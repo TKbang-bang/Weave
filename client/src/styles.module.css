@@ -1,0 +1,763 @@
+/*NAV*/
+.nav {
+  height: 100svh;
+  width: 25%;
+  padding: 0.5rem;
+  background-color: #fff;
+}
+
+.search {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: fit-content;
+  border: none;
+  margin-bottom: 2rem;
+}
+
+.search input {
+  width: 100%;
+  height: 3rem;
+  font-size: 1rem;
+  padding-left: 0.5rem;
+  padding-right: 4rem;
+  border-radius: 0.3rem;
+  outline: none;
+  border: 1px solid var(--color1);
+  color: var(--black);
+  transition: all 0.1s;
+}
+
+.search input:focus,
+.search input:hover {
+  border: solid 2px var(--color1);
+}
+
+.search span {
+  position: absolute;
+  display: block;
+  right: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.search span svg {
+  width: 1.6rem;
+  height: 1.6rem;
+  cursor: pointer;
+  fill: var(--color1);
+  opacity: 0.5;
+  transition: all 0.4s;
+}
+
+.search span svg:hover {
+  opacity: 1;
+}
+
+.search:has(span svg:hover) input {
+  border: 2px solid var(--color1);
+}
+
+.nav_links {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  list-style-type: none;
+  gap: 0;
+}
+
+.nav_links li {
+  height: fit-content;
+  width: 100%;
+}
+
+.nav_links li a {
+  display: block;
+  padding: 1rem;
+  width: 100%;
+  text-decoration: none;
+  color: var(--color1);
+  border-radius: 0 0.5rem 0.5rem 0;
+  transition: all 0.3s;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.nav_links li a svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 0.5rem;
+  fill: var(--color1);
+}
+
+.nav_links li a:hover {
+  background-color: var(--color2);
+}
+
+.nav_links li .active {
+  background-color: var(--color1);
+  color: #fff;
+}
+
+.nav_links li .active svg {
+  fill: #fff;
+}
+
+.nav_links li .active:hover {
+  background-color: var(--color1);
+  color: #fff;
+}
+/*NAV*/
+
+/*PRINCIPAL*/
+.principal {
+  display: flex;
+  height: 100svh;
+  width: 100vw;
+}
+
+.principal > section {
+  width: 75%;
+  max-width: 75%;
+  padding-inline: 15rem;
+  overflow-y: scroll;
+}
+/*PRINCIPAL*/
+
+/*SESSIONS*/
+.session_form_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  height: fit-content;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  padding: 1rem;
+  border-radius: 0.5rem;
+  padding-right: 0;
+  background-color: #fff;
+  /* border: 1px solid var(--color1); */
+  box-shadow: 0 0 10px 5px #f6643540;
+}
+
+.session_form_container > svg {
+  width: 35rem;
+  max-height: 100%;
+  background-color: var(--color2);
+  border-radius: 3px;
+}
+
+.form_container {
+  padding-inline: 3rem;
+  /* border: 1px solid #000; */
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form_container h1 {
+  margin-bottom: 2rem;
+  color: var(--color1);
+}
+
+.form_container .name_container {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.form_container input {
+  height: 2.5rem;
+  padding-left: 0.5rem;
+  font-size: 1rem;
+  border-radius: 3px;
+  outline: none;
+  border: solid 1px var(--color1);
+  color: var(--black);
+  width: 25rem;
+
+  transition: all 0.1s;
+}
+
+.form_container input:focus,
+.form_container input:hover {
+  border: 2px solid var(--color1);
+}
+
+.form_container input::placeholder {
+  color: var(--color1);
+  opacity: 0.5;
+}
+
+.form_container .name_container input {
+  width: 12rem;
+  height: 2.5rem;
+}
+
+.form_container .password_container,
+.form_container .confirm_password_container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+}
+
+.form_container .password_container input,
+.form_container .confirm_password_container input {
+  width: 100%;
+}
+
+.form_container .password_container span,
+.form_container .confirm_password_container span {
+  position: absolute;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+.form_container .password_container svg,
+.form_container .confirm_password_container svg {
+  width: 1.5rem;
+  fill: var(--color1);
+}
+
+.form_container button {
+  height: 2.5rem;
+  font-size: 1rem;
+  border-radius: 3px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background: var(--color1);
+  color: var(--white);
+}
+
+.form_container .arlready_have_account {
+  font-size: 0.9rem;
+  color: var(--black);
+  margin-top: 2rem;
+}
+
+.form_container .arlready_have_account a {
+  color: #3535ee;
+}
+
+.form_container .error {
+  color: var(--dark);
+  font-size: 0.9rem;
+}
+/*SESSIONS*/
+
+/*POSTS*/
+.home {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  padding-block: 2rem;
+}
+
+.home .home_header,
+.home .home_footer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-block: 1rem;
+  margin-bottom: 2rem;
+  color: var(--color1);
+}
+.home .header p {
+  opacity: 0.4;
+}
+
+/*POST*/
+
+.posts {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative;
+}
+
+.posts .arrow_left {
+  cursor: pointer;
+  width: 3rem;
+  display: grid;
+  place-items: center;
+  height: 3rem;
+  border-radius: 50%;
+  transition: all 0.3s;
+  padding: 0;
+  margin-top: 2rem;
+}
+
+.posts .arrow_left:hover {
+  /* background-color: var(--color1); */
+  fill: var(--color1);
+}
+
+.posts .arrow_left svg {
+  width: 1.8rem;
+}
+
+.post {
+  padding: 1rem;
+  width: 100%;
+  border-radius: 0.3rem;
+  background-color: #fff;
+
+  box-shadow: 0 10px 15px -3px rgba(246, 100, 53, 0.2);
+}
+
+/*POST HEADER*/
+.post .post_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.post .post_header .user {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.post .post_header .user a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: var(--black);
+}
+
+.post .post_header .user img {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: var(--color2);
+}
+
+.post .post_header .options {
+  background-color: var(--color2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 8rem;
+  color: var(--color1);
+
+  position: absolute;
+  right: 3rem;
+}
+
+.post .post_header svg {
+  width: 1.5rem;
+  cursor: pointer;
+  fill: var(--black);
+}
+
+.post .post_header button {
+  width: 6rem;
+  height: 1.8rem;
+  cursor: pointer;
+  border: none;
+  font-size: 1rem;
+  border-radius: 0.2rem;
+}
+
+.post .post_header .follow {
+  background-color: var(--color1);
+  color: var(--white);
+}
+
+.post .post_header .unfollow {
+  background-color: var(--white);
+  border: 1px solid var(--color1);
+  color: var(--color1);
+}
+
+.post .post_header .options {
+  border: 1px solid var(--color1);
+  background: none;
+}
+
+.post .post_header .options p {
+  width: 100%;
+  text-align: center;
+  padding-block: 0.2rem;
+  cursor: pointer;
+  transition: all 0.4s;
+}
+
+.post .post_header .options p:hover {
+  background-color: var(--color2);
+}
+
+.post .title {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.post .edit_form {
+  height: 2.5rem;
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.3rem;
+}
+
+.post .edit_form input {
+  grid-column: 1/5;
+  padding-left: 0.5rem;
+  font-size: 1rem;
+  outline: none;
+  border: 1px solid var(--color1);
+  border-radius: 0.3rem;
+}
+
+.post .edit_form input:focus {
+  border: 2px solid var(--color1);
+}
+
+.post .edit_form button,
+.post .edit_form span {
+  border: none;
+  cursor: pointer;
+  border-radius: 0.3rem;
+  font-size: 1rem;
+}
+
+.post .edit_form .edit_form_edit_btn {
+  background-color: var(--color1);
+  color: var(--white);
+}
+
+.post .edit_form .edit_form_cancel_btn {
+  color: var(--color1);
+  border: 1px solid var(--color1);
+  background-color: var(--white);
+}
+/*POST HEADER*/
+
+.post .post_img {
+  max-width: 100%;
+  max-height: 30rem;
+  object-fit: cover;
+  margin: auto;
+  display: block;
+}
+
+.post .date {
+  color: var(--color1);
+  opacity: 0.4;
+  font-size: 0.8rem;
+}
+
+/*POST FOOTER*/
+.post .post_footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.post .post_footer svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: var(--color1);
+}
+
+.post .post_footer .like_btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  cursor: pointer;
+  color: var(--color1);
+}
+
+.post .post_footer .comments_link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-decoration: none;
+  text-align: center;
+  color: var(--color1);
+}
+
+.post .post_footer .comments_link .comments_icon_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.3rem;
+}
+/*POST FOOTER*/
+/*POST*/
+
+.home > .footer {
+  /* margin-block: 6rem 3rem; */
+  color: var(--color1);
+  opacity: 0.4;
+}
+
+/*COMMENTS*/
+
+.post .comments_section .no_comments {
+  color: var(--color1);
+}
+
+.post .comments_section {
+  /* border: 1px solid #000; */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.post .comments_section .comment {
+  /* border: 1px solid #000; */
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.post .comments_section .comment .profile_link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.post .comments_section .comment img {
+  width: 3.5rem;
+  height: 3.5rem;
+  /* border: 1px solid #000; */
+  border-radius: 50%;
+  background-color: var(--color2);
+}
+
+.post .comments_section .comment .comment_ {
+  background-color: var(--color2);
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  /* color: var(--white); */
+}
+
+.post .comments_section .comment .name_link {
+  text-decoration: none;
+  color: var(--color1);
+  font-weight: bold;
+}
+
+.post .comments_section .comment .comment_content {
+  opacity: 0.7;
+}
+
+.comments_form {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: sticky;
+  bottom: 1rem;
+  min-height: 2.5rem;
+}
+
+.comments_form input {
+  border-radius: 0.3rem;
+  width: 100%;
+  height: 100%;
+  padding-left: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid var(--color1);
+  outline: none;
+  padding-right: 4rem;
+}
+
+.comments_form input:focus {
+  border: 2px solid var(--color1);
+}
+
+.comments_form .send {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* border: 1px solid #000; */
+  cursor: pointer;
+  margin-right: 0.5rem;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+.comments_form .send:hover {
+  fill: var(--color1);
+}
+
+.comments_form .send svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+/*POSTS*/
+
+/*PUBLICATE*/
+
+.publicate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.publicate form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  /* background-color: var(--white); */
+
+  /* -webkit-box-shadow: 2px 2px 12px 0px rgba(246, 100, 53, 1);
+  -moz-box-shadow: 2px 2px 12px 0px rgba(246, 100, 53, 1);
+  box-shadow: 2px 2px 12px 0px rgba(246, 100, 53, 1); */
+
+  -webkit-box-shadow: 1px 7px 36px -11px rgba(246, 100, 53, 1);
+  -moz-box-shadow: 1px 7px 36px -11px rgba(246, 100, 53, 1);
+  box-shadow: 1px 7px 36px -11px rgba(246, 100, 53, 1);
+}
+
+.publicate form h1 {
+  font-size: 1.5rem;
+  color: var(--color1);
+  align-self: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.publicate form input {
+  width: 100%;
+  height: 2.5rem;
+  font-size: 1rem;
+  padding-left: 0.5rem;
+  border-radius: 0.3rem;
+  outline: none;
+  transition: all 0.3s;
+  color: var(--black);
+  border: 1px solid var(--color1);
+}
+
+.publicate form input:focus,
+.publicate form input:hover {
+  border: 2px solid var(--color1);
+  background-color: var(--white);
+}
+
+.publicate form input::placeholder {
+  color: var(--color1);
+  opacity: 0.3;
+}
+
+.publicate form .file_label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 20rem;
+  cursor: pointer;
+  color: var(--color1);
+  background-color: var(--color2);
+  border: 1px solid var(--color1);
+  border-radius: 0.3rem;
+}
+
+.publicate form .file_label svg {
+  width: 5rem;
+  height: 5rem;
+  fill: var(--color1);
+}
+
+.publicate form .submit {
+  height: 2.5rem;
+  font-size: 1rem;
+  border-radius: 0.3rem;
+  background-color: var(--color1);
+  color: var(--white);
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  align-self: flex-end;
+  width: 10rem;
+}
+
+.publicate form .image_display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  border-radius: 0.3rem;
+}
+
+.publicate form .image_display img {
+  max-width: 100%;
+  max-height: 25rem;
+  object-fit: cover;
+}
+
+.publicate form .image_display label {
+  align-self: flex-start;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color2);
+  border-radius: 0.5rem;
+  border: 1px solid var(--color1);
+  color: var(--color1);
+  cursor: pointer;
+  gap: 0.5rem;
+  height: 1.8rem;
+  width: 10rem;
+}
+
+.publicate form .image_display label svg {
+  width: 1.2rem;
+  fill: var(--color1);
+}
+
+.publicate form .error_message {
+  color: #d55252;
+  font-size: 1rem;
+  align-self: flex-start;
+}
+
+.publicate form .my_file {
+  display: none;
+}
+
+/*PUBLICATE*/
