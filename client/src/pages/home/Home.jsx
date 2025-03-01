@@ -1,19 +1,9 @@
 import React, { useEffect } from "react";
 import styles from "../../styles.module.css";
 import axios from "axios";
+import Posts from "../../components/Posts";
 
 function Home() {
-  useEffect(() => {
-    axios
-      .get("/posts")
-      .then((result) => {
-        console.log(result.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
   return (
     <section className={styles.home}>
       <article className={styles.home_header}>
@@ -21,7 +11,8 @@ function Home() {
         <p>Share with everybody</p>
       </article>
 
-      <article className={styles.posts}></article>
+      {/* <article className={styles.posts}></article> */}
+      <Posts to={"/posts"} />
 
       <article className={styles.home_footer}>
         <h1>Follow more users for more posts</h1>
