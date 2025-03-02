@@ -500,7 +500,8 @@
 
 /*COMMENTS*/
 
-.this_post .arrow_left {
+.this_post .arrow_left,
+.profile .back {
   cursor: pointer;
   width: 3rem;
   display: grid;
@@ -512,12 +513,14 @@
   margin-top: 2rem;
 }
 
-.this_post .arrow_left:hover {
+.this_post .arrow_left:hover,
+.profile .back:hover {
   /* background-color: var(--color1); */
   fill: var(--color1);
 }
 
-.this_post .arrow_left svg {
+.this_post .arrow_left svg,
+.profile .back svg {
   width: 1.8rem;
 }
 
@@ -767,3 +770,61 @@
 }
 
 /*PUBLICATE*/
+
+/*PROFILE*/
+
+.profile {
+  width: 100%;
+  padding-block: 2rem;
+}
+
+.profile > .user {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  background-color: var(--color1);
+  padding: 1rem;
+  color: var(--white);
+  border-radius: 0.3rem;
+}
+
+.profile > .user img {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: var(--color2);
+}
+
+.profile > h3 {
+  padding-block: 5rem 0.5rem;
+  color: var(--color1);
+}
+
+.profile > button {
+  width: 100%;
+  font-size: 1rem;
+  border-radius: 0.3rem;
+  border: none;
+  height: 3.5rem;
+  background: none;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+
+.profile > .unfollow {
+  border: 1px solid var(--color1);
+  color: var(--color1);
+}
+
+.profile > .follow {
+  background-color: var(--color1);
+  color: var(--white);
+}
+
+.profile .back {
+  margin-top: 0;
+}
+
+/*PROFILE*/

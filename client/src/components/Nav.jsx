@@ -38,7 +38,7 @@ function Nav() {
 
         <li>
           <NavLink
-            to="/profile"
+            to="/myprofile"
             className={({ isActive }) => (isActive ? styles.active : "")}
           >
             <span>

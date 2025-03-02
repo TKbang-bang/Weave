@@ -5,6 +5,8 @@ import styles from "../styles.module.css";
 import Nav from "../components/Nav";
 import ThisPost from "./home/ThisPost";
 import Publicate from "./home/Publicate";
+import MyProfile from "./home/MyProfile";
+import Profile from "./home/Profile";
 
 function Principal() {
   return (
@@ -14,6 +16,8 @@ function Principal() {
         <Route path="/" element={<Home />} />
         <Route path="/publicate" element={<Publicate />} />
         <Route path="/post/:post_id" element={<ThisPost />} />
+        <Route path="/myprofile" element={<MyProfile />} />
+        <Route path="/profile/:user_id" element={<Profile />} />
       </Routes>
     </div>
   );

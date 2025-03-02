@@ -173,7 +173,7 @@ router.post("/publicate", upload.single("file"), (req, res) => {
 
 router.get("/posts", (req, res) => {
   const rq =
-    "SELECT post_id, post_title, post_content, post_date, p.user_id, user_name, user_lastname, user_profile,(SELECT COUNT(*) follow_id FROM follows WHERE from_user_id = ? AND to_user_id = u.user_id) as followed, (SELECT COUNT(*) like_id FROM likes WHERE post_id = p.post_id) as likes, (SELECT COUNT(*) like_id FROM likes WHERE user_id = ? AND post_id = p.post_id) as liked , (SELECT COUNT(*) comment_id FROM comments WHERE user_id = ? AND post_id = p.post_id) as comments FROM posts p JOIN users u ON u.user_id = p.user_id ORDER BY post_date DESC";
+    "SELECT post_id, post_title, post_content, post_date, p.user_id, user_name, user_lastname, user_profile,(SELECT COUNT(*) FROM follows WHERE from_user_id = ? AND to_user_id = u.user_id) as followed, (SELECT COUNT(*) FROM likes WHERE post_id = p.post_id) as likes, (SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = p.post_id) as liked , (SELECT COUNT(*) FROM comments WHERE post_id = p.post_id) as comments FROM posts p JOIN users u ON u.user_id = p.user_id ORDER BY post_date DESC";
 
   db.query(
     rq,
@@ -280,12 +280,15 @@ router.post("/like", (req, res) => {
 router.get("/post/:post_id", (req, res) => {
   const { post_id } = req.params;
 
+  // const rq =
+  //   "SELECT post_id, post_title, post_content, post_date, p.user_id, user_name, user_lastname, user_profile,(SELECT COUNT(*) FROM follows WHERE from_user_id = ? AND to_user_id = u.user_id) as followed, (SELECT COUNT(*) FROM likes WHERE post_id = p.post_id) as likes, (SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = p.post_id) as liked , (SELECT COUNT(*) FROM comments WHERE post_id = p.post_id) as comments FROM posts p JOIN users u ON u.user_id = p.user_id WHERE p.post_id = ? ORDER BY post_date DESC";
+
   const rq =
-    "SELECT post_id, post_title, post_content, post_date, p.user_id, user_name, user_lastname, user_profile,(SELECT COUNT(*) follow_id FROM follows WHERE from_user_id = ? AND to_user_id = u.user_id) as followed, (SELECT COUNT(*) like_id FROM likes WHERE post_id = p.post_id) as likes, (SELECT COUNT(*) like_id FROM likes WHERE user_id = ? AND post_id = p.post_id) as liked , (SELECT COUNT(*) comment_id FROM comments WHERE user_id = ? AND post_id = p.post_id) as comments FROM posts p JOIN users u ON u.user_id = p.user_id WHERE post_id = ? ORDER BY post_date DESC";
+    "SELECT post_id, post_title, post_content, post_date, p.user_id, user_name, user_lastname, user_profile, (SELECT COUNT(*) FROM follows WHERE from_user_id = ? AND to_user_id = u.user_id) as followed, (SELECT COUNT(*) FROM likes WHERE post_id = p.post_id) as likes, (SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = p.post_id) as liked , (SELECT COUNT(*) FROM comments WHERE post_id = p.post_id) as comments FROM posts p JOIN users u ON u.user_id = p.user_id WHERE p.post_id = ? ORDER BY post_date DESC";
 
   db.query(
     rq,
-    [req.session.userID, req.session.userID, req.session.userID, post_id],
+    [req.session.userID, req.session.userID, post_id],
     (err, result) => {
       if (err) return res.json({ ok: false, message: "Server error" });
 
@@ -320,6 +323,103 @@ router.get("/post/:post_id", (req, res) => {
 
 router.get("/user_id", (req, res) => {
   res.json({ ok: true, user_id: req.session.userID });
+});
+
+router.get("/user", (req, res) => {
+  const rq =
+    "SELECT user_name, user_lastname, user_profile, (SELECT COUNT(*) FROM follows WHERE to_user_id = ?) AS followers FROM users WHERE user_id = ?";
+
+  db.query(rq, [req.session.userID, req.session.userID], (err, result) => {
+    if (err) return res.json({ ok: false, message: "Server error" });
+
+    if (result.length > 0) {
+      res.json({ ok: true, user: result[0] });
+    } else {
+      res.json({ ok: false, message: "User not found" });
+    }
+  });
+});
+
+router.get("/user_posts", (req, res) => {
+  const rq =
+    "SELECT post_id, post_title, post_content, post_date, p.user_id, user_name, user_lastname, user_profile,(SELECT COUNT(*) FROM follows WHERE from_user_id = ? AND to_user_id = u.user_id) as followed, (SELECT COUNT(*) FROM likes WHERE post_id = p.post_id) as likes, (SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = p.post_id) as liked , (SELECT COUNT(*) FROM comments WHERE post_id = p.post_id) as comments FROM posts p JOIN users u ON u.user_id = p.user_id WHERE p.user_id = ? ORDER BY post_date DESC";
+
+  db.query(
+    rq,
+    [
+      req.session.userID,
+      req.session.userID,
+      req.session.userID,
+      req.session.userID,
+    ],
+    (err, result) => {
+      if (err) return res.json({ ok: false, message: "Server error" });
+
+      const dateFormat = "yyyy-MM-dd HH:mm:ss";
+      const today = new Date();
+
+      const newPosts = result.map((post) => {
+        return {
+          ...post,
+          since_date: myDate(post.post_date, today, dateFormat),
+          me: post.user_id == req.session.userID ? true : false,
+          comment_section: false,
+        };
+      });
+
+      res.json(newPosts);
+    }
+  );
+});
+
+router.get("/user_/:user_id", (req, res) => {
+  const { user_id } = req.params;
+
+  const rq =
+    "SELECT user_name, user_lastname, user_profile, (SELECT COUNT(*) FROM follows WHERE to_user_id = ?) AS followers, (SELECT COUNT(*) FROM follows WHERE from_user_id = ? AND to_user_id = ?) AS followed FROM users WHERE user_id = ?";
+
+  db.query(
+    rq,
+    [user_id, req.session.userID, user_id, user_id],
+    (err, result) => {
+      if (err) return res.json({ ok: false, message: "Server error" });
+
+      if (result.length > 0) {
+        res.json({ ok: true, user: result[0] });
+      } else {
+        res.json({ ok: false, message: "User not found" });
+      }
+    }
+  );
+});
+
+router.get("/user_posts_/:user_id", (req, res) => {
+  const { user_id } = req.params;
+
+  const rq =
+    "SELECT post_id, post_title, post_content, post_date, p.user_id, user_name, user_lastname, user_profile,(SELECT COUNT(*) FROM follows WHERE from_user_id = ? AND to_user_id = u.user_id) as followed, (SELECT COUNT(*) FROM likes WHERE post_id = p.post_id) as likes, (SELECT COUNT(*) like_id FROM likes WHERE user_id = ? AND post_id = p.post_id) as liked , (SELECT COUNT(*) FROM comments WHERE post_id = p.post_id) as comments FROM posts p JOIN users u ON u.user_id = p.user_id WHERE p.user_id = ? ORDER BY post_date DESC";
+
+  db.query(
+    rq,
+    [req.session.userID, req.session.userID, user_id, user_id],
+    (err, result) => {
+      if (err) return res.json({ ok: false, message: "Server error" });
+
+      const dateFormat = "yyyy-MM-dd HH:mm:ss";
+      const today = new Date();
+
+      const newPosts = result.map((post) => {
+        return {
+          ...post,
+          since_date: myDate(post.post_date, today, dateFormat),
+          me: post.user_id == req.session.userID ? true : false,
+          comment_section: false,
+        };
+      });
+
+      res.json(newPosts);
+    }
+  );
 });
 
 module.exports = router;

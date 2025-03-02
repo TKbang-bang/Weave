@@ -49,10 +49,10 @@ app.use(router);
 
 // SOCKETS
 io.on("connection", (socket) => {
-  console.log("a user connected");
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
+  // console.log("a user connected");
+  // socket.on("disconnect", () => {
+  //   console.log("user disconnected");
+  // });
 
   socket.on("client_comment", (data) => {
     const comment_id = crypto.randomUUID();

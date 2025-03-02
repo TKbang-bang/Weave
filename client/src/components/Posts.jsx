@@ -175,7 +175,7 @@ function Posts({ to }) {
       <article className={styles.post}>
         <article className={styles.post_header}>
           <div className={styles.user}>
-            <Link>
+            <Link to={post.me ? "/myprofile" : `/profile/${post.user_id}`}>
               <img
                 src={
                   post.user_profile
@@ -186,7 +186,7 @@ function Posts({ to }) {
               />
             </Link>
 
-            <Link>
+            <Link to={post.me ? "/myprofile" : `/profile/${post.user_id}`}>
               <h3>
                 {post.user_name} {post.user_lastname}
               </h3>
