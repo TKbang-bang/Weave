@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Eye, EyeSplash, SocialIllustration } from "../../components/svg.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -16,6 +16,17 @@ function Signup() {
 
   const [seePassword, setSeePassword] = useState(false);
   const [seeConfirmPassword, setSeeConfirmPassword] = useState(false);
+
+  useEffect(() => {
+    axios
+      .get("/user_verify")
+      .then((res) => {
+        if (res.data.ok) {
+          navigate("/");
+        }
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();

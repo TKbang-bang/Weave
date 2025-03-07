@@ -26,9 +26,19 @@ function Posts({ to }) {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [to]);
 
-  const handleDelete = () => {};
+  const handleDelete = (post_id) => {
+    try {
+      axios.delete("/delete_post/" + post_id).then((result) => {
+        if (result.data.ok) {
+          setPosts(posts.filter((post) => post.post_id != post_id));
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const Post = ({ post }) => {
     const [editing, setEditing] = useState(false);
@@ -219,7 +229,9 @@ function Posts({ to }) {
                         Edit post
                       </p>
 
-                      <p onClick={handleDelete}>Delete post</p>
+                      <p onClick={() => handleDelete(post.post_id)}>
+                        Delete post
+                      </p>
                     </div>
                   )}
                 </>
@@ -311,9 +323,20 @@ function Posts({ to }) {
 
   return (
     <article className={styles.posts}>
-      {posts.map((post) => (
-        <Post post={post} key={post.post_id} />
-      ))}
+      {posts.length > 0 ? (
+        <>
+          {posts.map((post) => (
+            <Post post={post} key={post.post_id} />
+          ))}
+        </>
+      ) : (
+        <article className={styles.noposts}>
+          <h1>NO POSTS FOUND</h1>
+          <Link to={"/publicate"}>
+            <h3>Publicate</h3>
+          </Link>
+        </article>
+      )}
     </article>
   );
 }

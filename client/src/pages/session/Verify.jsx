@@ -10,6 +10,17 @@ function Verify() {
   const [code, setCode] = useState("");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    axios
+      .get("/user_verify")
+      .then((res) => {
+        if (res.data.ok) {
+          navigate("/");
+        }
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setFormError(false);

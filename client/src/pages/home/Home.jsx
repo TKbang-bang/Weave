@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import styles from "../../styles.module.css";
-import axios from "axios";
 import Posts from "../../components/Posts";
 
 function Home() {

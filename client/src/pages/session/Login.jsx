@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Eye,
   EyeSplash,
@@ -18,19 +18,16 @@ function Login() {
 
   const [seePassword, setSeePassword] = useState(false);
 
-  const handleSeePassword = () => {
-    if (seePassword) {
-      document.querySelector(
-        ".session_form_container form .password_container  input"
-      ).type = "password";
-      setSeePassword(false);
-    } else {
-      document.querySelector(
-        ".session_form_container form .password_container  input"
-      ).type = "text";
-      setSeePassword(true);
-    }
-  };
+  useEffect(() => {
+    axios
+      .get("/user_verify")
+      .then((res) => {
+        if (res.data.ok) {
+          navigate("/");
+        }
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -71,18 +68,18 @@ function Login() {
 
         <div className={styles.password_container}>
           <input
-            type="password"
+            type={seePassword ? "tetx" : "password"}
             placeholder="Password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           {seePassword ? (
-            <span onClick={handleSeePassword}>
+            <span onClick={() => setSeePassword(!seePassword)}>
               <Eye />
             </span>
           ) : (
-            <span onClick={handleSeePassword}>
+            <span onClick={() => setSeePassword(!seePassword)}>
               <EyeSplash />
             </span>
           )}
@@ -95,6 +92,10 @@ function Login() {
         <p className={styles.arlready_have_account}>
           You don't have an account yet?{" "}
           <Link to={"/signup"}>Create account</Link>
+        </p>
+
+        <p>
+          <Link to={"/recoverpassword"}>Forgot password?</Link>
         </p>
       </form>
     </div>

@@ -34,16 +34,17 @@
   border: solid 2px var(--color1);
 }
 
-.search span {
+.search a {
   position: absolute;
   display: block;
   right: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  text-decoration: none;
 }
 
-.search span svg {
+.search a svg {
   width: 1.6rem;
   height: 1.6rem;
   cursor: pointer;
@@ -52,11 +53,11 @@
   transition: all 0.4s;
 }
 
-.search span svg:hover {
+.search a svg:hover {
   opacity: 1;
 }
 
-.search:has(span svg:hover) input {
+.search:has(a svg:hover) input {
   border: 2px solid var(--color1);
 }
 
@@ -303,6 +304,20 @@
   box-shadow: 0 10px 15px -3px rgba(246, 100, 53, 0.2);
 }
 
+.noposts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  color: var(--color1);
+  padding-block: 8rem;
+}
+
+.noposts a {
+  color: inherit;
+}
+
 /*POST HEADER*/
 .post .post_header {
   display: flex;
@@ -331,6 +346,7 @@
   height: 4rem;
   border-radius: 50%;
   background-color: var(--color2);
+  object-fit: cover;
 }
 
 .post .post_header .options {
@@ -640,7 +656,7 @@
   justify-content: center;
 }
 
-.publicate form {
+.publicate > form {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -660,14 +676,24 @@
   box-shadow: 1px 7px 36px -11px rgba(246, 100, 53, 1);
 }
 
-.publicate form h1 {
+.publicate .change_form_doble {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.publicate form h1,
+.fgpass form h1 {
   font-size: 1.5rem;
   color: var(--color1);
   align-self: flex-start;
   margin-bottom: 0.5rem;
 }
 
-.publicate form input {
+.publicate form input,
+.fgpass form input {
   width: 100%;
   height: 2.5rem;
   font-size: 1rem;
@@ -677,15 +703,19 @@
   transition: all 0.3s;
   color: var(--black);
   border: 1px solid var(--color1);
+  padding-right: 3rem;
 }
 
 .publicate form input:focus,
-.publicate form input:hover {
+.publicate form input:hover,
+.fgpass form input:focus,
+.fgpass form input:hover {
   border: 2px solid var(--color1);
   background-color: var(--white);
 }
 
-.publicate form input::placeholder {
+.publicate > form input::placeholder,
+.fgpass form input::placeholder {
   color: var(--color1);
   opacity: 0.3;
 }
@@ -710,7 +740,8 @@
   fill: var(--color1);
 }
 
-.publicate form .submit {
+.publicate form .submit,
+.fgpass form .submit {
   height: 2.5rem;
   font-size: 1rem;
   border-radius: 0.3rem;
@@ -767,6 +798,34 @@
 
 .publicate form .my_file {
   display: none;
+}
+
+.publicate form .password_container,
+.fgpass form .password_container {
+  position: relative;
+  width: 100%;
+  /* border: 1px solid #000; */
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.publicate form .password_container span,
+.fgpass form .password_container span {
+  position: absolute;
+  right: 0.5rem;
+  cursor: pointer;
+  color: var(--color1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.publicate form .password_container span svg,
+.fgpass form .password_container span svg {
+  width: 1.8rem;
+  height: 1.8rem;
+  fill: var(--color1);
 }
 
 /*PUBLICATE*/
@@ -828,3 +887,473 @@
 }
 
 /*PROFILE*/
+
+/*CHATS*/
+
+.chats {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-direction: column;
+  gap: 1rem;
+  padding-block: 1rem;
+}
+
+.chats .chats_header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+}
+
+.chats .chats_header .search_results_error {
+  text-align: center;
+  width: 100%;
+  display: block;
+  margin-block: 1rem;
+}
+
+.chats .chats_header .chats_search_form {
+  width: 100%;
+  /* border: 1px solid #000; */
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+}
+
+.chats .chats_header .chats_search_form input {
+  width: 100%;
+  height: 3rem;
+  padding: 0 1rem;
+  font-size: 1rem;
+  outline: none;
+  border: 1px solid var(--color1);
+  border-radius: 0.3rem;
+  color: var(--black);
+}
+
+.chats .chats_header .chats_search_form input:hover,
+.chats .chats_header .chats_search_form input:focus {
+  border: 2px solid var(--color1);
+}
+
+.chats .chats_header .chats_search_form button {
+  position: absolute;
+  right: 0.5rem;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--color1);
+  fill: var(--color1);
+  /* border: 1px solid #000; */
+}
+
+.chats .chats_header .chats_search_form:has(button:hover) input {
+  border: 2px solid var(--color1);
+}
+
+.chats .chats_header .chats_search_form button svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.chats .chats_header .search_results {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: #fff;
+  width: 100%;
+  border: 1px solid var(--color1);
+  max-height: 20rem;
+  overflow-y: scroll;
+  position: absolute;
+  top: 3rem;
+}
+
+.chats .chats_header .search_results span {
+  justify-self: flex-end;
+  align-self: flex-end;
+  cursor: pointer;
+}
+
+.chats .chats_header .search_results span svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.chats .chats_header .search_results .search_results_list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.chats .chats_header .search_results .search_results_list a {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+  background-color: var(--color2);
+  border-radius: 0.3rem;
+  text-decoration: none;
+  color: var(--black);
+  padding: 0.5rem;
+}
+
+.chats .chats_header .search_results .search_results_list a img {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: var(--white);
+}
+
+.chats .chats_list {
+  background-color: var(--color2);
+  height: 100%;
+  padding: 1rem;
+}
+
+/*CHATS*/
+
+/*CHAT*/
+.chat {
+  width: 100%;
+  /* padding-block: 1rem; */
+}
+
+.chat .chat_container {
+  background-color: var(--color2);
+  width: 100%;
+  max-height: 100%;
+  min-height: 100%;
+  display: grid;
+  grid-template-rows: repeat(8, 1fr);
+}
+
+.chat .chat_container .chat_header {
+  background-color: var(--color1);
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  gap: 1rem;
+  grid-row: 1/2;
+}
+
+.chat .chat_container .chat_header .back {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chat .chat_container .chat_header .back svg {
+  width: 2rem;
+  height: 2rem;
+  fill: #fff;
+}
+
+.chat .chat_container .chat_header .user {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--white);
+}
+
+.chat .chat_container .chat_header .user img {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: var(--white);
+}
+
+.chat .chat_container .chat_body {
+  position: relative;
+  border: 1px solid #000;
+  overflow-y: scroll;
+  grid-row: 2/-1;
+  padding-inline: 1rem;
+}
+
+.chat .chat_container .chat_body .chat_form {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  position: sticky;
+  top: 90%;
+  bottom: 2rem;
+}
+
+.chat .chat_container .chat_body .chat_form input {
+  width: 100%;
+  height: 3rem;
+  padding-left: 0.5rem;
+  font-size: 1rem;
+  outline: none;
+  border: 1px solid var(--color1);
+}
+
+.chat .chat_container .chat_body .chat_form input:hover,
+.chat .chat_container .chat_body .chat_form input:focus {
+  border: 2px solid var(--color1);
+}
+
+.chat .chat_container .chat_body .chat_form button {
+  background: none;
+  border: none;
+  position: absolute;
+  margin-right: 1rem;
+}
+
+.chat .chat_container .chat_body .chat_form button svg {
+  width: 2rem;
+  height: 2rem;
+  fill: var(--color1);
+}
+/*CHAT*/
+
+/*CONFIGS*/
+
+.configs {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.configs .config {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  /* border: 1px solid #000; */
+}
+
+.configs .config .config_header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: var(--color1);
+  color: var(--white);
+  fill: var(--white);
+}
+
+.configs .config .config_header svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.configs .config .config_list {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  list-style-type: none;
+}
+
+.configs .config .config_list li {
+  width: 100%;
+}
+
+.configs .config .config_list a,
+.configs .config .config_list button {
+  width: 100%;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  padding-left: 2rem;
+  padding-block: 1rem;
+  font-size: 1rem;
+  background: none;
+  transition: all 0.3s;
+  border: none;
+}
+
+.configs .config .config_list a:hover,
+.configs .config .config_list button:hover {
+  background-color: var(--color2);
+}
+
+/*CONFIGS*/
+
+.error {
+  color: red;
+}
+
+.fgpass {
+  width: 100%;
+  height: 100svh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fgpass form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: fit-content;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  /* background-color: var(--white); */
+
+  /* -webkit-box-shadow: 2px 2px 12px 0px rgba(246, 100, 53, 1);
+  -moz-box-shadow: 2px 2px 12px 0px rgba(246, 100, 53, 1);
+  box-shadow: 2px 2px 12px 0px rgba(246, 100, 53, 1); */
+
+  -webkit-box-shadow: 1px 7px 36px -11px rgba(246, 100, 53, 1);
+  -moz-box-shadow: 1px 7px 36px -11px rgba(246, 100, 53, 1);
+  box-shadow: 1px 7px 36px -11px rgba(246, 100, 53, 1);
+}
+
+.fgpass form h1 {
+  /* font-size: 2rem; */
+  /* color: var(--color1); */
+
+  margin-bottom: 2rem;
+}
+
+.fgpass form input {
+  width: 25rem;
+}
+
+/*SEARCH*/
+
+.searched {
+  display: flex;
+  width: 100%;
+  min-height: 100svh;
+  flex-direction: column;
+  padding-block: 1rem 2rem;
+  overflow-y: scroll;
+}
+
+.searched .search_form {
+  width: 100%;
+  /* border: 1px solid #000; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+  justify-self: center;
+  align-self: center;
+}
+
+.searched .search_form input {
+  width: 100%;
+  height: 3.5rem;
+  font-size: 1rem;
+  padding-left: 0.5rem;
+  border-radius: 0.3rem;
+  border: 1px solid var(--color1);
+  outline: none;
+}
+
+.searched .search_form input:focus {
+  border: 2px solid var(--color1);
+}
+
+.searched .search_form button {
+  width: 100%;
+  height: 2rem;
+  font-size: 1rem;
+  border-radius: 0.3rem;
+  border: none;
+  background-color: var(--color1);
+  color: var(--white);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.searched .result {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.searched h1 {
+  margin-top: 2rem;
+}
+
+.searched .arrow_left {
+  cursor: pointer;
+  width: fit-content;
+  justify-self: flex-start;
+  align-self: flex-start;
+}
+
+.searched .arrow_left svg {
+  width: 2rem;
+  height: 2rem;
+  fill: var(--color1);
+}
+
+.searched .users {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  padding: 1rem;
+  background-color: #fff;
+  overflow-x: scroll;
+}
+
+.searched .users .user {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  background-color: var(--color2);
+  /* border: 1px solid #000; */
+  padding: 0.5rem;
+  gap: 0.5rem;
+  min-width: 12rem;
+  height: 16rem;
+  border-radius: 0.3rem;
+}
+
+.searched .users .user img {
+  width: 100%;
+  height: 10rem;
+  object-fit: cover;
+  background-color: var(--white);
+}
+
+.searched .users .user h3 {
+  font-size: 1.2rem;
+  align-self: flex-start;
+  /* justify-self: flex-start; */
+}
+
+.searched .users .user a {
+  background-color: var(--color1);
+  width: 8rem;
+  align-self: flex-start;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: var(--white);
+  border-radius: 0.3rem;
+}
+
+/*SEARCH*/

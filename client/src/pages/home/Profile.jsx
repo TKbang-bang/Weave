@@ -56,7 +56,9 @@ function Profile() {
           <h3>
             {user.user_name} {user.user_lastname}
           </h3>
-          <p>{user.followers} Followers</p>
+          <p>
+            {user.followers} {() => (user.followers > 0 ? Followers : Follower)}
+          </p>
         </div>
       </article>
 

@@ -7,6 +7,9 @@ const http = require("http");
 const myStore = require("./configs/session_store");
 const router = require("./router/router");
 const db = require("./database/db");
+const myDate = require("./configs/date_format");
+const { format } = require("date-fns");
+const { user } = require("./configs/database_config");
 require("dotenv").config();
 
 // STARTING APPLICATION
@@ -48,6 +51,7 @@ app.use(
 app.use(router);
 
 // SOCKETS
+
 io.on("connection", (socket) => {
   // console.log("a user connected");
   // socket.on("disconnect", () => {
@@ -85,6 +89,37 @@ io.on("connection", (socket) => {
       }
     );
   });
+
+  // socket.on("client_message", (data) => {
+  //   const { from_user_id, to_user_id, message } = data;
+  //   const dateFormat = "yyyy-MM-dd HH:mm:ss";
+  //   const now = new Date();
+  //   const date = format(now, dateFormat);
+  //   const message_id = crypto.randomUUID();
+
+  //   // Insertamos el mensaje en la base de datos
+  //   const rq =
+  //     "INSERT INTO messages (message_id, from_user_id, to_user_id, message_content, message_date) VALUES (?, ?, ?, ?, ?)";
+
+  //   db.query(
+  //     rq,
+  //     [message_id, from_user_id, to_user_id, message, date],
+  //     (err, result) => {
+  //       if (err) return socket.emit("error", { message: "Server error" });
+
+  //       // Creamos el objeto de mensaje
+  //       const newMessage = {
+  //         message_id: message_id,
+  //         from_user_id: from_user_id,
+  //         to_user_id: to_user_id,
+  //         message_content: message,
+  //         message_date: date,
+  //       };
+
+  //       io.emit("server_message", newMessage);
+  //     }
+  //   );
+  // });
 });
 
 server.listen(app.get("port"), () => console.log("Server running"));

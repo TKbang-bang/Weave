@@ -5,6 +5,7 @@ import Login from "./pages/session/Login";
 import Verify from "./pages/session/Verify";
 import Principal from "./pages/Principal";
 import axios from "axios";
+import ForgotPassword from "./pages/changes/ForgotPassword";
 
 axios.defaults.baseURL = "http://localhost:3000/";
 axios.defaults.withCredentials = true;
@@ -17,6 +18,7 @@ function App() {
         if (!res.data.ok) {
           if (
             window.location == `http://localhost:5173/signup` ||
+            window.location == `http://localhost:5173/recoverpassword` ||
             window.location == "http://localhost:5173/verify"
           ) {
             return;
@@ -36,6 +38,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/verify" element={<Verify />} />
       <Route path="*" element={<Principal />} />
+      <Route path="/recoverpassword" element={<ForgotPassword />} />
     </Routes>
   );
 }
