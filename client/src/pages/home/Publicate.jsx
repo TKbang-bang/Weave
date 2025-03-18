@@ -20,24 +20,31 @@ function Publicate() {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setErrorMessage("");
-
-    if (noFile) {
-      setErrorMessage("Please select a file");
-    } else {
-      setNoFile(false);
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
       setErrorMessage("");
 
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("file", file);
+      if (noFile) {
+        setErrorMessage("Please select a file");
+      } else {
+        setNoFile(false);
+        setErrorMessage("");
 
-      axios
-        .post("/publicate", formData)
-        .then((res) => navigate("/"))
-        .catch((error) => console.log(error));
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("file", file);
+
+        const publicating = await axios.post("/publicate", formData);
+
+        if (!publicating.data.ok) {
+          throw new Error(publicating.response.data.message);
+        }
+
+        navigate("/");
+      }
+    } catch (error) {
+      setErrorMessage(error.response.data.message);
     }
   };
 

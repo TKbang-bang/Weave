@@ -11,6 +11,7 @@ const myDate = require("./configs/date_format");
 const { format } = require("date-fns");
 const { user } = require("./configs/database_config");
 const { mySocket } = require("./services/socket.services/socketService");
+const errorHandler = require("./error/errorHandler");
 require("dotenv").config();
 
 // STARTING APPLICATION
@@ -47,4 +48,5 @@ app.use(
 // ROUTES
 app.use(router);
 
+app.use(errorHandler);
 server.listen(app.get("port"), () => console.log("Server running"));

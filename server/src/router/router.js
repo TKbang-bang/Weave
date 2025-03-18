@@ -1,7 +1,5 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-const nodemailer = require("nodemailer");
-const { nanoid } = require("nanoid");
 const upload = require("../configs/multer");
 const {
   getUserId,
@@ -42,234 +40,178 @@ const {
 } = require("../services/router.services/updateServices");
 const {
   deleteUserAccount,
+  emialSend,
 } = require("../services/router.services/accountServices");
 const {
   usersSearch,
   postsSearch,
 } = require("../services/router.services/searchServices");
+const ServerError = require("../error/errorClass");
 
 const router = express.Router();
 
 // VERIFYING IF USER IS LOGGED
-router.get("/user_verify", (req, res) => {
+router.get("/user_verify", async (req, res, next) => {
   try {
-    if (req.session.userID) {
-      getUserId(req.session.userID).then((user_id) => {
-        if (!user_id) {
-          return res.json({ ok: false, message: "User not found" });
-        }
+    if (!req.session.userID)
+      return next(new ServerError("User is not logged", 401));
 
-        return res.json({ ok: true });
-      });
-    } else {
-      return res.json({ ok: false, message: "Access denied" });
-    }
+    const gettingUserId = await getUserId(req.session.userID);
+    if (!gettingUserId) return next(new ServerError("User not found", 404));
+
+    return res.status(204).json({ ok: true, message: "User is logged" });
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    next(new ServerError(error.message, 500));
   }
 });
 
 // SIGNUP PROCESS
-router.post("/signup", async (req, res) => {
+router.post("/signup", async (req, res, next) => {
   try {
     // USER DATA
     const { name, lastname, email, password } = req.body;
 
     // CHECKING IF THE USER ALREADY EXISTS
-    getUserByEmail(email).then(async (user) => {
-      if (user) {
-        return res.json({ ok: false, message: "User already exists" });
-      }
+    const user = await getUserByEmail(email);
 
-      // CODE GENERATION
-      const code = nanoid(5);
+    if (user) return next(new ServerError("User already exists", 409));
 
-      // SENDING EMAIL PROCESS
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAIL,
-          pass: process.env.PASSWORD,
-        },
-      });
+    const sendMail = await emialSend(email);
 
-      const mailOptions = {
-        from: process.env.EMAIL,
-        to: `${email}`,
-        subject: "Verification code",
-        html: `<div>
-              <p>Verification code</p>
-              <h1>${code}</h1>
-              </div>`,
-      };
+    req.session.nextUser = { name, lastname, email, password };
+    req.session.code = sendMail.code;
+    req.session.save();
 
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          res.json({ ok: false, message: "Mail failed to send" });
-        } else {
-          if (info.accepted) {
-            //  CREATING A SESSION VARIABLE TO SAVE THE CREDENTIALS AND THE CODE
-            req.session.nextUser = {
-              name,
-              lastname,
-              email,
-              password,
-            };
+    res.status(201).json({ ok: true });
 
-            // SAVING THE CODE IN THE SESSION
-            req.session.code = code;
-            res.json({ ok: true });
-
-            //  DELETING THE CODE AFTER THREE MINUTES
-            setTimeout(() => {
-              delete req.session.code;
-              delete req.session.nextUser;
-              req.session.save();
-            }, 180000);
-          } else {
-            //  IF THERE WHERE NO ERROR BUT THE EMAIL WAS NOT SENT
-            res.json({ ok: false, message: "Email not found" });
-          }
-        }
-      });
-    });
+    setTimeout(() => {
+      delete req.session.nextUser;
+      delete req.session.code;
+      req.session.save();
+    }, [180000]);
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
 // VERIFYING THE CODE TO SIGN THE USER
-router.post("/verify", async (req, res) => {
+router.post("/verify", async (req, res, next) => {
   try {
     // CODE FORM USER
+
     const { code } = req.body;
 
     // VERIFYING THE CODE
-    if (req.session.code) {
-      if (req.session.code == code) {
-        // USER DATA
-        const { name, lastname, email, password } = req.session.nextUser;
+    if (!req.session.code)
+      return next(new ServerError("Code may expired", 400));
 
-        // CREATING THE USER
-        createUser(name, lastname, email, password).then((userId) => {
-          // SAVING THE USERID IN THE SESSION
-          req.session.userID = userId;
-          req.session.save();
+    if (req.session.code != code)
+      return next(new ServerError("Code incorrect", 400));
 
-          res.send({ ok: true });
+    const { name, lastname, email, password } = req.session.nextUser;
 
-          // DELETING THE CODE AND THE USER DATA IN THE SESSION
-          delete req.session.code;
-          delete req.session.nextUser;
-          req.session.save();
-        });
-      } else {
-        // IF THE CODE IS NOT CORRECT
-        res.send({ ok: false, message: "Wrong code" });
-      }
-    }
+    // CREATING THE USER
+    const ceratingUser = await createUser(name, lastname, email, password);
+
+    req.session.userID = ceratingUser;
+    req.session.save();
+
+    res.status(201).json({ ok: true });
+
+    delete req.session.code;
+    delete req.session.nextUser;
+    req.session.save();
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
 // LOGIN PROCESS
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => {
   try {
     // USER DATA
     const { email, password } = req.body;
 
     // CHECKING IF THE USER EXISTS
-    getUserByEmail(email).then(async (user) => {
-      if (!user) {
-        return res.json({ ok: false, message: "User not found" });
-      }
+    const user = await getUserByEmail(email);
 
-      // VERIFYING THE PASSWORD
-      const validPassword = await bcrypt.compare(password, user.user_password);
+    if (!user) return next(new ServerError("User not found", 404));
 
-      if (validPassword) {
-        req.session.userID = user.user_id;
-        req.session.save();
+    const validPassword = await bcrypt.compare(password, user.user_password);
 
-        res.json({ ok: true });
-      } else {
-        res.json({ ok: false, message: "Wrong password" });
-      }
-    });
+    if (!validPassword) return next(new ServerError("Wrong password", 400));
+
+    req.session.userID = user.user_id;
+    req.session.save();
+
+    res.status(201).json({ ok: true });
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
 // POSTING PROCESS
-router.post("/publicate", upload.single("file"), (req, res) => {
+router.post("/publicate", upload.single("file"), async (req, res, next) => {
   try {
     // POST DATA
     const { title } = req.body;
     const file = req.file.filename;
 
     // CREATING THE POST
-    createPost(title, file, req.session.userID).then((postId) => {
-      if (postId) {
-        res.json({ ok: true });
-      } else {
-        res.json({ ok: false, message: "Something went wrong, try again" });
-      }
-    });
+    await createPost(title, file, req.session.userID);
+
+    res.status(201).json({ ok: true });
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.get("/posts", async (req, res) => {
-  const posts = await getAllPosts(req.session.userID);
-  res.json(posts);
+router.get("/posts", async (req, res, next) => {
+  try {
+    const posts = await getAllPosts(req.session.userID);
+
+    res.status(200).json({ ok: true, posts });
+  } catch (error) {
+    console.log(error);
+    return next(new ServerError(error.message, 500));
+  }
 });
 
-router.post("/follow", async (req, res) => {
+router.post("/follow", async (req, res, next) => {
   try {
     const { user_id } = req.body;
 
     const following = await isFollowing(req.session.userID, user_id);
 
-    if (following) {
-      await unFollowUser(req.session.userID, user_id);
-      res.json({ ok: true, followed: false });
-    } else {
+    if (!following) {
       await followUser(req.session.userID, user_id);
-      res.json({ ok: true, followed: true });
+      res.status(200).json({ ok: true, followed: true });
+    } else {
+      await unFollowUser(req.session.userID, user_id);
+      res.status(200).json({ ok: true, followed: false });
     }
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.post("/edit_post", async (req, res) => {
+router.post("/edit_post", async (req, res, next) => {
   try {
     const { post_id, post_title } = req.body;
 
     const isPostOwner = await postOwner(req.session.userID, post_id);
 
-    if (isPostOwner) {
-      await postUpdate(post_title, post_id);
-      res.json({ ok: true });
-    } else {
-      res.json({ ok: false, message: "You are not the owner of this post" });
-    }
+    if (!isPostOwner)
+      return next(new ServerError("You are not the owner of this post", 403));
+
+    await postUpdate(post_title, post_id);
+    res.json({ ok: true });
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.post("/like", async (req, res) => {
+router.post("/like", async (req, res, next) => {
   try {
     const { post_id } = req.body;
 
@@ -277,18 +219,17 @@ router.post("/like", async (req, res) => {
 
     if (liked) {
       await unLike(req.session.userID, post_id);
-      res.json({ ok: true, liked: false });
+      res.status(200).json({ ok: true, liked: false });
     } else {
       await like(req.session.userID, post_id);
-      res.json({ ok: true, liked: true });
+      res.status(200).json({ ok: true, liked: true });
     }
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.get("/post/:post_id", async (req, res) => {
+router.get("/post/:post_id", async (req, res, next) => {
   try {
     const { post_id } = req.params;
 
@@ -296,54 +237,51 @@ router.get("/post/:post_id", async (req, res) => {
     const comments = await getCommentsByPostId(post_id);
 
     if (!post) {
-      return res.json({ ok: false, message: "Post not found" });
+      return next(new ServerError("Post not found", 404));
     }
 
     post.allComments = comments;
-    res.json(post);
+    res.status(200).json({ ok: true, posts: [post] });
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.get("/user_id", (req, res) => {
+router.get("/user_id", (req, res, next) => {
   try {
     if (!req.session.userID) {
-      return res.json({ ok: false, message: "User not logged in" });
+      return next(new ServerError("User is not logged", 401));
     }
 
-    res.json({ ok: true, user_id: req.session.userID });
+    res.status(200).json({ ok: true, user_id: req.session.userID });
   } catch (error) {
-    res.status(500).json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.get("/user", async (req, res) => {
+router.get("/user", async (req, res, next) => {
   try {
     const user = await getUserById(req.session.userID, req.session.userID);
     if (!user) {
-      return res.status(404).json({ ok: false, message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
-    res.json({ ok: true, user });
+    res.status(200).json({ ok: true, user });
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.get("/user_posts", async (req, res) => {
+router.get("/user_posts", async (req, res, next) => {
   try {
     const posts = await getUserPosts(req.session.userID, req.session.userID);
-    res.json(posts);
+    res.json({ ok: true, posts });
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.get("/user_/:user_id", async (req, res) => {
+router.get("/user_/:user_id", async (req, res, next) => {
   try {
     const { user_id } = req.params;
 
@@ -352,43 +290,27 @@ router.get("/user_/:user_id", async (req, res) => {
       return res.status(404).json({ ok: false, message: "User not found" });
     }
 
-    res.json({ ok: true, user });
+    res.status(200).json({ ok: true, user });
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.get("/user_posts_/:user_id", async (req, res) => {
+router.get("/user_posts_/:user_id", async (req, res, next) => {
   try {
     const { user_id } = req.params;
 
     const posts = await getUserPosts(req.session.userID, user_id);
-    res.json(posts);
+    res.status(200).json({ ok: true, posts });
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
-  }
-});
-
-router.get("/user_profile", async (req, res) => {
-  try {
-    const user = await getUserById(req.session.userID, req.session.userID);
-    if (!user) {
-      return res.status(404).json({ ok: false, message: "User not found" });
-    }
-
-    res.json({ ok: true, user });
-  } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
 router.post(
   "/change_profile_picture",
   upload.single("file"),
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const { filename } = req.file;
 
@@ -396,20 +318,18 @@ router.post(
         filename,
         req.session.userID
       );
-
-      if (!profileUpdate) {
-        return res.json({ ok: false, message: "Something went wrong" });
+      if (profileUpdate == false) {
+        return next(new ServerError("Something went wrong", 500));
       }
 
-      res.json({ ok: true, message: "Profile picture updated" });
+      res.status(200).json({ ok: true, message: "Profile picture updated" });
     } catch (error) {
-      console.log({ error });
-      res.json({ ok: false, message: "Internal server error" });
+      return next(new ServerError(error.message, 500));
     }
   }
 );
 
-router.post("/change_name", async (req, res) => {
+router.post("/change_name", async (req, res, next) => {
   try {
     const { name, lastname, password } = req.body;
 
@@ -421,24 +341,15 @@ router.post("/change_name", async (req, res) => {
     );
 
     if (!changeName.ok)
-      return res.json({
-        ok: false,
-        message: changeName.message
-          ? changeName.message
-          : "Something went wrong",
-      });
+      return next(new ServerError(changeName.message, changeName.status));
 
-    res.json({ ok: true, message: "Name changed" });
+    res.status(200).json({ ok: true, message: "Name changed" });
   } catch (error) {
-    console.log(error);
-    res.json({
-      ok: false,
-      message: "Internal server error",
-    });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.post("/change_email", async (req, res) => {
+router.post("/change_email", async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -448,55 +359,44 @@ router.post("/change_email", async (req, res) => {
       req.session.userID
     );
 
-    if (!changeEmail.ok) {
-      return res.json({ ok: false, message: changeEmail.message });
-    } else {
-      req.session.user_email = email;
-      req.session.code = changeEmail.code;
+    if (!changeEmail.ok)
+      return next(new ServerError(changeEmail.message, changeEmail.status));
 
-      setTimeout(() => {
-        delete req.session.code;
-        delete req.session.user_email;
-        req.session.save();
-      }, 180000);
+    req.session.user_email = email;
+    req.session.code = changeEmail.code;
 
-      res.json({ ok: true, message: "Code sent to your new email" });
-    }
+    setTimeout(() => {
+      delete req.session.code;
+      delete req.session.user_email;
+      req.session.save();
+    }, 180000);
+
+    res.json({ ok: true, message: "Code sent to your new email" });
   } catch (error) {
-    console.log(error);
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.post("/change_email_code", async (req, res) => {
+router.post("/change_email_code", async (req, res, next) => {
   try {
-    if (req.session.code) {
-      if (req.session.code == req.body.code) {
-        const { user_email } = req.session;
+    if (!req.session.code)
+      return next(new ServerError("Code may expired", 400));
 
-        await emailUpdate(user_email, req.session.userID);
-        res.json({ ok: true, message: "Email updated" });
-      } else {
-        res.json({ ok: false, message: "Incorrect code" });
-      }
-    } else {
-      res.json({ ok: false, message: "Verification may code expired" });
-    }
+    if (req.session.code != req.body.code)
+      return next(new ServerError("The code is incorrect", 400));
+
+    const { user_email } = req.session;
+    await emailUpdate(user_email, req.session.userID);
+
+    res.status(201).json({ ok: true, message: "Email updated" });
   } catch (error) {
-    console.log(error);
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.post("/change_password", async (req, res) => {
+router.post("/change_password", async (req, res, next) => {
   try {
     const { oldPassword, newPassword } = req.body;
-
-    if (oldPassword == newPassword)
-      return res.json({
-        ok: false,
-        message: "New password cannot be the same as the old one",
-      });
 
     const changePassword = await changeUserPasswod(
       oldPassword,
@@ -504,131 +404,124 @@ router.post("/change_password", async (req, res) => {
       req.session.userID
     );
 
-    if (!changePassword.ok) {
-      return res.json({ ok: false, message: changePassword.message });
-    } else {
-      res.json({ ok: true, message: changePassword.message });
-    }
+    if (!changePassword.ok)
+      return next(
+        new ServerError(changePassword.message, changePassword.status)
+      );
+
+    res.status(201).json({ ok: true, message: changePassword.message });
   } catch (error) {
-    console.log(error);
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
 router.post("/logout", (req, res) => {
   req.session.destroy();
-  res.json({ ok: true, message: "Logout successful" });
+  res.status(201).json({ ok: true, message: "Logout successful" });
 });
 
-router.delete("/delete_account", async (req, res) => {
+router.delete("/delete_account", async (req, res, next) => {
   try {
     const userId = req.session.userID;
 
     const accountDeleted = await deleteUserAccount(userId);
 
-    if (!accountDeleted.ok) {
-      return res.json({ ok: false, message: accountDeleted.message });
-    } else {
-      req.session.destroy();
-      res.json({ ok: true, message: accountDeleted.message });
-    }
+    req.session.destroy();
+    res.status(201).json({ ok: true, message: accountDeleted.message });
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.delete("/delete_post/:post_id", async (req, res) => {
+router.delete("/delete_post/:post_id", async (req, res, next) => {
   try {
     const { post_id } = req.params;
 
     await deletePost(post_id);
-    res.json({ ok: true, message: "Post deleted" });
+    res.status(201).json({ ok: true, message: "Post deleted" });
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.post("/email_forgot_password", async (req, res) => {
+router.post("/email_forgot_password", async (req, res, next) => {
   try {
     const { email } = req.body;
 
     const forgotPassword = await sendChangePassCode(email);
 
-    if (!forgotPassword.ok) {
-      return res.json({ ok: false, message: forgotPassword.message });
-    } else {
-      req.session.code = forgotPassword.code;
-      req.session.user_email = email;
+    if (!forgotPassword.ok)
+      return next(
+        new ServerError(forgotPassword.message, forgotPassword.status)
+      );
 
-      setTimeout(() => {
-        delete req.session.code;
-        delete req.session.user_email;
-        req.session.save();
-      }, [180000]);
+    req.session.code = forgotPassword.code;
+    req.session.user_email = email;
 
-      res.json({ ok: true });
-    }
+    setTimeout(() => {
+      delete req.session.code;
+      delete req.session.user_email;
+      req.session.save();
+    }, [180000]);
+
+    res.status(201).json({ ok: true });
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.post("/code_password", async (req, res) => {
+router.post("/code_password", async (req, res, next) => {
   try {
     const { code, password } = req.body;
 
-    if (req.session.code) {
-      if (req.session.code == code) {
-        const changePassword = await changePassCode(
-          req.session.user_email,
-          password
-        );
+    if (!req.session.code)
+      return next(new ServerError("Code may expired", 400));
 
-        if (!changePassword.ok)
-          return res.json({ ok: false, message: changePassword.message });
+    if (req.session.code != code)
+      return next(new ServerError("The code is incorrect", 400));
 
-        delete req.session.code;
-        delete req.session.user_email;
-        req.session.save();
+    const changePassword = await changePassCode(
+      req.session.user_email,
+      password
+    );
 
-        res.json({ ok: true, message: "Password changed successfully" });
-      } else {
-        res.json({ ok: false, message: "Code incorrect" });
-      }
-    } else {
-      res.json({ ok: false, message: "Code may expired" });
-    }
+    if (!changePassword.ok)
+      return next(
+        new ServerError(changePassword.message, changePassword.status)
+      );
+
+    delete req.session.code;
+    delete req.session.user_email;
+    req.session.save();
+
+    res
+      .status(201)
+      .json({ ok: true, message: "Password changed successfully" });
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.get("/user_search/:search", async (req, res) => {
+router.get("/user_search/:search", async (req, res, next) => {
   try {
     const { search } = req.params;
 
     const searched = await usersSearch(search, req.session.userID);
 
-    res.json({ users: searched });
+    res.status(200).json({ ok: true, users: searched });
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 
-router.get("/user_posts_by_word/:word", async (req, res) => {
+router.get("/user_posts_by_word/:word", async (req, res, next) => {
   try {
     const { word } = req.params;
 
     const { posts } = await postsSearch(req.session.userID, word);
-    res.json(posts);
+    res.status(200).json({ ok: true, posts });
   } catch (error) {
-    console.log({ error });
-    res.json({ ok: false, message: "Internal server error" });
+    return next(new ServerError(error.message, 500));
   }
 });
 

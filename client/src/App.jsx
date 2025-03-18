@@ -6,6 +6,7 @@ import Verify from "./pages/session/Verify";
 import Principal from "./pages/Principal";
 import axios from "axios";
 import ForgotPassword from "./pages/changes/ForgotPassword";
+import { userVerify } from "./services/usersServices";
 
 axios.defaults.baseURL = "http://localhost:3000/";
 axios.defaults.withCredentials = true;
@@ -13,23 +14,29 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    try {
-      axios.get(`http://localhost:3000/user_verify`).then((res) => {
-        if (!res.data.ok) {
-          if (
-            window.location == `http://localhost:5173/signup` ||
-            window.location == `http://localhost:5173/recoverpassword` ||
-            window.location == "http://localhost:5173/verify"
-          ) {
-            return;
-          } else {
-            navigate("/login");
-          }
+    const verifyingUser = async () => {
+      try {
+        const request = await userVerify();
+
+        if (request.status == 200 || request.status == 204) {
+          return;
+        } else {
+          throw new Error(request.data.message);
         }
-      });
-    } catch (error) {
-      console.log(error);
-    }
+      } catch (error) {
+        if (
+          window.location == `http://localhost:5173/signup` ||
+          window.location == `http://localhost:5173/recoverpassword` ||
+          window.location == "http://localhost:5173/verify"
+        ) {
+          return;
+        } else {
+          navigate("/login");
+        }
+      }
+    };
+
+    verifyingUser();
   }, []);
 
   return (

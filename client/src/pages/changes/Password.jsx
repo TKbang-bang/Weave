@@ -15,7 +15,7 @@ function Password() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     setErrRes("");
@@ -23,18 +23,18 @@ function Password() {
     if (newPassword !== confirmPassword) {
       setErrRes("Passwords do not match");
     } else {
-      axios
-        .post("/change_password", { oldPassword, newPassword })
-        .then((res) => {
-          if (res.data.ok) {
-            navigate("/configuration");
-          } else {
-            setErrRes(res.data.message);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
+      try {
+        const res = await axios.post("/change_password", {
+          oldPassword,
+          newPassword,
         });
+
+        if (!res.data.ok) throw new Error(res.response.data.message);
+
+        navigate("/configuration");
+      } catch (error) {
+        setErrRes(error.response.data.message);
+      }
     }
   };
 

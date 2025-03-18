@@ -18,37 +18,35 @@ function Login() {
 
   const [seePassword, setSeePassword] = useState(false);
 
-  useEffect(() => {
-    axios
-      .get("/user_verify")
-      .then((res) => {
-        if (res.data.ok) {
-          navigate("/");
-        }
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get("/user_verify")
+  //     .then((res) => {
+  //       if (res.data.ok) {
+  //         navigate("/");
+  //       }
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       setFormError(false);
       setErrorMsj("");
 
-      axios
-        .post("http://localhost:3000/login", {
-          email,
-          password,
-        })
-        .then((res) => {
-          res.data.ok
-            ? navigate("/")
-            : (setFormError(true), setErrorMsj(res.data.message));
-          // console.log(res.data);
-        });
+      const res = await axios.post("/login", {
+        email,
+        password,
+      });
+
+      if (!res.data.ok) throw new Error(res.response.data.message);
+
+      navigate("/");
     } catch (error) {
-      console.log(error);
+      setFormError(true);
+      setErrorMsj(error.response.data.message);
     }
   };
 

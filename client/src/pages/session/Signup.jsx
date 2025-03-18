@@ -17,18 +17,18 @@ function Signup() {
   const [seePassword, setSeePassword] = useState(false);
   const [seeConfirmPassword, setSeeConfirmPassword] = useState(false);
 
-  useEffect(() => {
-    axios
-      .get("/user_verify")
-      .then((res) => {
-        if (res.data.ok) {
-          navigate("/");
-        }
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get("/user_verify")
+  //     .then((res) => {
+  //       if (res.data.ok) {
+  //         navigate("/");
+  //       }
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -42,22 +42,22 @@ function Signup() {
         setFormError(false);
         setErrorMsj("");
 
-        axios
-          .post("http://localhost:3000/signup", {
-            name,
-            lastname,
-            email,
-            password,
-          })
-          .then((res) => {
-            res.data.ok
-              ? navigate("/verify")
-              : (setFormError(true), setErrorMsj(res.data.message));
-            // console.log(res.data);
-          });
+        const res = await axios.post("/signup", {
+          name,
+          lastname,
+          email,
+          password,
+        });
+
+        if (!res.data.ok) {
+          throw new Error(res.response.data.message);
+        }
+
+        navigate("/verify");
       }
     } catch (error) {
-      console.log(error);
+      setFormError(true);
+      setErrorMsj(`${error.response.data.message}`);
     }
   };
 

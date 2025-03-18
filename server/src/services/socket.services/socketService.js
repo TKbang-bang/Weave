@@ -1,5 +1,6 @@
 const { Server } = require("socket.io");
 const commentService = require("./commentServices");
+const ServerError = require("../../error/errorClass");
 
 function mySocket(server) {
   const io = new Server(server, {

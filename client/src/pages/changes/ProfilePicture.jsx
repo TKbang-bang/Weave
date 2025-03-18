@@ -12,6 +12,22 @@ function ProfilePicture() {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const gettingProfile = async () => {
+      try {
+        const res = await axios.get("/user");
+
+        if (!res.data.ok) throw new Error(res.response.data.message);
+
+        setFile(res.data.user.user_profile);
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    };
+
+    gettingProfile();
+  }, []);
+
   const handleChange = (e) => {
     if (e.target.files.length) {
       setFile(e.target.files[0]);
@@ -20,7 +36,7 @@ function ProfilePicture() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
 
@@ -33,23 +49,22 @@ function ProfilePicture() {
       const formData = new FormData();
       formData.append("file", file);
 
-      axios
-        .post("/change_profile_picture", formData)
-        .then((res) => navigate("/configuration"))
-        .catch((error) => console.log(error));
+      try {
+        const changeProfile = await axios.post(
+          "/change_profile_picture",
+          formData
+        );
+
+        if (!changeProfile.data.ok)
+          throw new Error(changeProfile.response.data.message);
+
+        navigate("/configuration");
+      } catch (error) {
+        console.log(error);
+        console.log(error.response.data.message);
+      }
     }
   };
-
-  useEffect(() => {
-    axios
-      .get("/user_profile")
-      .then((res) => {
-        setFile(res.data.user.user_profile);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
 
   return (
     <section className={styles.publicate}>

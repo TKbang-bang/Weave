@@ -7,20 +7,24 @@ import axios from "axios";
 function Configs() {
   const navigate = useNavigate();
 
-  const handleLogOut = () => {
-    axios.post("/logout").then(() => navigate("/login"));
+  const handleLogOut = async () => {
+    try {
+      await axios.post("/logout");
+      navigate("/login");
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
   };
-  const handleDelete = () => {
-    axios
-      .delete("/delete_account")
-      .then((res) => {
-        if (res.data.ok) {
-          navigate("/login");
-        } else {
-          console.log(res.data.message);
-        }
-      })
-      .catch((err) => console.log(err));
+  const handleDelete = async () => {
+    try {
+      const res = await axios.delete("/delete_account");
+
+      if (!res.data.ok) throw new Error(res.response.data.message);
+
+      navigate("/login");
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
   };
 
   return (

@@ -11,17 +11,19 @@ function Searched() {
   const [to, setTo] = useState("");
   const [searched, setSearched] = useState(false);
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
     setTo(txt);
 
-    axios
-      .get("/user_search/" + txt)
-      .then((res) => {
-        setUsers(res.data.users);
-        setSearched(true);
-      })
-      .catch((err) => console.log(err));
+    try {
+      const res = await axios.get("/user_search/" + txt);
+      if (!res.data.ok) throw new Error(res.data.message);
+
+      setUsers(res.data.users);
+      setSearched(true);
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
   };
 
   return (

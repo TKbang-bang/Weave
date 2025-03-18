@@ -7,14 +7,19 @@ function MyProfile() {
   const [user, setUser] = useState({});
 
   useEffect(() => {
-    axios
-      .get("/user")
-      .then((result) => {
-        result.data.ok && setUser(result.data.user);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const gettingUser = async () => {
+      try {
+        const res = await axios.get("/user");
+
+        if (!res.data.ok) throw new Error(res.response.data.message);
+
+        setUser(res.data.user);
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    };
+
+    gettingUser();
   }, []);
 
   return (
@@ -32,7 +37,12 @@ function MyProfile() {
           <h3>
             {user.user_name} {user.user_lastname}
           </h3>
-          <p>{user.followers} Followers</p>
+          <p>
+            {user.followers}{" "}
+            {user.followers > 1 || user.followers < 1
+              ? "Followers"
+              : " Follower"}
+          </p>
         </div>
       </article>
 

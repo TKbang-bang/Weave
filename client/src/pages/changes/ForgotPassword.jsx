@@ -17,18 +17,18 @@ function ForgotPassword() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    axios
-      .get("/user_verify")
-      .then((res) => {
-        if (res.data.ok) {
-          navigate("/");
-        }
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get("/user_verify")
+  //     .then((res) => {
+  //       if (res.data.ok) {
+  //         navigate("/");
+  //       }
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     setErrRes("");
@@ -36,22 +36,22 @@ function ForgotPassword() {
     if (newPassword !== confirmPassword) {
       setErrRes("Passwords do not match");
     } else {
-      axios
-        .post("/code_password", { password: newPassword, code })
-        .then((res) => {
-          if (res.data.ok) {
-            navigate("/login");
-          } else {
-            setErrRes(res.data.message);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
+      try {
+        const res = await axios.post("/code_password", {
+          password: newPassword,
+          code,
         });
+
+        if (!res.data.ok) throw new Error(res.response.data.message);
+
+        navigate("/login");
+      } catch (error) {
+        setErrRes(error.response.data.message);
+      }
     }
   };
 
-  const handleEmail = (e) => {
+  const handleEmail = async (e) => {
     e.preventDefault();
 
     setErrRes2("");
@@ -61,14 +61,16 @@ function ForgotPassword() {
       return;
     }
 
-    axios.post("/email_forgot_password", { email }).then((res) => {
-      if (res.data.ok) {
-        setErrRes2("");
-        setEmailed(true);
-      } else {
-        setErrRes2(res.data.message);
-      }
-    });
+    try {
+      const res = await axios.post("/email_forgot_password", { email });
+
+      if (!res.data.ok) throw new Error(res.response.data.message);
+
+      setErrRes2("");
+      setEmailed(true);
+    } catch (error) {
+      setErrRes2(error.response.data.message);
+    }
   };
 
   return (

@@ -11,14 +11,19 @@ function Profile() {
   const [user, setUser] = useState({});
 
   useEffect(() => {
-    axios
-      .get(`/user_/${user_id}`)
-      .then((result) => {
-        setUser(result.data.user);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const gettingUser = async () => {
+      try {
+        const res = await axios.get(`/user_/${user_id}`);
+
+        if (!res.data.ok) throw new Error(res.response.data.message);
+
+        setUser(res.data.user);
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    };
+
+    gettingUser();
   }, []);
 
   const handleFollow = () => {
@@ -57,7 +62,10 @@ function Profile() {
             {user.user_name} {user.user_lastname}
           </h3>
           <p>
-            {user.followers} {() => (user.followers > 0 ? Followers : Follower)}
+            {user.followers}{" "}
+            {user.followers > 1 || user.followers < 1
+              ? "Followers"
+              : "Follower"}
           </p>
         </div>
       </article>

@@ -13,35 +13,39 @@ function UserName() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    const gettinName = async () => {
+      try {
+        const res = await axios.get("/user");
+
+        setName(res.data.user.user_name);
+        setLastname(res.data.user.user_lastname);
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    };
+
+    gettinName();
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrRes("");
 
-    axios
-      .post("/change_name", { name, lastname, password })
-      .then((res) => {
-        if (res.data.ok) {
-          navigate("/configuration");
-        } else {
-          setErrRes(res.data.message);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
+    try {
+      const res = await axios.post("/change_name", {
+        name,
+        lastname,
+        password,
       });
-  };
 
-  useEffect(() => {
-    axios
-      .get("/user_profile")
-      .then((res) => {
-        setName(res.data.user.user_name);
-        setLastname(res.data.user.user_lastname);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+      if (!res.data.ok) throw new Error(res.response.data.message);
+
+      navigate("/configuration");
+    } catch (error) {
+      setErrRes(error.response.data.message);
+    }
+  };
 
   return (
     <section className={styles.publicate}>

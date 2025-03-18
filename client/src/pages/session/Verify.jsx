@@ -10,18 +10,19 @@ function Verify() {
   const [code, setCode] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    axios
-      .get("/user_verify")
-      .then((res) => {
-        if (res.data.ok) {
-          navigate("/");
-        }
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   const sendCode = await axios
+  //   axios
+  //     .get("/user_verify")
+  //     .then((res) => {
+  //       if (res.data.ok) {
+  //         navigate("/");
+  //       }
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError(false);
     if (!code || code.length < 1) {
@@ -29,16 +30,18 @@ function Verify() {
       setErrorMsj("Invalid code");
     } else {
       try {
-        axios.post("http://localhost:3000/verify", { code }).then((res) => {
-          if (res.data.ok) {
-            navigate("/");
-          } else {
-            setFormError(true);
-            setErrorMsj(res.data.message);
-          }
+        const sendCode = await axios.post("http://localhost:3000/verify", {
+          code,
         });
+
+        if (!sendCode.data.ok) {
+          throw new Error(sendCode.response.data.message);
+        }
+
+        navigate("/");
       } catch (error) {
-        console.log(error);
+        setFormError(true);
+        setErrorMsj(error.response.data.message);
       }
     }
   };

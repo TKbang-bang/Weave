@@ -9,22 +9,18 @@ function Code() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrRes("");
-    axios
-      .post("/change_email_code", { code })
-      .then((res) => {
-        if (res.data.ok) {
-          navigate("/configuration");
-        } else {
-          setErrRes(res.data.message);
-        }
-      })
+    try {
+      const res = await axios.post("/change_email_code", { code });
 
-      .catch((err) => {
-        setErrRes(err.response.data.msg);
-      });
+      if (!res.data.ok) throw new Error(res.response.data.message);
+
+      navigate("/configuration");
+    } catch (error) {
+      setErrRes(error.response.data.message);
+    }
   };
 
   return (

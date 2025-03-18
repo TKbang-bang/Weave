@@ -9,34 +9,40 @@ const socket = io("http://localhost:3000");
 
 function Posts({ to }) {
   const [posts, setPosts] = useState([]);
-  const [one, setOne] = useState(false);
 
   useEffect(() => {
-    axios
-      .get(`${to}`)
-      .then((result) => {
-        if (result.data.length == 1) {
-          setOne(true);
-          setPosts(result.data);
-        } else {
-          setOne(false);
-          setPosts(result.data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const myScroll = sessionStorage.getItem("scrollY");
+
+    if (myScroll) {
+      window.scrollTo(0, parseInt(myScroll, 10));
+      sessionStorage.removeItem("scrollY");
+    }
+
+    const gettingPosts = async () => {
+      try {
+        const serverPosts = await axios.get(`${to}`);
+
+        if (!serverPosts.data.ok)
+          throw new Error(serverPosts.response.data.message);
+
+        setPosts(serverPosts.data.posts);
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    };
+
+    gettingPosts();
   }, [to]);
 
-  const handleDelete = (post_id) => {
+  const handleDelete = async (post_id) => {
     try {
-      axios.delete("/delete_post/" + post_id).then((result) => {
-        if (result.data.ok) {
-          setPosts(posts.filter((post) => post.post_id != post_id));
-        }
-      });
+      const res = await axios.delete("/delete_post/" + post_id);
+
+      if (!res.data.ok) throw new Error(res.response.data.message);
+
+      setPosts(posts.filter((post) => post.post_id != post_id));
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data.message);
     }
   };
 
@@ -45,53 +51,60 @@ function Posts({ to }) {
     const [options, setOptions] = useState(false);
     const [editValue, setEditValue] = useState("");
 
-    const handleFollow = (post) => {
-      axios.post("/follow", { user_id: post.user_id }).then((result) => {
-        if (result.data.ok) {
-          if (result.data.followed) {
-            posts.find((p) => p.post_id == post.post_id).followed = 1;
-          } else {
-            posts.find((p) => p.post_id == post.post_id).followed = 0;
-          }
-          setPosts([...posts]);
+    const handleFollow = async (post) => {
+      try {
+        const res = await axios.post("/follow", { user_id: post.user_id });
+
+        if (!res.data.ok) throw new Error(res.response.data.message);
+
+        if (res.data.followed) {
+          posts.find((p) => p.post_id == post.post_id).followed = 1;
+        } else {
+          posts.find((p) => p.post_id == post.post_id).followed = 0;
         }
-      });
+        setPosts([...posts]);
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
     };
 
-    const handleEditTitle = (e) => {
+    const handleEditTitle = async (e) => {
       e.preventDefault();
 
-      axios
-        .post("/edit_post", {
+      try {
+        const res = await axios.post("/edit_post", {
           post_id: post.post_id,
           post_title: editValue,
-        })
-        .then((result) => {
-          if (result.data.ok) {
-            posts.find((p) => p.post_id == post.post_id).post_title = editValue;
-            setPosts([...posts]);
-            setEditing(false);
-            setOptions(false);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
         });
+
+        if (!res.data.ok) throw new Error(res.response.data.message);
+
+        posts.find((p) => p.post_id == post.post_id).post_title = editValue;
+        setPosts([...posts]);
+        setEditing(false);
+        setOptions(false);
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
     };
 
-    const handleLike = () => {
-      axios.post("/like", { post_id: post.post_id }).then((result) => {
-        if (result.data.ok) {
-          if (result.data.liked) {
-            posts.find((p) => p.post_id == post.post_id).liked = 1;
-            posts.find((p) => p.post_id == post.post_id).likes++;
-          } else {
-            posts.find((p) => p.post_id == post.post_id).liked = 0;
-            posts.find((p) => p.post_id == post.post_id).likes--;
-          }
-          setPosts([...posts]);
+    const handleLike = async () => {
+      try {
+        const res = await axios.post("/like", { post_id: post.post_id });
+
+        if (!res.data.ok) throw new Error(res.response.data.message);
+
+        if (res.data.liked) {
+          posts.find((p) => p.post_id == post.post_id).liked = 1;
+          posts.find((p) => p.post_id == post.post_id).likes++;
+        } else {
+          posts.find((p) => p.post_id == post.post_id).liked = 0;
+          posts.find((p) => p.post_id == post.post_id).likes--;
         }
-      });
+        setPosts([...posts]);
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
     };
 
     const CommentSection = () => {
@@ -106,23 +119,26 @@ function Posts({ to }) {
           // posts[0].comments++;
           setCommentValue("");
         });
+
+        socket.on("server_error", (errTxt) => {
+          console.log(errTxt);
+        });
       }, [socket]);
 
-      const handleSendComment = (e) => {
+      const handleSendComment = async (e) => {
         e.preventDefault();
 
-        axios
-          .get("/user_id")
-          .then((result) => {
-            socket.emit("client_comment", {
-              post_id: post.post_id,
-              comment_content: commentValue,
-              user_id: result.data.user_id,
-            });
-          })
-          .catch((err) => {
-            console.log(err);
+        try {
+          const getId = await axios.get("/user_id");
+
+          socket.emit("client_comment", {
+            post_id: post.post_id,
+            comment_content: commentValue,
+            user_id: getId.data.user_id,
           });
+        } catch (error) {
+          console.log(error.response.data.message);
+        }
       };
 
       return (
@@ -306,7 +322,11 @@ function Posts({ to }) {
           )}
 
           {!post.comment_section && (
-            <Link className={styles.comments_link} to={`/post/${post.post_id}`}>
+            <Link
+              className={styles.comments_link}
+              to={`/post/${post.post_id}`}
+              onClick={() => sessionStorage.setItem("scrollY", window.scrollY)}
+            >
               <span className={styles.comments_icon_container}>
                 <CommentIcon /> Comments
               </span>

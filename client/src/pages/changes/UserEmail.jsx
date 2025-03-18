@@ -12,17 +12,19 @@ function UserEmail() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrRes("");
 
-    axios.post("/change_email", { email, password }).then((res) => {
-      if (res.data.ok) {
-        navigate("/code");
-      } else {
-        setErrRes(res.data.message);
-      }
-    });
+    try {
+      const res = await axios.post("/change_email", { email, password });
+
+      if (!res.data.ok) throw new Error(res.response.data.message);
+
+      navigate("/code");
+    } catch (error) {
+      setErrRes(error.response.data.message);
+    }
   };
 
   return (

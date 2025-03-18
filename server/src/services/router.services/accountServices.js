@@ -1,4 +1,9 @@
 const db = require("../../database/db");
+const nodemailer = require("nodemailer");
+const nanoid = async () => {
+  const { nanoid } = await import("nanoid");
+  return nanoid(5);
+};
 
 const deleteUserAccount = async (userId) => {
   try {
@@ -22,4 +27,32 @@ const deleteUserAccount = async (userId) => {
   }
 };
 
-module.exports = { deleteUserAccount };
+const emialSend = async (email) => {
+  const code = await nanoid();
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.PASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: `${email}`,
+    subject: "Verification code",
+    html: `<div>
+      <p>Verification code</p>
+      <h1>${code}</h1>
+    </div>`,
+  };
+
+  const info = await transporter.sendMail(mailOptions);
+
+  return info.accepted
+    ? { ok: true, code }
+    : { ok: false, message: "Mail failed to send" };
+};
+
+module.exports = { deleteUserAccount, emialSend };

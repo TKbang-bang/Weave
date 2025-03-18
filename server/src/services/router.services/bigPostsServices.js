@@ -27,15 +27,16 @@ const getAllPosts = async (userId) => {
     const dateFormat = "yyyy-MM-dd HH:mm:ss";
     const today = new Date();
 
-    return posts.map((post) => ({
+    const newPosts = posts.map((post) => ({
       ...post,
       since_date: myDate(post.post_date, today, dateFormat),
       me: post.user_id == userId,
       comment_section: false,
     }));
+
+    return newPosts;
   } catch (error) {
-    console.error({ error });
-    throw new Error("Database has failde", error);
+    throw new Error(error);
   }
 };
 
