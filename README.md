@@ -13,11 +13,8 @@ Framework: React.js
 Libraries:
 
 axios
-
 react-router-dom
-
 socket.io-client
-
 
 Backend (Server-side)
 
@@ -26,29 +23,17 @@ Framework: Node.js with Express.js
 Libraries:
 
 bcrypt
-
 cors
-
 date-fns
-
 dotenv
-
 express
-
 express-mysql-session
-
 express-session
-
 multer
-
 mysql2
-
 nanoid
-
 nodemailer
-
 socket.io
-
 
 Features
 
@@ -83,7 +68,6 @@ Search for posts.
 Session Control:
 
 Log out securely.
-
 
 Purpose of the Project
 

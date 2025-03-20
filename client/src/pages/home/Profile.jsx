@@ -53,7 +53,7 @@ function Profile() {
           src={
             user.user_profile
               ? `http://localhost:3000/uploads/${user.user_profile}`
-              : `../../../public/no_user.png`
+              : `/no_user.png`
           }
           alt=""
         />

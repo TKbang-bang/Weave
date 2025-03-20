@@ -7,6 +7,7 @@ import {
 } from "../../components/svg.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { userVerify } from "../../services/usersServices.js";
 import styles from "../../styles.module.css";
 
 function Login() {
@@ -18,16 +19,19 @@ function Login() {
 
   const [seePassword, setSeePassword] = useState(false);
 
-  // useEffect(() => {
-  //   axios
-  //     .get("/user_verify")
-  //     .then((res) => {
-  //       if (res.data.ok) {
-  //         navigate("/");
-  //       }
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, []);
+  useEffect(() => {
+    const verifyingUser = async () => {
+      const request = await userVerify();
+
+      if (!request.status == 200 || !request.status == 204) {
+        return;
+      } else {
+        navigate("/");
+      }
+    };
+
+    verifyingUser();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

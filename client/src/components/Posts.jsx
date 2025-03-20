@@ -155,7 +155,7 @@ function Posts({ to }) {
                       src={
                         comment.user_profile
                           ? `http://localhost:3000/uploads/${comment.user_profile}`
-                          : "../../public/no_user.png"
+                          : "/no_user.png"
                       }
                       alt=""
                     />
@@ -206,7 +206,7 @@ function Posts({ to }) {
                 src={
                   post.user_profile
                     ? `http://localhost:3000/uploads/${post.user_profile}`
-                    : "../../public/no_user.png"
+                    : "/no_user.png"
                 }
                 alt=""
               />
