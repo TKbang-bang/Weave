@@ -1,0 +1,345 @@
+@use "../base/variables" as *;
+
+.sign_container,
+.verify_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100svh;
+  width: 100vw;
+
+  & .sign,
+  & .verify {
+    background-color: $white;
+    width: 55rem;
+    height: 35rem;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 1rem rgba($primary, 0.2);
+
+    & .form_container {
+      width: 50%;
+      z-index: 1;
+      height: 100%;
+      position: absolute;
+      right: 0;
+
+      transition: 0.6s ease-in-out 0.6s, visibility 0s 1s;
+      transition-delay: 0.6s;
+    }
+
+    & .form_container.signup {
+      visibility: hidden;
+    }
+
+    & .info_box {
+      width: 50%;
+      height: 100%;
+      position: absolute;
+      left: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 2rem;
+      padding: 2rem;
+      color: $primary;
+    }
+  }
+
+  & .form_container form {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    color: $primary;
+
+    & > article {
+      width: 100%;
+
+      & .error {
+        font-size: 0.8rem;
+        color: $error;
+      }
+
+      & .name_container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+
+        & > div {
+          position: relative;
+
+          /* Se mueve :has() fuera de esta estructura */
+        }
+      }
+
+      & > div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+
+        & input {
+          width: 100%;
+          height: 2.5rem;
+          padding: 1rem;
+          font-size: 1rem;
+          border: none;
+          border-bottom: 1px solid rgba($primary, 0.3);
+          outline: none;
+          background: none;
+
+          &:focus {
+            position: sticky;
+          }
+        }
+
+        & label {
+          position: absolute;
+          left: 1rem;
+          bottom: 0.5rem;
+          transition: 0.3s ease-in-out;
+        }
+
+        &:has(input:focus) label,
+        &:has(input:not(:placeholder-shown)) label {
+          font-weight: bold;
+          font-size: 0.8rem;
+          bottom: 2rem;
+          transition: 0.3s ease-in-out;
+        }
+
+        & span {
+          position: absolute;
+          right: 1rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          & svg {
+            width: 1.5rem;
+            fill: $primary;
+          }
+        }
+      }
+    }
+
+    & button {
+      width: 100%;
+      height: 2.5rem;
+      font-size: 1rem;
+      color: $white;
+      background: $primary;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 0.3rem;
+    }
+  }
+
+  & .slider {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    &::before {
+      content: "";
+      position: absolute;
+      width: 300%;
+      height: 100%;
+      background-color: $primary;
+      right: 50%;
+      z-index: 2;
+      border-radius: 15rem;
+      transition: 1.2s ease-in-out;
+    }
+
+    & .slider_box {
+      width: 50%;
+      height: 100%;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 4rem;
+      padding: 2rem;
+      z-index: 2;
+      color: $white;
+
+      & > div {
+        width: 100%;
+      }
+
+      & .down button {
+        width: 10rem;
+        height: 2.5rem;
+        border-radius: 0.3rem;
+        background-color: $white;
+        color: $primary;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: none;
+        font-size: 1rem;
+        font-weight: bold;
+      }
+    }
+
+    & .slider_box.slider_login {
+      left: 0;
+      transition: 0.6s ease-in-out;
+      transition-delay: 0.6s;
+      //   transition-delay: 0.6s;
+    }
+
+    & .slider_box.slider_signup {
+      right: -50%;
+      transition: 0.6s ease-in-out;
+      text-align: right;
+    }
+  }
+}
+
+.sign.active {
+  & .form_container.login {
+    visibility: hidden;
+  }
+
+  & .form_container.signup {
+    visibility: visible;
+  }
+
+  & .form_container {
+    right: 50%;
+    transition-delay: 0.6s;
+  }
+
+  & .slider::before {
+    right: -250%;
+  }
+
+  & .slider .slider_box.slider_login {
+    left: -50%;
+    transition: 0.6s ease-in-out;
+  }
+
+  & .slider .slider_box.slider_signup {
+    right: 0;
+    transition-delay: 0.6s;
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  .sign_container {
+    padding-inline: 5rem;
+
+    & .sign {
+      width: 100%;
+      height: 90vh;
+      gap: 1rem;
+      // gap: 0rem;
+
+      & .form_container {
+        width: 100%;
+        height: 70%;
+        bottom: 0;
+        left: 0;
+      }
+    }
+
+    & .form_container form {
+      gap: 1.3rem;
+      padding: 2rem;
+      color: $primary;
+    }
+
+    & .slider {
+      width: 100%;
+      height: 100%;
+
+      &::before {
+        content: "";
+        height: 300%;
+        width: 100%;
+        top: -270%;
+        left: 0;
+      }
+
+      & .slider_box {
+        width: 100%;
+        height: 30%;
+
+        & .up {
+          display: none;
+        }
+
+        & > div {
+          height: 100%;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+      }
+
+      & .slider_box.slider_login {
+        top: 0;
+        & div {
+          justify-content: flex-start;
+          height: 100%;
+        }
+      }
+
+      & .slider_box.slider_signup {
+        top: -30%;
+        left: 0;
+
+        & div {
+          justify-content: flex-end;
+          height: 100%;
+        }
+      }
+    }
+  }
+
+  .sign.active {
+    & .form_container {
+      bottom: 30%;
+      left: 0;
+    }
+
+    & .slider::before {
+      top: 70%;
+    }
+
+    & .slider .slider_box.slider_login {
+      top: -30%;
+      left: 0;
+    }
+
+    & .slider .slider_box.slider_signup {
+      top: 70%;
+      left: 0;
+    }
+  }
+}
+
+@media screen and (max-width: 650px) {
+  .sign_container {
+    padding: 4rem 1rem;
+
+    & .sign .form_container form {
+      justify-content: flex-start;
+    }
+  }
+}

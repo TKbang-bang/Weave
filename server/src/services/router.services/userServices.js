@@ -13,6 +13,17 @@ const getUserByEmail = async (email) => {
   }
 };
 
+const getUserByAlias = async (alias) => {
+  try {
+    const [users] = await db.query("SELECT * FROM users WHERE user_alias = ?", [
+      alias,
+    ]);
+    return users.length > 0 ? users[0] : null;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const getUserId = async (userID) => {
   try {
     const [user] = await db.query(
@@ -25,7 +36,7 @@ const getUserId = async (userID) => {
   }
 };
 
-const createUser = async (name, lastname, email, password) => {
+const createUser = async (name, alias, email, password) => {
   try {
     const userId = crypto.randomUUID();
 
@@ -33,8 +44,8 @@ const createUser = async (name, lastname, email, password) => {
     const hashPassword = await bcrypt.hash(password, salt);
 
     await db.query(
-      "INSERT INTO users (user_name, user_lastname, user_email, user_password, user_id) VALUES (?, ?, ?, ?, ?)",
-      [name, lastname, email, hashPassword, userId]
+      "INSERT INTO users (user_name, user_alias, user_email, user_password, user_id) VALUES (?, ?, ?, ?, ?)",
+      [name, alias, email, hashPassword, userId]
     );
 
     return userId;
@@ -49,7 +60,7 @@ const getUserById = async (myId, userId) => {
       const sql = `
       SELECT 
         user_name, 
-        user_lastname, 
+        user_alias, 
         user_profile, 
         (SELECT COUNT(*) FROM follows WHERE to_user_id = ?) AS followers 
       FROM users 
@@ -62,7 +73,7 @@ const getUserById = async (myId, userId) => {
       const sql = `
       SELECT 
         user_name, 
-        user_lastname, 
+        user_alias, 
         user_profile, 
         (SELECT COUNT(*) FROM follows WHERE to_user_id = ?) AS followers,
         (SELECT COUNT(*) FROM follows WHERE from_user_id = ? AND to_user_id = ?) AS followed 
@@ -83,4 +94,5 @@ module.exports = {
   getUserId,
   createUser,
   getUserById,
+  getUserByAlias,
 };

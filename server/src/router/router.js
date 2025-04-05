@@ -47,120 +47,25 @@ const {
   postsSearch,
 } = require("../services/router.services/searchServices");
 const ServerError = require("../error/errorClass");
+const { signup, verify, login, userIsLogged } = require("../controllers/auth");
 
 const router = express.Router();
 
 //
 // VERIFYING IF THE USER IS LOGGED -- START
-router.get("/user_verify", async (req, res, next) => {
-  try {
-    if (!req.session.userID)
-      return next(new ServerError("User is not logged", 401));
-
-    const gettingUserId = await getUserId(req.session.userID);
-    if (!gettingUserId) return next(new ServerError("User not found", 404));
-
-    return res.status(204).json({ ok: true, message: "User is logged" });
-  } catch (error) {
-    next(new ServerError(error.message, 500));
-  }
-});
+router.get("/user_is_logged", userIsLogged);
 // VERIFYING IF THE USER IS LOGGED -- END
 //
 
 //
-// USER LOGS -- START
-router.post("/signup", async (req, res, next) => {
-  try {
-    // USER DATA
-    const { name, lastname, email, password } = req.body;
-
-    // CHECKING IF THE USER ALREADY EXISTS
-    const user = await getUserByEmail(email);
-
-    if (user) return next(new ServerError("User already exists", 409));
-
-    // SENDING A VERIFY CODE TO THE USER EMAIL
-    const sendMail = await emialSend(email);
-
-    // CREATING A USER VARIABLE IN THE SERVER TEMPORARY
-    req.session.nextUser = { name, lastname, email, password };
-    // SAVING THE CODE TEMPORARY IN THE SERVER
-    req.session.code = sendMail.code;
-    req.session.save();
-
-    res.status(201).json({ ok: true });
-
-    // DELETING THE USER VARIABLE AND THE CODE IN 30 MINS
-    setTimeout(() => {
-      delete req.session.nextUser;
-      delete req.session.code;
-      req.session.save();
-    }, [180000]);
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
+// AUTH -- START
+router.post("/signup", signup);
 
 // VERIFYING THE CODE
-router.post("/verify", async (req, res, next) => {
-  try {
-    // CODE FORM USER
-    const { code } = req.body;
+router.post("/verify", verify);
 
-    // VERIFYING THE CODE
-    if (!req.session.code)
-      return next(new ServerError("Code may expired", 400));
-
-    if (req.session.code != code)
-      return next(new ServerError("Code incorrect", 400));
-
-    // TAKING THE USER DATA FROM THE TEMPORARY SESSION VARIABLE
-    const { name, lastname, email, password } = req.session.nextUser;
-
-    // CREATING THE USER
-    const ceratingUser = await createUser(name, lastname, email, password);
-
-    // SAVING THE USER ID IN THE SESSION
-    req.session.userID = ceratingUser;
-    req.session.save();
-
-    res.status(201).json({ ok: true });
-
-    // DELETING THE USER VARIABLE AND THE CODE
-    delete req.session.code;
-    delete req.session.nextUser;
-    req.session.save();
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
-
-router.post("/login", async (req, res, next) => {
-  try {
-    // USER DATA
-    const { email, password } = req.body;
-
-    // CHECKING IF THE USER EXISTS
-    const user = await getUserByEmail(email);
-
-    if (!user) return next(new ServerError("User not found", 404));
-
-    // CHECKING THE PASSWORD
-    const validPassword = await bcrypt.compare(password, user.user_password);
-
-    if (!validPassword) return next(new ServerError("Wrong password", 400));
-
-    // SAVING THE USER ID IN THE SESSION
-    req.session.userID = user.user_id;
-    req.session.save();
-
-    res.status(201).json({ ok: true });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
-// USER LOGS -- END
+router.post("/login", login);
+// AUTH -- END
 //
 
 //
