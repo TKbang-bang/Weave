@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
-import Verify from "./pages/auth/Verify";
-import Principal from "./pages/Principal";
 import axios from "axios";
 import ForgotPassword from "./pages/changes/ForgotPassword";
 import Sign from "./pages/auth/Sign";
+import Verify from "./pages/auth/Verify";
 import { userIsLogged } from "./services/global";
+import Display from "./pages/Display";
 
 axios.defaults.baseURL = "http://localhost:3000/";
 axios.defaults.withCredentials = true;
@@ -18,12 +18,12 @@ function App() {
       try {
         const res = await userIsLogged();
 
-        if (!res.data.ok) throw new Error(res.response.data.message);
+        if (res.status == 204 || res.status == 200 || res.status == 201) return;
 
-        return;
+        throw new Error(res.response.data.message);
       } catch (error) {
         if (
-          window.location == `http://localhost:5173/recoverpassword` ||
+          window.location == "http://localhost:5173/recoverpassword" ||
           window.location == "http://localhost:5173/verify"
         ) {
           return;
@@ -40,7 +40,7 @@ function App() {
     <Routes>
       <Route path="/sign" element={<Sign />} />
       <Route path="/verify" element={<Verify />} />
-      <Route path="*" element={<Principal />} />
+      <Route path="*" element={<Display />} />
       <Route path="/recoverpassword" element={<ForgotPassword />} />
     </Routes>
   );

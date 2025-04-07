@@ -1,0 +1,52 @@
+// @use "../base/variables" as *;
+
+// .sidenav {
+//   background-color: $white;
+//   display: flex;
+//   flex-direction: column;
+
+//   & .nav_links {
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: flex-start;
+//     align-items: flex-end;
+
+//     & li {
+//       width: 100%;
+//       display: flex;
+//       justify-content: flex-end;
+//       align-items: center;
+
+//       & a {
+//         display: flex;
+//         justify-content: flex-end;
+//         align-items: center;
+//         gap: 0.5rem;
+//         width: 100%;
+//         padding-right: 2rem;
+//         height: 4rem;
+//         transition: 0.4s ease-in-out;
+//         text-decoration: none;
+//         color: $secondary;
+//         fill: $secondary;
+
+//         &:hover {
+//           background: $bgColor;
+//         }
+
+//         &.active {
+//           background: $secondary;
+//           color: $white;
+//           fill: $white;
+//           border-radius: 0.5rem 0 0 0.5rem;
+//           font-weight: bold;
+//         }
+
+//         & svg {
+//           width: 1.5rem;
+//           height: 1.5rem;
+//         }
+//       }
+//     }
+//   }
+// }

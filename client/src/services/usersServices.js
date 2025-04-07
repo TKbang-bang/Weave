@@ -1,7 +1,7 @@
-import api from "./apis/axios";
+// import api from "./apis/axios";
 
-export const userVerify = async () => {
-  const request = await api.get("/user_verify");
+// export const userVerify = async () => {
+//   const request = await api.get("/user_verify");
 
-  return request;
-};
+//   return request;
+// };

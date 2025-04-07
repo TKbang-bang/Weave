@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 // import { Eye, EyeSplash, SocialIllustration } from "../../components/svg.jsx";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { userVerify } from "../../services/usersServices.js";
-import styles from "../../styles.module.css";
 import { codeVerify } from "../../services/auth.js";
 
 function Verify() {

@@ -40,6 +40,46 @@ const getAllPosts = async (userId) => {
   }
 };
 
+const getAllFollowingPosts = async (userId) => {
+  try {
+    const sql = `
+    SELECT 
+        p.post_id, p.post_title, p.post_content, p.post_date, 
+        p.user_id, u.user_name, u.user_alias, u.user_profile,
+        COUNT(DISTINCT f.follow_id) AS followed,
+        COUNT(DISTINCT l1.like_id) AS likes,
+        COUNT(DISTINCT l2.like_id) AS liked,
+        COUNT(DISTINCT c.comment_id) AS comments
+      FROM posts p
+      JOIN users u ON u.user_id = p.user_id
+      LEFT JOIN follows f ON f.from_user_id = ? AND f.to_user_id = u.user_id
+      LEFT JOIN likes l1 ON l1.post_id = p.post_id
+      LEFT JOIN likes l2 ON l2.user_id = ? AND l2.post_id = p.post_id
+      LEFT JOIN comments c ON c.post_id = p.post_id
+      WHERE f.from_user_id = ?
+      GROUP BY p.post_id, p.post_title, p.post_content, p.post_date, 
+      p.user_id, u.user_name, u.user_alias, u.user_profile
+      ORDER BY p.post_date DESC
+  `;
+
+    const [posts] = await db.query(sql, [userId, userId, userId]);
+
+    const dateFormat = "yyyy-MM-dd HH:mm:ss";
+    const today = new Date();
+
+    const newPosts = posts.map((post) => ({
+      ...post,
+      since_date: myDate(post.post_date, today, dateFormat),
+      me: post.user_id == userId,
+      comment_section: false,
+    }));
+
+    return newPosts;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const getPostById = async (userId, postId) => {
   const sql = `
     SELECT 
@@ -129,4 +169,5 @@ module.exports = {
   getPostById,
   getCommentsByPostId,
   getUserPosts,
+  getAllFollowingPosts,
 };

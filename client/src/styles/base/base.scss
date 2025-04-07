@@ -1,13 +1,13 @@
-@use "variables";
+@use "./variables" as *;
 
 :root {
   font-family: "Rubik", serif, Inter, system-ui, Avenir, Helvetica, Arial,
     sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: variables.$black;
+  color: $black;
 
-  background-color: variables.$bgColor;
+  background-color: $white;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;

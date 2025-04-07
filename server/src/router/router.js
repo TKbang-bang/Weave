@@ -1,12 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const upload = require("../configs/multer");
-const {
-  getUserId,
-  getUserByEmail,
-  createUser,
-  getUserById,
-} = require("../services/router.services/userServices");
+const { getUserById } = require("../services/router.services/userServices");
 const {
   createPost,
   postOwner,
@@ -14,9 +9,6 @@ const {
   deletePost,
 } = require("../services/router.services/postServices");
 const {
-  getAllPosts,
-  getPostById,
-  getCommentsByPostId,
   getUserPosts,
 } = require("../services/router.services/bigPostsServices");
 const {
@@ -40,7 +32,6 @@ const {
 } = require("../services/router.services/updateServices");
 const {
   deleteUserAccount,
-  emialSend,
 } = require("../services/router.services/accountServices");
 const {
   usersSearch,
@@ -48,6 +39,11 @@ const {
 } = require("../services/router.services/searchServices");
 const ServerError = require("../error/errorClass");
 const { signup, verify, login, userIsLogged } = require("../controllers/auth");
+const {
+  getPosts,
+  getFollowingPosts,
+  getPostsById,
+} = require("../controllers/bigPosts");
 
 const router = express.Router();
 
@@ -87,39 +83,12 @@ router.post("/publicate", upload.single("file"), async (req, res, next) => {
 });
 
 // GETTING ALL POSTS
-router.get("/posts", async (req, res, next) => {
-  try {
-    // GETTING ALL POSTS
-    const posts = await getAllPosts(req.session.userID);
+router.get("/posts", getPosts);
 
-    res.status(200).json({ ok: true, posts });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
+router.get("/following_posts", getFollowingPosts);
 
 // GETTING A POST BY ID
-router.get("/post/:post_id", async (req, res, next) => {
-  try {
-    // POST ID
-    const { post_id } = req.params;
-
-    // GETTING THE POST
-    const post = await getPostById(req.session.userID, post_id);
-    // GETTING THE COMMENTS
-    const comments = await getCommentsByPostId(post_id);
-
-    if (!post) {
-      return next(new ServerError("Post not found", 404));
-    }
-
-    // ADDING THE COMMENTS
-    post.allComments = comments;
-    res.status(200).json({ ok: true, posts: [post] });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
+router.get("/post/:post_id", getPostsById);
 
 // GETTING MY POSTS
 router.get("/user_posts", async (req, res, next) => {

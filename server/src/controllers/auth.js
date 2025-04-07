@@ -11,15 +11,18 @@ const bcrypt = require("bcrypt");
 const userIsLogged = async (req, res, next) => {
   try {
     if (!req.session.userID)
-      return next(new ServerError("User is not logged", 401));
+      return next(new ServerError("User is not logged", "auth", 401));
 
     const gettingUserId = await getUserId(req.session.userID);
-    if (!gettingUserId) return next(new ServerError("User not found", 404));
+    if (!gettingUserId)
+      return next(new ServerError("User not found", "auth", 404));
 
     return res.status(204).json({ ok: true, message: "User is logged" });
   } catch (error) {
-    next(new ServerError(error.message, 500));
+    next(new ServerError(error.message, "server", 500));
   }
+
+  // console.log(req.session.userID);
 };
 
 const signup = async (req, res, next) => {
@@ -41,6 +44,9 @@ const signup = async (req, res, next) => {
     // SENDING A VERIFY CODE TO THE USER EMAIL
     const sendMail = await emialSend(email);
 
+    if (!sendMail.ok)
+      return next(new ServerError(sendMail.message, "email", 500));
+
     // CREATING A USER VARIABLE IN THE SERVER TEMPORARY
     req.session.nextUser = { name, alias, email, password };
     // SAVING THE CODE TEMPORARY IN THE SERVER
@@ -56,7 +62,7 @@ const signup = async (req, res, next) => {
       req.session.save();
     }, [180000]);
   } catch (error) {
-    return next(new ServerError(error.message, 500));
+    return next(new ServerError(error.message, "server", 500));
   }
 };
 
@@ -67,10 +73,10 @@ const verify = async (req, res, next) => {
 
     // VERIFYING THE CODE
     if (!req.session.code)
-      return next(new ServerError("Code may expired", 400));
+      return next(new ServerError("Code may expired", "session", 400));
 
     if (req.session.code != code)
-      return next(new ServerError("The code is incorrect", 400));
+      return next(new ServerError("The code is incorrect", "code", 400));
 
     // TAKING THE USER DATA FROM THE TEMPORARY SESSION VARIABLE
     const { name, alias, email, password } = req.session.nextUser;
@@ -89,7 +95,7 @@ const verify = async (req, res, next) => {
     delete req.session.nextUser;
     req.session.save();
   } catch (error) {
-    return next(new ServerError(error.message, 500));
+    return next(new ServerError(error.message, "server", 500));
   }
 };
 
@@ -100,13 +106,13 @@ const login = async (req, res, next) => {
 
     // CHECKING IF THE USER EXISTS
     const user = await getUserByEmail(email);
-
-    if (!user) return next(new ServerError("User not found", 404));
+    if (!user) return next(new ServerError("Email not found", "email", 404));
 
     // CHECKING THE PASSWORD
     const validPassword = await bcrypt.compare(password, user.user_password);
 
-    if (!validPassword) return next(new ServerError("Wrong password", 400));
+    if (!validPassword)
+      return next(new ServerError("Wrong password", "password", 400));
 
     // SAVING THE USER ID IN THE SESSION
     req.session.userID = user.user_id;
@@ -114,7 +120,7 @@ const login = async (req, res, next) => {
 
     res.status(201).json({ ok: true });
   } catch (error) {
-    return next(new ServerError(error.message, 500));
+    return next(new ServerError(error.message, "server", 500));
   }
 };
 

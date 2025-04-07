@@ -52,7 +52,7 @@ const emialSend = async (email) => {
 
   return info.accepted
     ? { ok: true, code }
-    : { ok: false, message: "Mail failed to send" };
+    : { ok: false, message: "Mail failed to send, try again" };
 };
 
 module.exports = { deleteUserAccount, emialSend };

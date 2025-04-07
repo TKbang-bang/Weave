@@ -5,6 +5,11 @@
 // @import url("./base/_variables.scss");
 
 // components
+@import url("./components/nav.scss");
+@import url("./components/submain.scss");
 
 // pages
 @import url("./pages/auth.scss");
+@import url("./pages/display.scss");
+@import url("./pages/postsContainer.scss");
+@import url("./pages/publicate.scss");

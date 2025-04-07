@@ -3,7 +3,7 @@ import { Eye, EyeSplash } from "../../components/svg";
 import styles from "../../styles.module.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { userVerify } from "../../services/usersServices";
+// import { userVerify } from "../../services/usersServices";
 
 function ForgotPassword() {
   const [errRes, setErrRes] = useState("");
@@ -18,19 +18,19 @@ function ForgotPassword() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const verifyingUser = async () => {
-      const request = await userVerify();
+  // useEffect(() => {
+  //   const verifyingUser = async () => {
+  //     const request = await userVerify();
 
-      if (!request.status == 200 || !request.status == 204) {
-        return;
-      } else {
-        navigate("/");
-      }
-    };
+  //     if (!request.status == 200 || !request.status == 204) {
+  //       return;
+  //     } else {
+  //       navigate("/");
+  //     }
+  //   };
 
-    verifyingUser();
-  }, []);
+  //   verifyingUser();
+  // }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
