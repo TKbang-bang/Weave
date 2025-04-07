@@ -1,14 +1,14 @@
 const db = require("../../database/db");
 const { format } = require("date-fns");
 
-const createPost = async (title, file, userID) => {
+const createPost = async (title, file, type, userID) => {
   try {
     const postId = crypto.randomUUID();
     const date = format(new Date(), "yyyy-MM-dd HH:mm:ss");
 
     await db.query(
-      "INSERT INTO posts (post_id, post_title, post_content, post_date, user_id) VALUES (?, ?, ?, ?, ?)",
-      [postId, title, file, date, userID]
+      "INSERT INTO posts (post_id, post_title, post_media, post_media_type, post_date, user_id) VALUES (?, ?, ?, ?, ?, ?)",
+      [postId, title, file, type, date, userID]
     );
 
     return postId;

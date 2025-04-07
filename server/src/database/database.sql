@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS posts (
     post_id VARCHAR(255) NOT NULL PRIMARY KEY,
     post_title VARCHAR(255) NOT NULL,
-    post_content TEXT NOT NULL,
+    post_media TEXT NOT NULL,
+    post_media_type VARCHAR(255),
     post_date TIMESTAMP NOT NULL,
     user_id VARCHAR(255) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE

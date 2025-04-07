@@ -44,6 +44,7 @@ const {
   getFollowingPosts,
   getPostsById,
 } = require("../controllers/bigPosts");
+const { posting } = require("../controllers/posts");
 
 const router = express.Router();
 
@@ -67,20 +68,7 @@ router.post("/login", login);
 //
 // POSTS ACTIVITIES -- START
 // PUBLICATING A POST
-router.post("/publicate", upload.single("file"), async (req, res, next) => {
-  try {
-    // POST DATA
-    const { title } = req.body;
-    const file = req.file.filename;
-
-    // CREATING THE POST
-    await createPost(title, file, req.session.userID);
-
-    res.status(201).json({ ok: true });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
+router.post("/publicate", upload.single("file"), posting);
 
 // GETTING ALL POSTS
 router.get("/posts", getPosts);

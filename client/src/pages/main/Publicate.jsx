@@ -1,15 +1,29 @@
 import React, { useState } from "react";
 import { Image, Trash, Video } from "../../components/svg";
+import { Toaster, toast } from "sonner";
+import { postingPost } from "../../services/posts";
 
 function Publicate() {
   const [file, setFile] = useState(null);
   const [title, setTitle] = useState("");
   const [type, setType] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log({ file, title, type });
+    try {
+      const res = await postingPost({ file, title, type });
+
+      if (!res.data.ok) throw new Error(res);
+
+      toast.success(res.data.message);
+
+      setTitle("");
+      setFile(null);
+      setType("");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
   };
 
   return (
@@ -67,6 +81,8 @@ function Publicate() {
           Publicate
         </button>
       </form>
+
+      <Toaster position="top-center" richColors />
     </section>
   );
 }
