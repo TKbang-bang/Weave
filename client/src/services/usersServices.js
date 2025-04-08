@@ -1,7 +1,6 @@
-// import api from "./apis/axios";
+import axios from "axios";
 
-// export const userVerify = async () => {
-//   const request = await api.get("/user_verify");
-
-//   return request;
-// };
+export const getUserId = async () => {
+  const res = await axios.get("/user_id");
+  return res;
+};

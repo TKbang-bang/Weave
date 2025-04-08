@@ -5,7 +5,7 @@ const getAllPosts = async (userId) => {
   try {
     const sql = `
     SELECT 
-        p.post_id, p.post_title, p.post_content, p.post_date, 
+        p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, 
         p.user_id, u.user_name, u.user_alias, u.user_profile,
         COUNT(DISTINCT f.follow_id) AS followed,
         COUNT(DISTINCT l1.like_id) AS likes,
@@ -17,7 +17,7 @@ const getAllPosts = async (userId) => {
       LEFT JOIN likes l1 ON l1.post_id = p.post_id
       LEFT JOIN likes l2 ON l2.user_id = ? AND l2.post_id = p.post_id
       LEFT JOIN comments c ON c.post_id = p.post_id
-      GROUP BY p.post_id, p.post_title, p.post_content, p.post_date, 
+      GROUP BY p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, 
       p.user_id, u.user_name, u.user_alias, u.user_profile
       ORDER BY p.post_date DESC
   `;
@@ -44,7 +44,7 @@ const getAllFollowingPosts = async (userId) => {
   try {
     const sql = `
     SELECT 
-        p.post_id, p.post_title, p.post_content, p.post_date, 
+        p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, 
         p.user_id, u.user_name, u.user_alias, u.user_profile,
         COUNT(DISTINCT f.follow_id) AS followed,
         COUNT(DISTINCT l1.like_id) AS likes,
@@ -57,7 +57,7 @@ const getAllFollowingPosts = async (userId) => {
       LEFT JOIN likes l2 ON l2.user_id = ? AND l2.post_id = p.post_id
       LEFT JOIN comments c ON c.post_id = p.post_id
       WHERE f.from_user_id = ?
-      GROUP BY p.post_id, p.post_title, p.post_content, p.post_date, 
+      GROUP BY p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, 
       p.user_id, u.user_name, u.user_alias, u.user_profile
       ORDER BY p.post_date DESC
   `;
@@ -83,7 +83,7 @@ const getAllFollowingPosts = async (userId) => {
 const getPostById = async (userId, postId) => {
   const sql = `
     SELECT 
-        p.post_id, p.post_title, p.post_content, p.post_date, 
+        p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, 
         p.user_id, u.user_name, u.user_alias, u.user_profile,
         COUNT(DISTINCT f.follow_id) AS followed,
         COUNT(DISTINCT l1.like_id) AS likes,
@@ -96,7 +96,7 @@ const getPostById = async (userId, postId) => {
       LEFT JOIN likes l2 ON l2.user_id = ? AND l2.post_id = p.post_id
       LEFT JOIN comments c ON c.post_id = p.post_id
       WHERE p.post_id = ?
-      GROUP BY p.post_id, p.post_title, p.post_content, p.post_date, 
+      GROUP BY p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, 
       p.user_id, u.user_name, u.user_alias, u.user_profile
       ORDER BY p.post_date DESC
   `;
@@ -131,7 +131,7 @@ const getUserPosts = async (myId, userId) => {
   try {
     const sql = `
     SELECT 
-      p.post_id, p.post_title, p.post_content, p.post_date, 
+      p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, 
       p.user_id, u.user_name, u.user_alias, u.user_profile,
       COUNT(DISTINCT f.follow_id) AS followed,
       COUNT(DISTINCT l1.like_id) AS likes,
@@ -144,7 +144,7 @@ const getUserPosts = async (myId, userId) => {
     LEFT JOIN likes l2 ON l2.user_id = ? AND l2.post_id = p.post_id
     LEFT JOIN comments c ON c.post_id = p.post_id
     WHERE p.user_id = ?
-    GROUP BY p.post_id, p.post_title, p.post_content, p.post_date, 
+    GROUP BY p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, 
       p.user_id, u.user_name, u.user_alias, u.user_profile
     ORDER BY p.post_date DESC;
   `;

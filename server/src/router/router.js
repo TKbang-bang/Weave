@@ -1,12 +1,11 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
 const upload = require("../configs/multer");
 const { getUserById } = require("../services/router.services/userServices");
 const {
-  createPost,
   postOwner,
   postUpdate,
   deletePost,
+  gettingComments,
 } = require("../services/router.services/postServices");
 const {
   getUserPosts,
@@ -45,6 +44,8 @@ const {
   getPostsById,
 } = require("../controllers/bigPosts");
 const { posting } = require("../controllers/posts");
+const { editTitle, likingPost } = require("../controllers/activities");
+const { getUserId } = require("../controllers/user");
 
 const router = express.Router();
 
@@ -74,6 +75,8 @@ router.post("/publicate", upload.single("file"), posting);
 router.get("/posts", getPosts);
 
 router.get("/following_posts", getFollowingPosts);
+
+router.get("/comments/:post_id", gettingComments);
 
 // GETTING A POST BY ID
 router.get("/post/:post_id", getPostsById);
@@ -145,65 +148,17 @@ router.post("/follow", async (req, res, next) => {
 });
 
 // EDITING A POST
-router.post("/edit_post", async (req, res, next) => {
-  try {
-    // POST DATA
-    const { post_id, post_title } = req.body;
-
-    // CHECKING IF THE POST BELONGS TO THE USER
-    const isPostOwner = await postOwner(req.session.userID, post_id);
-
-    if (!isPostOwner)
-      return next(new ServerError("You are not the owner of this post", 403));
-
-    // UPDATING THE POST
-    await postUpdate(post_title, post_id);
-    res.json({ ok: true });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
+router.put("/edit_post/:post_id", editTitle);
 
 // LIKE CONTROLLER
-router.post("/like", async (req, res, next) => {
-  try {
-    // POST ID
-    const { post_id } = req.body;
-
-    // CHECKING IF THE POST IS ALREADY LIKED
-    const liked = await hasLiked(req.session.userID, post_id);
-
-    if (liked) {
-      // UNLIKING THE POST
-      await unLike(req.session.userID, post_id);
-      res.status(200).json({ ok: true, liked: false });
-    } else {
-      // LIKING THE POST
-      await like(req.session.userID, post_id);
-      res.status(200).json({ ok: true, liked: true });
-    }
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
+router.post("/like", likingPost);
 // USER ACTIVITIES -- END
 //
 
 //
 // GETTING USER CREDENTIALS -- START
 // GETTING USER ID
-router.get("/user_id", (req, res, next) => {
-  try {
-    // CHECKING IF THE USER IS LOGGED
-    if (!req.session.userID) {
-      return next(new ServerError("User is not logged", 401));
-    }
-
-    res.status(200).json({ ok: true, user_id: req.session.userID });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
+router.get("/user_id", getUserId);
 
 // GETTING USER
 router.get("/user", async (req, res, next) => {

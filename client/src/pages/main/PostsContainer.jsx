@@ -28,15 +28,17 @@ function PostsContainer() {
 
   return (
     <section className="posts_container">
-      <Search />
-      <ul className="posts_nav">
-        <li className="all_posts active" onClick={handleAllPosts}>
-          All posts
-        </li>
-        <li className="friends_posts" onClick={handleFriendsPosts}>
-          Following
-        </li>
-      </ul>
+      <article className="header">
+        <Search />
+        <ul className="posts_nav">
+          <li className="all_posts active" onClick={handleAllPosts}>
+            All posts
+          </li>
+          <li className="friends_posts" onClick={handleFriendsPosts}>
+            Following
+          </li>
+        </ul>
+      </article>
 
       {followingPosts ? (
         <Posts to={"/following_posts"} />

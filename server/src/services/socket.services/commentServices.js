@@ -15,7 +15,7 @@ async function addComment(data) {
     ]);
 
     const userQuery =
-      "SELECT user_name, user_lastname, user_profile FROM users WHERE user_id = ?";
+      "SELECT user_name, user_profile FROM users WHERE user_id = ?";
     const [userResult] = await db.query(userQuery, [data.user_id]);
 
     if (userResult.length === 0) {
@@ -26,7 +26,6 @@ async function addComment(data) {
       comment_id,
       comment_content: data.comment_content,
       user_name: userResult[0].user_name,
-      user_lastname: userResult[0].user_lastname,
       user_profile: userResult[0].user_profile,
     };
   } catch (error) {

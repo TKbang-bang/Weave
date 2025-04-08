@@ -8,7 +8,7 @@ const getPosts = async (req, res, next) => {
 
     res.status(200).json({ ok: true, posts });
   } catch (error) {
-    return next(new ServerError(error.message, 500));
+    return next(new ServerError(error.message, "server", 500));
   }
 };
 
@@ -19,7 +19,7 @@ const getFollowingPosts = async (req, res, next) => {
 
     res.status(200).json({ ok: true, posts });
   } catch (error) {
-    return next(new ServerError(error.message, 500));
+    return next(new ServerError(error.message, "server", 500));
   }
 };
 
@@ -34,14 +34,14 @@ const getPostsById = async (req, res, next) => {
     const comments = await getCommentsByPostId(post_id);
 
     if (!post) {
-      return next(new ServerError("Post not found", 404));
+      return next(new ServerError("Post not found", "post", 404));
     }
 
     // ADDING THE COMMENTS
     post.allComments = comments;
     res.status(200).json({ ok: true, posts: [post] });
   } catch (error) {
-    return next(new ServerError(error.message, 500));
+    return next(new ServerError(error.message, "server", 500));
   }
 };
 

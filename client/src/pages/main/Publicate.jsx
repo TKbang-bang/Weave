@@ -34,6 +34,7 @@ function Publicate() {
         <textarea
           placeholder="Write something..."
           rows={1}
+          limit={500}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         ></textarea>

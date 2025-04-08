@@ -1,5 +1,6 @@
 const db = require("../../database/db");
 const { format } = require("date-fns");
+const { getCommentsByPostId } = require("./bigPostsServices");
 
 const createPost = async (title, file, type, userID) => {
   try {
@@ -46,4 +47,23 @@ const deletePost = async (postId) => {
   }
 };
 
-module.exports = { createPost, postOwner, postUpdate, deletePost };
+const gettingComments = async (req, res, next) => {
+  try {
+    // POST ID
+    const { post_id } = req.params;
+
+    // GETTING THE COMMENTS
+    const comments = await getCommentsByPostId(post_id);
+    res.status(200).json({ ok: true, comments });
+  } catch (error) {
+    return next(new ServerError(error.message, "server", "server", 500));
+  }
+};
+
+module.exports = {
+  createPost,
+  postOwner,
+  postUpdate,
+  deletePost,
+  gettingComments,
+};
