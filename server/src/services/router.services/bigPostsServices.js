@@ -56,7 +56,7 @@ const getAllFollowingPosts = async (userId) => {
       LEFT JOIN likes l1 ON l1.post_id = p.post_id
       LEFT JOIN likes l2 ON l2.user_id = ? AND l2.post_id = p.post_id
       LEFT JOIN comments c ON c.post_id = p.post_id
-      WHERE f.from_user_id = ?
+      WHERE from_user_id = ?
       GROUP BY p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, 
       p.user_id, u.user_name, u.user_alias, u.user_profile
       ORDER BY p.post_date DESC

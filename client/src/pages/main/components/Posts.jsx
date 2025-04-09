@@ -91,6 +91,11 @@ function Posts({ to }) {
           key={post.post_id}
           post={post}
           post_id={(id) => handlePostId(id)}
+          del={(id) =>
+            setPosts((prev) => prev.filter((post) => post.post_id != id))
+          }
+          err={(errTxt) => toast.error(errTxt)}
+          sucs={(sucsTxt) => toast.success(sucsTxt)}
         />
       ))}
 
@@ -121,7 +126,7 @@ function Posts({ to }) {
         </div>
       </article>
 
-      <Toaster position="top-right" richColors />
+      <Toaster position="top-center" richColors />
     </section>
   );
 }

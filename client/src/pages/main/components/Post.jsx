@@ -7,14 +7,19 @@ import {
   UnHeart,
 } from "../../../components/svg";
 import { Link } from "react-router-dom";
+import {
+  deletePost,
+  editingTitle,
+  likingPost,
+} from "../../../services/activities";
 import { Toaster, toast } from "sonner";
-import { editingTitle, likingPost } from "../../../services/activities";
 
-function Post({ post, post_id }) {
+function Post({ post, post_id, del, err, sucs }) {
   const [edit, setEdit] = useState(false);
   const [editValue, setEditValue] = useState(post.post_title);
   const [liked, setLiked] = useState(post.liked == 1 ? true : false);
   const [likes, setLikes] = useState(post.likes);
+  const [showOptions, setShowOptions] = useState(false);
 
   const handleEdit = async (e) => {
     e.preventDefault();
@@ -28,9 +33,10 @@ function Post({ post, post_id }) {
       toast.success("Title updated");
 
       post.post_title = editValue;
+
+      setShowOptions(false);
     } catch (error) {
-      console.log(error);
-      toast.error(`${error.response.data.message}`);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -50,7 +56,21 @@ function Post({ post, post_id }) {
 
       //   console.log(res);
     } catch (error) {
-      toast.error(`Unexpected error, try again`);
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const res = await deletePost(post.post_id);
+
+      if (!res.data.ok) throw new Error(res);
+
+      del(post.post_id);
+
+      setShowOptions(false);
+    } catch (error) {
+      toast.error(error.response.data.message);
     }
   };
 
@@ -83,9 +103,7 @@ function Post({ post, post_id }) {
             {!edit && (
               <div
                 className="post_options"
-                onClick={() =>
-                  document.querySelector(".options").classList.remove("hide")
-                }
+                onClick={() => setShowOptions(true)}
               >
                 <Options />
               </div>
@@ -97,8 +115,8 @@ function Post({ post, post_id }) {
           </button>
         )}
 
-        {!edit && (
-          <div className="options hide ">
+        {!edit && showOptions && (
+          <div className="options">
             <button
               className="edit"
               onClick={() => (
@@ -108,20 +126,10 @@ function Post({ post, post_id }) {
             >
               Edit
             </button>
-            <button
-              className="delete"
-              onClick={() =>
-                document.querySelector(".options").classList.add("hide")
-              }
-            >
+            <button className="delete" onClick={handleDelete}>
               Delete
             </button>
-            <button
-              className="cancel"
-              onClick={() =>
-                document.querySelector(".options").classList.add("hide")
-              }
-            >
+            <button className="cancel" onClick={() => setShowOptions(false)}>
               Cancel
             </button>
           </div>
@@ -145,7 +153,11 @@ function Post({ post, post_id }) {
               </button>
               <button
                 className="cancel"
-                onClick={() => (setEdit(false), setEditValue(post.post_title))}
+                onClick={() => (
+                  setEdit(false),
+                  setEditValue(post.post_title),
+                  setShowOptions(false)
+                )}
               >
                 Cancel
               </button>

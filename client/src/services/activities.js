@@ -14,3 +14,8 @@ export const gettingComments = async (id) => {
   const res = await axios.get(`/comments/${id}`);
   return res;
 };
+
+export const deletePost = async (post_id) => {
+  const res = await axios.delete("/delete_post/" + post_id);
+  return res;
+};
