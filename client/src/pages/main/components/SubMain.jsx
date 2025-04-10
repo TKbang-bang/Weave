@@ -3,6 +3,9 @@ import Search from "./Search";
 import PostsContainer from "../PostsContainer";
 import { Route, Routes } from "react-router-dom";
 import Publicate from "../Publicate";
+import MyProfile from "../../MyProfile";
+import EditProfile from "../../EditProfile";
+import SavedPosts from "../../SavedPosts";
 
 function SubMain() {
   return (
@@ -10,6 +13,9 @@ function SubMain() {
       <Routes>
         <Route path="/" element={<PostsContainer />} />
         <Route path="/publicate" element={<Publicate />} />
+        <Route path="/myprofile" element={<MyProfile />} />
+        <Route path="/editprofile" element={<EditProfile />} />
+        <Route path="/savedposts" element={<SavedPosts />} />
       </Routes>
     </section>
   );

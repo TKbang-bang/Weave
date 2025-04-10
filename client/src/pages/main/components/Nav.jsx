@@ -4,7 +4,7 @@ import {
   GearIcon,
   HomeIcon,
   PlusIcon,
-  Saved,
+  SavedIconfill,
   UserIcon,
 } from "../../../components/svg";
 
@@ -38,8 +38,8 @@ function Nav() {
         </li>
 
         <li>
-          <NavLink to={"/saved"}>
-            <Saved />
+          <NavLink to={"/savedposts"}>
+            <SavedIconfill />
             <p>Saved</p>
           </NavLink>
         </li>

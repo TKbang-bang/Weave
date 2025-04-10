@@ -10,19 +10,21 @@ const getAllPosts = async (userId) => {
         COUNT(DISTINCT f.follow_id) AS followed,
         COUNT(DISTINCT l1.like_id) AS likes,
         COUNT(DISTINCT l2.like_id) AS liked,
-        COUNT(DISTINCT c.comment_id) AS comments
+        COUNT(DISTINCT c.comment_id) AS comments,
+        COUNT(DISTINCT s.saved_id) AS saved
       FROM posts p
       JOIN users u ON u.user_id = p.user_id
       LEFT JOIN follows f ON f.from_user_id = ? AND f.to_user_id = u.user_id
       LEFT JOIN likes l1 ON l1.post_id = p.post_id
       LEFT JOIN likes l2 ON l2.user_id = ? AND l2.post_id = p.post_id
       LEFT JOIN comments c ON c.post_id = p.post_id
+      LEFT JOIN saved s ON s.user_id = ? AND s.post_id = p.post_id
       GROUP BY p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, 
       p.user_id, u.user_name, u.user_alias, u.user_profile
       ORDER BY p.post_date DESC
   `;
 
-    const [posts] = await db.query(sql, [userId, userId]);
+    const [posts] = await db.query(sql, [userId, userId, userId]);
 
     const dateFormat = "yyyy-MM-dd HH:mm:ss";
     const today = new Date();
@@ -49,20 +51,22 @@ const getAllFollowingPosts = async (userId) => {
         COUNT(DISTINCT f.follow_id) AS followed,
         COUNT(DISTINCT l1.like_id) AS likes,
         COUNT(DISTINCT l2.like_id) AS liked,
-        COUNT(DISTINCT c.comment_id) AS comments
+        COUNT(DISTINCT c.comment_id) AS comments,
+        COUNT(DISTINCT s.saved_id) AS saved
       FROM posts p
       JOIN users u ON u.user_id = p.user_id
       LEFT JOIN follows f ON f.from_user_id = ? AND f.to_user_id = u.user_id
       LEFT JOIN likes l1 ON l1.post_id = p.post_id
       LEFT JOIN likes l2 ON l2.user_id = ? AND l2.post_id = p.post_id
       LEFT JOIN comments c ON c.post_id = p.post_id
+      LEFT JOIN saved s ON s.user_id = ? AND s.post_id = p.post_id
       WHERE from_user_id = ?
       GROUP BY p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, 
       p.user_id, u.user_name, u.user_alias, u.user_profile
       ORDER BY p.post_date DESC
   `;
 
-    const [posts] = await db.query(sql, [userId, userId, userId]);
+    const [posts] = await db.query(sql, [userId, userId, userId, userId]);
 
     const dateFormat = "yyyy-MM-dd HH:mm:ss";
     const today = new Date();
@@ -88,20 +92,22 @@ const getPostById = async (userId, postId) => {
         COUNT(DISTINCT f.follow_id) AS followed,
         COUNT(DISTINCT l1.like_id) AS likes,
         COUNT(DISTINCT l2.like_id) AS liked,
-        COUNT(DISTINCT c.comment_id) AS comments
+        COUNT(DISTINCT c.comment_id) AS comments,
+        COUNT(DISTINCT s.saved_id) AS saved
       FROM posts p
       JOIN users u ON u.user_id = p.user_id
       LEFT JOIN follows f ON f.from_user_id = ? AND f.to_user_id = u.user_id
       LEFT JOIN likes l1 ON l1.post_id = p.post_id
       LEFT JOIN likes l2 ON l2.user_id = ? AND l2.post_id = p.post_id
       LEFT JOIN comments c ON c.post_id = p.post_id
+      LEFT JOIN saved s ON s.user_id = ? AND s.post_id = p.post_id
       WHERE p.post_id = ?
       GROUP BY p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, 
       p.user_id, u.user_name, u.user_alias, u.user_profile
       ORDER BY p.post_date DESC
   `;
 
-  const [posts] = await db.query(sql, [userId, userId, postId]);
+  const [posts] = await db.query(sql, [userId, userId, userId, postId]);
   if (posts.length == 0) return null;
 
   const dateFormat = "yyyy-MM-dd HH:mm:ss";
@@ -136,19 +142,21 @@ const getUserPosts = async (myId, userId) => {
       COUNT(DISTINCT f.follow_id) AS followed,
       COUNT(DISTINCT l1.like_id) AS likes,
       COUNT(DISTINCT l2.like_id) AS liked,
-      COUNT(DISTINCT c.comment_id) AS comments
+      COUNT(DISTINCT c.comment_id) AS comments,
+      COUNT(DISTINCT s.saved_id) AS saved
     FROM posts p
     JOIN users u ON u.user_id = p.user_id
     LEFT JOIN follows f ON f.from_user_id = ? AND f.to_user_id = u.user_id
     LEFT JOIN likes l1 ON l1.post_id = p.post_id
     LEFT JOIN likes l2 ON l2.user_id = ? AND l2.post_id = p.post_id
     LEFT JOIN comments c ON c.post_id = p.post_id
+    LEFT JOIN saved s ON s.user_id = ? AND s.post_id = p.post_id
     WHERE p.user_id = ?
     GROUP BY p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, 
       p.user_id, u.user_name, u.user_alias, u.user_profile
     ORDER BY p.post_date DESC;
   `;
-    const [posts] = await db.query(sql, [myId, myId, userId]);
+    const [posts] = await db.query(sql, [myId, myId, myId, userId]);
 
     const dateFormat = "yyyy-MM-dd HH:mm:ss";
     const today = new Date();
@@ -164,10 +172,50 @@ const getUserPosts = async (myId, userId) => {
   }
 };
 
+const savedPosts = async (userId) => {
+  try {
+    const sql = `
+    SELECT 
+      p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date,  
+      p.user_id, u.user_name, u.user_alias, u.user_profile,
+      COUNT(DISTINCT f.follow_id) AS followed,
+      COUNT(DISTINCT l1.like_id) AS likes,
+      COUNT(DISTINCT l2.like_id) AS liked,
+      COUNT(DISTINCT c.comment_id) AS comments,
+      COUNT(DISTINCT s.saved_id) AS saved
+    FROM posts p
+    JOIN users u ON u.user_id = p.user_id
+    LEFT JOIN follows f ON f.from_user_id = ? AND f.to_user_id = u.user_id
+    LEFT JOIN likes l1 ON l1.post_id = p.post_id
+    LEFT JOIN likes l2 ON l2.user_id = ? AND l2.post_id = p.post_id
+    LEFT JOIN comments c ON c.post_id = p.post_id
+    LEFT JOIN saved s ON s.user_id = ? AND s.post_id = p.post_id
+    WHERE s.user_id = ?
+    GROUP BY p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, 
+      p.user_id, u.user_name, u.user_alias, u.user_profile
+    ORDER BY p.post_date DESC;
+  `;
+    const [posts] = await db.query(sql, [userId, userId, userId, userId]);
+
+    const dateFormat = "yyyy-MM-dd HH:mm:ss";
+    const today = new Date();
+
+    return posts.map((post) => ({
+      ...post,
+      since_date: myDate(post.post_date, today, dateFormat),
+      me: post.user_id == userId,
+      comment_section: false,
+    }));
+  } catch (error) {
+    throw new Error("Database has failde", error);
+  }
+};
+
 module.exports = {
   getAllPosts,
   getPostById,
   getCommentsByPostId,
   getUserPosts,
   getAllFollowingPosts,
+  savedPosts,
 };

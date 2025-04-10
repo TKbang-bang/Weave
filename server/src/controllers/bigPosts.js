@@ -1,4 +1,8 @@
-const { getAllPosts } = require("../services/router.services/bigPostsServices");
+const {
+  getAllPosts,
+  getPostById,
+  savedPosts,
+} = require("../services/router.services/bigPostsServices");
 const ServerError = require("../error/errorClass");
 
 const getPosts = async (req, res, next) => {
@@ -45,4 +49,22 @@ const getPostsById = async (req, res, next) => {
   }
 };
 
-module.exports = { getPosts, getFollowingPosts, getPostsById };
+const gettingSavedPosts = async (req, res, next) => {
+  try {
+    // GETTING ALL POSTS
+    const posts = await savedPosts(req.session.userID);
+
+    if (!posts) return next(new ServerError("Posts not found", "post", 404));
+
+    res.status(200).json({ ok: true, posts });
+  } catch (error) {
+    return next(new ServerError(error.message, "server", 500));
+  }
+};
+
+module.exports = {
+  getPosts,
+  getFollowingPosts,
+  getPostsById,
+  gettingSavedPosts,
+};

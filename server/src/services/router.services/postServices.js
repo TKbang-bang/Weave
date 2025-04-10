@@ -37,6 +37,7 @@ const deletePost = async (postId) => {
     await db.query("DELETE FROM likes WHERE post_id = ?", [postId]);
     await db.query("DELETE FROM comments WHERE post_id = ?", [postId]);
     await db.query("DELETE FROM posts WHERE post_id = ?", [postId]);
+    await db.query("DELETE FROM saved WHERE post_id = ?", [postId]);
 
     await db.commit();
 
@@ -47,16 +48,30 @@ const deletePost = async (postId) => {
   }
 };
 
-const gettingComments = async (req, res, next) => {
+const savePost = async (userId, postId) => {
   try {
-    // POST ID
-    const { post_id } = req.params;
+    // CHECKING IF THE POST IS ALREADY SAVED
+    const [saved] = await db.query(
+      "SELECT * FROM saved WHERE user_id = ? AND post_id = ?",
+      [userId, postId]
+    );
 
-    // GETTING THE COMMENTS
-    const comments = await getCommentsByPostId(post_id);
-    res.status(200).json({ ok: true, comments });
+    if (saved.length > 0) {
+      await db.query("DELETE FROM saved WHERE user_id = ? AND post_id = ?", [
+        userId,
+        postId,
+      ]);
+      return { ok: true, saved: false, message: "Post unsaved successfully" };
+    }
+
+    await db.query(
+      "INSERT INTO saved (saved_id, user_id, post_id) VALUES (?, ?, ?)",
+      [crypto.randomUUID(), userId, postId]
+    );
+
+    return { ok: true, saved: true, message: "Post saved successfully" };
   } catch (error) {
-    return next(new ServerError(error.message, "server", "server", 500));
+    throw new Error(error);
   }
 };
 
@@ -65,5 +80,5 @@ module.exports = {
   postOwner,
   postUpdate,
   deletePost,
-  gettingComments,
+  savePost,
 };

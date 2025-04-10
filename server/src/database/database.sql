@@ -51,3 +51,11 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY (from_user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (to_user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS saved (
+    saved_id VARCHAR(255) NOT NULL PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL,
+    post_id VARCHAR(255) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE
+);

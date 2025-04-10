@@ -3,14 +3,17 @@ import {
   CommentIcon,
   Heart,
   Options,
-  Saved,
+  SavedIcon,
+  SavedIconfill,
   UnHeart,
 } from "../../../components/svg";
 import { Link } from "react-router-dom";
 import {
   deletePost,
   editingTitle,
+  followConfig,
   likingPost,
+  savingPost,
 } from "../../../services/activities";
 import { Toaster, toast } from "sonner";
 
@@ -20,6 +23,8 @@ function Post({ post, post_id, del, err, sucs }) {
   const [liked, setLiked] = useState(post.liked == 1 ? true : false);
   const [likes, setLikes] = useState(post.likes);
   const [showOptions, setShowOptions] = useState(false);
+  const [following, setFollowing] = useState(post.followed == 1 ? true : false);
+  const [saved, setSaved] = useState(post.saved == 1 ? true : false);
 
   const handleEdit = async (e) => {
     e.preventDefault();
@@ -53,8 +58,6 @@ function Post({ post, post_id, del, err, sucs }) {
         setLiked(false);
         setLikes(likes - 1);
       }
-
-      //   console.log(res);
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -69,6 +72,43 @@ function Post({ post, post_id, del, err, sucs }) {
       del(post.post_id);
 
       setShowOptions(false);
+      toast.success("Post deleted");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const handleFollow = async () => {
+    try {
+      const res = await followConfig(post.user_id);
+
+      if (!res.data.ok) throw new Error(res);
+
+      if (res.data.followed) {
+        post.followed = 1;
+        setFollowing(true);
+      } else {
+        post.followed = 0;
+        setFollowing(false);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      const res = await savingPost(post.post_id);
+
+      if (!res.data.ok) throw new Error(res);
+
+      if (res.data.saved) {
+        post.saved = 1;
+        setSaved(true);
+      } else {
+        post.saved = 0;
+        setSaved(false);
+      }
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -110,9 +150,17 @@ function Post({ post, post_id, del, err, sucs }) {
             )}
           </>
         ) : (
-          <button className="follow">
-            {post.followed ? "Unfollow" : "Follow"}
-          </button>
+          <>
+            {following ? (
+              <button className="unfollow" onClick={handleFollow}>
+                Unfollow
+              </button>
+            ) : (
+              <button className="follow" onClick={handleFollow}>
+                follow
+              </button>
+            )}
+          </>
         )}
 
         {!edit && showOptions && (
@@ -204,10 +252,15 @@ function Post({ post, post_id, del, err, sucs }) {
         </div>
 
         <div className="saved">
-          <span>
-            <Saved />
-          </span>
-          {/* <p>Saved</p> */}
+          {saved ? (
+            <span className="saved" onClick={handleSave}>
+              <SavedIconfill />
+            </span>
+          ) : (
+            <span className="unsaved" onClick={handleSave}>
+              <SavedIcon />
+            </span>
+          )}
         </div>
       </div>
 

@@ -71,6 +71,7 @@ function Signup() {
             type="text"
             placeholder=" "
             value={alias}
+            onKeyDown={(e) => e.key === " " && e.preventDefault()}
             onChange={(e) => setAlias(e.target.value)}
             maxLength={15}
             required

@@ -1,27 +1,6 @@
 const express = require("express");
 const upload = require("../configs/multer");
-const { getUserById } = require("../services/router.services/userServices");
 const {
-  postOwner,
-  postUpdate,
-  deletePost,
-  gettingComments,
-} = require("../services/router.services/postServices");
-const {
-  getUserPosts,
-} = require("../services/router.services/bigPostsServices");
-const {
-  isFollowing,
-  unFollowUser,
-  followUser,
-} = require("../services/router.services/followServices");
-const {
-  hasLiked,
-  unLike,
-  like,
-} = require("../services/router.services/likesServices");
-const {
-  changeProfilePicture,
   changeUserName,
   changeUserEmail,
   emailUpdate,
@@ -40,187 +19,69 @@ const ServerError = require("../error/errorClass");
 const { signup, verify, login, userIsLogged } = require("../controllers/auth");
 const {
   getPosts,
-  getFollowingPosts,
   getPostsById,
+  gettingSavedPosts,
 } = require("../controllers/bigPosts");
-const { posting } = require("../controllers/posts");
-const { editTitle, likingPost } = require("../controllers/activities");
-const { getUserId } = require("../controllers/user");
+const {
+  posting,
+  gettingMyUserPosts,
+  gettingComments,
+  gettingUserPosts,
+} = require("../controllers/posts");
+const {
+  editTitle,
+  likingPost,
+  deletingPost,
+  following,
+  savingPost,
+} = require("../controllers/activities");
+const {
+  getUserId,
+  getUserCredentials,
+  gettingUserById,
+} = require("../controllers/user");
+const {
+  changingUserProfilePicture,
+  deletingProfilePicture,
+} = require("../controllers/updates");
 
 const router = express.Router();
 
-//
-// VERIFYING IF THE USER IS LOGGED -- START
+// AUTH CONTROLLERS
 router.get("/user_is_logged", userIsLogged);
-// VERIFYING IF THE USER IS LOGGED -- END
-//
-
-//
-// AUTH -- START
 router.post("/signup", signup);
-
-// VERIFYING THE CODE
 router.post("/verify", verify);
-
 router.post("/login", login);
-// AUTH -- END
-//
 
-//
-// POSTS ACTIVITIES -- START
-// PUBLICATING A POST
+// POSTS CONTROLLERS
 router.post("/publicate", upload.single("file"), posting);
-
-// GETTING ALL POSTS
 router.get("/posts", getPosts);
-
-router.get("/following_posts", getFollowingPosts);
-
 router.get("/comments/:post_id", gettingComments);
-
-// GETTING A POST BY ID
 router.get("/post/:post_id", getPostsById);
+router.get("/user_posts", gettingMyUserPosts);
+router.get("/user_posts_/:user_id", gettingUserPosts);
+router.get("/saved_posts", gettingSavedPosts);
 
-// GETTING MY POSTS
-router.get("/user_posts", async (req, res, next) => {
-  try {
-    // GETTING USER POSTS
-    const posts = await getUserPosts(req.session.userID, req.session.userID);
-    res.json({ ok: true, posts });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
-
-// GETTING A USER POSTS
-router.get("/user_posts_/:user_id", async (req, res, next) => {
-  try {
-    // USER ID
-    const { user_id } = req.params;
-
-    // GETTING USER POSTS
-    const posts = await getUserPosts(req.session.userID, user_id);
-    res.status(200).json({ ok: true, posts });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
-
-// DELETING A POST
-router.delete("/delete_post/:post_id", async (req, res, next) => {
-  try {
-    // POST ID
-    const { post_id } = req.params;
-
-    // DELETING THE POST
-    await deletePost(post_id);
-    res.status(201).json({ ok: true, message: "Post deleted" });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
-// POSTS ACTIVITIES -- END
-//
-
-//
-// USER ACTIVITIES -- START
-// FOLLOW CONTROLLER
-router.post("/follow", async (req, res, next) => {
-  try {
-    // USER ID
-    const { user_id } = req.body;
-
-    // CHECKING IF THE USER IS ALREADY FOLLOWING
-    const following = await isFollowing(req.session.userID, user_id);
-
-    if (!following) {
-      // FOLLOWING THE USER
-      await followUser(req.session.userID, user_id);
-      res.status(200).json({ ok: true, followed: true });
-    } else {
-      // UNFOLLOWING THE USER
-      await unFollowUser(req.session.userID, user_id);
-      res.status(200).json({ ok: true, followed: false });
-    }
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
-
-// EDITING A POST
+// USER ACTIVITIES CONTROLLERS
+router.delete("/delete_post/:post_id", deletingPost);
+router.post("/follow", following);
 router.put("/edit_post/:post_id", editTitle);
-
-// LIKE CONTROLLER
 router.post("/like", likingPost);
-// USER ACTIVITIES -- END
-//
-
-//
-// GETTING USER CREDENTIALS -- START
-// GETTING USER ID
 router.get("/user_id", getUserId);
+router.post("/save", savingPost);
 
-// GETTING USER
-router.get("/user", async (req, res, next) => {
-  try {
-    // GETTING USER
-    const user = await getUserById(req.session.userID, req.session.userID);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+// GETTING USER CREDENTIALS CONTROLLERS
+router.get("/user", getUserCredentials);
+router.get("/user_/:user_id", gettingUserById);
 
-    res.status(200).json({ ok: true, user });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
-
-// GETTING USER BY ID
-router.get("/user_/:user_id", async (req, res, next) => {
-  try {
-    // USER ID
-    const { user_id } = req.params;
-
-    // GETTING USER
-    const user = await getUserById(req.session.userID, user_id);
-    if (!user) {
-      return res.status(404).json({ ok: false, message: "User not found" });
-    }
-
-    res.status(200).json({ ok: true, user });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
-// GETTING USER CREDENTIALS -- END
-//
-
-//
-// USER SETTINGS -- START
-// CHANGING THE PROFILE PICTURE
+// ACCOUNT SETTINGS CONTROLLERS
 router.post(
   "/change_profile_picture",
   upload.single("file"),
-  async (req, res, next) => {
-    try {
-      // GETTING THE FILE
-      const { filename } = req.file;
-
-      // CHANGING THE PROFILE PICTURE
-      const profileUpdate = await changeProfilePicture(
-        filename,
-        req.session.userID
-      );
-      if (!profileUpdate) {
-        return next(new ServerError("Something went wrong", 500));
-      }
-
-      res.status(200).json({ ok: true, message: "Profile picture updated" });
-    } catch (error) {
-      return next(new ServerError(error.message, 500));
-    }
-  }
+  changingUserProfilePicture
 );
+
+router.delete("/delete_profile_picture", deletingProfilePicture);
 
 // CHANGING THE NAME
 router.post("/change_name", async (req, res, next) => {

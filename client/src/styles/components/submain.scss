@@ -28,5 +28,19 @@
       border-radius: 5px;
       border: 2px solid transparent;
     }
+
+    &.saved_posts {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding-inline: 2rem;
+
+      & > .title {
+        font-size: 2rem;
+        align-self: flex-start;
+      }
+    }
   }
 }

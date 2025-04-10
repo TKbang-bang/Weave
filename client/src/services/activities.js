@@ -19,3 +19,13 @@ export const deletePost = async (post_id) => {
   const res = await axios.delete("/delete_post/" + post_id);
   return res;
 };
+
+export const followConfig = async (user_id) => {
+  const res = await axios.post("/follow", { user_id });
+  return res;
+};
+
+export const savingPost = async (post_id) => {
+  const res = await axios.post("/save", { post_id });
+  return res;
+};

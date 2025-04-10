@@ -7,6 +7,7 @@ import { Toaster, toast } from "sonner";
 import { getUserId } from "../../../services/usersServices";
 import io from "socket.io-client";
 import { gettingComments } from "../../../services/activities";
+import { Link } from "react-router-dom";
 
 const socket = io("http://localhost:3000");
 
@@ -86,45 +87,60 @@ function Posts({ to }) {
 
   return (
     <section className="posts">
-      {posts.map((post) => (
-        <Post
-          key={post.post_id}
-          post={post}
-          post_id={(id) => handlePostId(id)}
-          del={(id) =>
-            setPosts((prev) => prev.filter((post) => post.post_id != id))
-          }
-          err={(errTxt) => toast.error(errTxt)}
-          sucs={(sucsTxt) => toast.success(sucsTxt)}
-        />
-      ))}
-
-      <article className="comments_section hide">
-        <div className="coments_container">
-          <button
-            className="close"
-            onClick={() =>
-              document.querySelector(".comments_section").classList.add("hide")
-            }
-          >
-            <CloseIcon />
-          </button>
-
-          <Comments comments={allComments} />
-
-          <form onSubmit={handleCommenting}>
-            <input
-              type="text"
-              placeholder="Comment..."
-              onChange={(e) => setCommentValue(e.target.value)}
-              value={commentValue}
+      {posts.length > 0 ? (
+        <>
+          {posts.map((post) => (
+            <Post
+              key={post.post_id}
+              post={post}
+              post_id={(id) => handlePostId(id)}
+              del={(id) =>
+                setPosts((prev) => prev.filter((post) => post.post_id != id))
+              }
+              err={(errTxt) => toast.error(errTxt)}
+              sucs={(sucsTxt) => toast.success(sucsTxt)}
             />
-            <button type="submit">
-              <SendIcon />
-            </button>
-          </form>
-        </div>
-      </article>
+          ))}
+
+          <article className="comments_section hide">
+            <div className="coments_container">
+              <button
+                className="close"
+                onClick={() => (
+                  document
+                    .querySelector(".comments_section")
+                    .classList.add("hide"),
+                  setPostId(""),
+                  setAllComments([]),
+                  setCommentValue("")
+                )}
+              >
+                <CloseIcon />
+              </button>
+
+              <Comments comments={allComments} />
+
+              <form onSubmit={handleCommenting}>
+                <input
+                  type="text"
+                  placeholder="Comment..."
+                  onChange={(e) => setCommentValue(e.target.value)}
+                  value={commentValue}
+                />
+                <button type="submit">
+                  <SendIcon />
+                </button>
+              </form>
+            </div>
+          </article>
+        </>
+      ) : (
+        <section className="no_posts">
+          <h1>No posts yet</h1>
+          <p>Make the first move</p>
+          <Link to={"/publicate"}>Publicate</Link>
+        </section>
+      )}
 
       <Toaster position="top-center" richColors />
     </section>

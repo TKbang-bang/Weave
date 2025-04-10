@@ -163,6 +163,25 @@ const changePassCode = async (email, password) => {
   }
 };
 
+const profilePictureDelete = async (userId) => {
+  try {
+    const [deleteUser] = await db.query(
+      `UPDATE users
+      SET user_profile = NULL
+      WHERE user_id = ?`,
+      [userId]
+    );
+
+    if (!deleteUser.affectedRows > 0)
+      return { ok: false, message: "User not found", status: 404 };
+
+    return { ok: true };
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }
+};
+
 module.exports = {
   changeProfilePicture,
   changeUserName,
@@ -171,4 +190,5 @@ module.exports = {
   changeUserPasswod,
   sendChangePassCode,
   changePassCode,
+  profilePictureDelete,
 };
