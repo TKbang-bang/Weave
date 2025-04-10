@@ -1,0 +1,124 @@
+@use "../base/variables" as *;
+
+.updates_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+  padding-block: 2rem;
+  width: 100%;
+
+  & .back {
+    position: absolute;
+    left: 2rem;
+    top: 2rem;
+    padding: 0.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: $white;
+    display: block;
+    border: none;
+    cursor: pointer;
+
+    & svg {
+      width: 100%;
+      height: 100%;
+      fill: $primary;
+    }
+  }
+
+  & form {
+    background: $white;
+    width: 35rem;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 4rem 2rem;
+
+    & .title {
+      align-self: flex-start;
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+    }
+
+    & .field_container {
+      width: 20rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+
+      &:has(input:focus) label,
+      &:has(input:not(:placeholder-shown)) label {
+        color: $primary;
+        font-size: 0.8rem;
+        bottom: 2rem;
+      }
+
+      & input {
+        width: 20rem;
+        height: 2.5rem;
+        padding-left: 0.5rem;
+        font-size: 1rem;
+        border: none;
+        outline: none;
+        background: none;
+        border-bottom: 1px solid #000;
+
+        &:focus {
+          border-bottom: 2px solid $primary;
+        }
+      }
+
+      & label {
+        position: absolute;
+        left: 0.5rem;
+        bottom: 0.5rem;
+        font-size: 1rem;
+        transition: ease-in-out 0.3s;
+        color: rgba($black, 0.5);
+      }
+
+      & span {
+        position: absolute;
+        right: 0.5rem;
+        bottom: 0.5rem;
+        font-size: 1rem;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: fit-content;
+        height: fit-content;
+        cursor: pointer;
+
+        & svg {
+          width: 1.5rem;
+          height: 1.5rem;
+        }
+      }
+    }
+
+    & .btn {
+      width: 20rem;
+      height: 2.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+      border: none;
+      outline: none;
+      background: $primary;
+      color: $white;
+      border-radius: 0.2rem;
+    }
+  }
+}

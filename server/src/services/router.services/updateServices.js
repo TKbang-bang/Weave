@@ -13,7 +13,7 @@ const changeProfilePicture = async (filename, userID) => {
   }
 };
 
-const changeUserName = async (name, lastname, password, userId) => {
+const changeUserName = async (name, password, userId) => {
   try {
     const userPassword = "SELECT user_password FROM users WHERE user_id = ?";
 
@@ -30,9 +30,8 @@ const changeUserName = async (name, lastname, password, userId) => {
     if (!isMatch)
       return { ok: false, message: "Incorrect password", status: 400 };
 
-    const sql =
-      "UPDATE users SET user_name = ?, user_lastname = ? WHERE user_id = ?";
-    const [result] = await db.query(sql, [name, lastname, userId]);
+    const sql = "UPDATE users SET user_name = ? WHERE user_id = ?";
+    const [result] = await db.query(sql, [name, userId]);
 
     return result.affectedRows > 0
       ? { ok: true }

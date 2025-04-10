@@ -1,0 +1,58 @@
+@use "../base/variables" as *;
+
+.settings_container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  padding-block: 2rem;
+
+  & .settings {
+    background: $white;
+    border-radius: 0.2rem;
+    padding: 2rem;
+    width: 30rem;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1rem;
+
+    & > h1 {
+      font-size: 2rem;
+    }
+
+    & article {
+      width: 100%;
+      & ul {
+        width: 100%;
+        margin-left: 0.5rem;
+        // border: 1px solid #000;
+        list-style: none;
+
+        & li {
+          width: 100%;
+          & a,
+          & button {
+            text-decoration: none;
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            height: 3rem;
+            padding-left: 0.5rem;
+            font-size: 1rem;
+            transition: ease-in-out 0.2s;
+            border: none;
+            background: none;
+            color: $black;
+
+            &:hover {
+              background: rgba($secondary, 0.2);
+            }
+          }
+        }
+      }
+    }
+  }
+}

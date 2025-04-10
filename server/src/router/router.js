@@ -1,7 +1,6 @@
 const express = require("express");
 const upload = require("../configs/multer");
 const {
-  changeUserName,
   changeUserEmail,
   emailUpdate,
   changeUserPasswod,
@@ -43,6 +42,7 @@ const {
 const {
   changingUserProfilePicture,
   deletingProfilePicture,
+  changingName,
 } = require("../controllers/updates");
 
 const router = express.Router();
@@ -80,31 +80,8 @@ router.post(
   upload.single("file"),
   changingUserProfilePicture
 );
-
 router.delete("/delete_profile_picture", deletingProfilePicture);
-
-// CHANGING THE NAME
-router.post("/change_name", async (req, res, next) => {
-  try {
-    // USER DATA
-    const { name, lastname, password } = req.body;
-
-    // CHANGING THE NAME
-    const changeName = await changeUserName(
-      name,
-      lastname,
-      password,
-      req.session.userID
-    );
-
-    if (!changeName.ok)
-      return next(new ServerError(changeName.message, changeName.status));
-
-    res.status(200).json({ ok: true, message: "Name changed" });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
+router.post("/change_name", changingName);
 
 // CHANGING THE EMAIL
 router.post("/change_email", async (req, res, next) => {

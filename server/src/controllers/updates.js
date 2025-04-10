@@ -2,6 +2,7 @@ const ServerError = require("../error/errorClass");
 const {
   changeProfilePicture,
   profilePictureDelete,
+  changeUserName,
 } = require("../services/router.services/updateServices");
 
 const changingUserProfilePicture = async (req, res, next) => {
@@ -42,4 +43,27 @@ const deletingProfilePicture = async (req, res, next) => {
   }
 };
 
-module.exports = { changingUserProfilePicture, deletingProfilePicture };
+const changingName = async (req, res, next) => {
+  try {
+    // USER DATA
+    const { name, password } = req.body;
+
+    // CHANGING THE NAME
+    const changeName = await changeUserName(name, password, req.session.userID);
+
+    if (!changeName.ok)
+      return next(
+        new ServerError(changeName.message, "name changing", changeName.status)
+      );
+
+    res.status(200).json({ ok: true, message: "Name changed" });
+  } catch (error) {
+    return next(new ServerError(error.message, 500));
+  }
+};
+
+module.exports = {
+  changingUserProfilePicture,
+  deletingProfilePicture,
+  changingName,
+};

@@ -6,6 +6,8 @@ import Publicate from "../Publicate";
 import MyProfile from "../../MyProfile";
 import EditProfile from "../../EditProfile";
 import SavedPosts from "../../SavedPosts";
+import Settings from "../../Settings";
+import ChangeName from "../../updates/ChangeName";
 
 function SubMain() {
   return (
@@ -16,6 +18,8 @@ function SubMain() {
         <Route path="/myprofile" element={<MyProfile />} />
         <Route path="/editprofile" element={<EditProfile />} />
         <Route path="/savedposts" element={<SavedPosts />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/settings/changename" element={<ChangeName />} />
       </Routes>
     </section>
   );
