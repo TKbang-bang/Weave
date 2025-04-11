@@ -5,6 +5,8 @@ const {
   changeUserName,
   changeUserAlias,
   changeUserPasswod,
+  changeUserEmail,
+  emailUpdate,
 } = require("../services/router.services/updateServices");
 
 const changingUserProfilePicture = async (req, res, next) => {
@@ -118,10 +120,70 @@ const changingPassword = async (req, res, next) => {
   }
 };
 
+const ChangingEmail = async (req, res, next) => {
+  try {
+    // USER DATA
+    const { email, password } = req.body;
+
+    // CHANGING THE EMAIL
+    const changeEmail = await changeUserEmail(
+      email,
+      password,
+      req.session.userID
+    );
+
+    if (!changeEmail.ok)
+      return next(
+        new ServerError(
+          changeEmail.message,
+          "email changing",
+          changeEmail.status
+        )
+      );
+
+    // CREATING EMAIL AND CODE VARIABLES IN THE SESSION
+    req.session.user_email = email;
+    req.session.code = changeEmail.code;
+
+    // DELETING THE CODE FROM THE SESSION AFTER 3 MINS
+    setTimeout(() => {
+      delete req.session.code;
+      delete req.session.user_email;
+      req.session.save();
+    }, 180000);
+
+    res.json({ ok: true, message: "A code has been sent to your new email" });
+  } catch (error) {
+    return next(new ServerError(error.message, "server", 500));
+  }
+};
+
+const sendingEmailChangeCode = async (req, res, next) => {
+  try {
+    // VERIFYING THE CODE
+    if (!req.session.code)
+      return next(new ServerError("Code may expired", "code", 400));
+
+    if (req.session.code != req.body.code)
+      return next(new ServerError("The code is incorrect", "code", 400));
+
+    // TAKING THE USER DATA FROM THE TEMPORARY SESSION VARIABLE
+    const { user_email } = req.session;
+    // UPDATING THE EMAIL
+    await emailUpdate(user_email, req.session.userID);
+
+    res.status(201).json({ ok: true, message: "Email updated" });
+  } catch (error) {
+    return next(new ServerError(error.message, "server", 500));
+  }
+};
+
 module.exports = {
   changingUserProfilePicture,
   deletingProfilePicture,
   changingName,
   changingAlias,
   changingPassword,
+  ChangingEmail,
+  sendingEmailChangeCode,
 };

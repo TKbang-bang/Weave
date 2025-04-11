@@ -14,3 +14,13 @@ export const loginData = async (email, password) => {
   const res = await axios.post("/login", { email, password });
   return res;
 };
+
+export const loginOut = async () => {
+  const res = await axios.get("/logout");
+  return res;
+};
+
+export const deleteAccount = async () => {
+  const res = await axios.delete("/delete_account");
+  return res;
+};

@@ -1,8 +1,6 @@
 const express = require("express");
 const upload = require("../configs/multer");
 const {
-  changeUserEmail,
-  emailUpdate,
   changePassCode,
   sendChangePassCode,
 } = require("../services/router.services/updateServices");
@@ -14,7 +12,13 @@ const {
   postsSearch,
 } = require("../services/router.services/searchServices");
 const ServerError = require("../error/errorClass");
-const { signup, verify, login, userIsLogged } = require("../controllers/auth");
+const {
+  signup,
+  verify,
+  login,
+  userIsLogged,
+  deletingAccount,
+} = require("../controllers/auth");
 const {
   getPosts,
   getPostsById,
@@ -44,6 +48,8 @@ const {
   changingName,
   changingAlias,
   changingPassword,
+  ChangingEmail,
+  sendingEmailChangeCode,
 } = require("../controllers/updates");
 
 const router = express.Router();
@@ -53,6 +59,11 @@ router.get("/user_is_logged", userIsLogged);
 router.post("/signup", signup);
 router.post("/verify", verify);
 router.post("/login", login);
+router.get("/logout", (req, res) => {
+  req.session.destroy();
+  res.status(201).json({ ok: true, message: "Loged out successful" });
+});
+router.delete("/delete_account", deletingAccount);
 
 // POSTS CONTROLLERS
 router.post("/publicate", upload.single("file"), posting);
@@ -85,60 +96,8 @@ router.delete("/delete_profile_picture", deletingProfilePicture);
 router.post("/change_name", changingName);
 router.post("/change_alias", changingAlias);
 router.post("/change_password", changingPassword);
-
-// CHANGING THE EMAIL
-router.post("/change_email", async (req, res, next) => {
-  try {
-    // USER DATA
-    const { email, password } = req.body;
-
-    // CHANGING THE EMAIL
-    const changeEmail = await changeUserEmail(
-      email,
-      password,
-      req.session.userID
-    );
-
-    if (!changeEmail.ok)
-      return next(new ServerError(changeEmail.message, changeEmail.status));
-
-    // CREATING EMAIL AND CODE VARIABLES IN THE SESSION
-    req.session.user_email = email;
-    req.session.code = changeEmail.code;
-
-    // DELETING THE CODE FROM THE SESSION AFTER 3 MINS
-    setTimeout(() => {
-      delete req.session.code;
-      delete req.session.user_email;
-      req.session.save();
-    }, 180000);
-
-    res.json({ ok: true, message: "Code sent to your new email" });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
-
-// CHANGING THE EMAIL AND VERIFYING THE CODE
-router.post("/change_email_code", async (req, res, next) => {
-  try {
-    // VERIFYING THE CODE
-    if (!req.session.code)
-      return next(new ServerError("Code may expired", 400));
-
-    if (req.session.code != req.body.code)
-      return next(new ServerError("The code is incorrect", 400));
-
-    // TAKING THE USER DATA FROM THE TEMPORARY SESSION VARIABLE
-    const { user_email } = req.session;
-    // UPDATING THE EMAIL
-    await emailUpdate(user_email, req.session.userID);
-
-    res.status(201).json({ ok: true, message: "Email updated" });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
+router.post("/change_email", ChangingEmail);
+router.post("/change_email_code", sendingEmailChangeCode);
 
 // CHANGING THE PASSWORD
 
@@ -215,28 +174,9 @@ router.post("/code_password", async (req, res, next) => {
 //
 // ACCOUNT SETTINGS -- START
 // LOGIN OUT
-router.post("/logout", (req, res) => {
-  // DESTROYING THE SESSION
-  req.session.destroy();
-  res.status(201).json({ ok: true, message: "Logout successful" });
-});
 
 // DELETE ACCOUNT
-router.delete("/delete_account", async (req, res, next) => {
-  try {
-    // MY USER ID
-    const userId = req.session.userID;
 
-    // DELETING THE ACCOUNT
-    const accountDeleted = await deleteUserAccount(userId);
-
-    // DESTROYING THE SESSION
-    req.session.destroy();
-    res.status(201).json({ ok: true, message: accountDeleted.message });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
 // ACCOUNT SETTINGS -- END
 //
 

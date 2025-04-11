@@ -119,9 +119,11 @@ function Signup() {
       </article>
 
       {loading ? (
-        <button className="btn loading" onClick={() => e.preventDefault()}>
-          Loading
-        </button>
+        <div className="loading">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       ) : (
         <button type="submit" className="btn">
           Sign up

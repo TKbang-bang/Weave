@@ -40,3 +40,17 @@ export const ChangingPassword = async (password, newPassword) => {
 
   return res;
 };
+
+export const changingEmail = async (email, password) => {
+  const res = await axios.post("/change_email", {
+    email,
+    password,
+  });
+
+  return res;
+};
+
+export const sendingChangeEmailCode = async (code) => {
+  const res = await axios.post("/change_email_code", { code });
+  return res;
+};

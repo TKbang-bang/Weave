@@ -1,5 +1,8 @@
 const ServerError = require("../error/errorClass");
-const { emialSend } = require("../services/router.services/accountServices");
+const {
+  emialSend,
+  deleteUserAccount,
+} = require("../services/router.services/accountServices");
 const {
   getUserByEmail,
   createUser,
@@ -124,4 +127,25 @@ const login = async (req, res, next) => {
   }
 };
 
-module.exports = { signup, verify, login, userIsLogged };
+const deletingAccount = async (req, res, next) => {
+  try {
+    // MY USER ID
+    const userId = req.session.userID;
+
+    // DELETING THE ACCOUNT
+    const accountDeleted = await deleteUserAccount(userId);
+
+    if (!accountDeleted.ok)
+      return next(
+        new ServerError(accountDeleted.message, "account deleting", 500)
+      );
+
+    // DESTROYING THE SESSION
+    req.session.destroy();
+    res.status(201).json({ ok: true, message: accountDeleted.message });
+  } catch (error) {
+    return next(new ServerError(error.message, "server", 500));
+  }
+};
+
+module.exports = { signup, verify, login, userIsLogged, deletingAccount };

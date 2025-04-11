@@ -8,6 +8,27 @@
   position: relative;
   padding-block: 2rem;
   width: 100%;
+  overflow: hidden;
+
+  & .one {
+    position: absolute;
+    left: auto;
+  }
+
+  & .two {
+    position: absolute;
+    right: -150%;
+  }
+
+  &.active {
+    & .one {
+      left: -150%;
+    }
+
+    & .two {
+      right: auto;
+    }
+  }
 
   & .back {
     position: absolute;
