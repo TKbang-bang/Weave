@@ -15,7 +15,7 @@ function Settings() {
               <Link to={"/settings/changename"}>Change name</Link>
             </li>
             <li>
-              <Link>Change alias</Link>
+              <Link to={"/settings/changealias"}>Change alias</Link>
             </li>
             <li>
               <Link>Change email</Link>

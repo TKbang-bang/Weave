@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { ArrowLeft, Eye, EyeSplash } from "../../components/svg";
 import { Toaster, toast } from "sonner";
 import { getMyUser } from "../../services/usersServices";
-import { changingName } from "../../services/updates";
+import { changingAlias } from "../../services/updates";
 import { useNavigate } from "react-router-dom";
 
-function ChangeName() {
-  const [name, setName] = useState("");
-  const [newName, setNewName] = useState("");
+function ChangeAlias() {
+  const [alias, setAlias] = useState("");
+  const [newAlias, setNewAlias] = useState("");
   const [password, setPassword] = useState("");
   const [seePassword, setSeePassword] = useState(false);
   const navigate = useNavigate();
@@ -19,8 +19,8 @@ function ChangeName() {
 
         if (!res.data.ok) throw new Error(res);
 
-        setName(res.data.user.user_name);
-        setNewName(res.data.user.user_name);
+        setAlias(res.data.user.user_alias);
+        setNewAlias(res.data.user.user_alias);
       } catch (error) {
         toast.error(error.response.data.message);
       }
@@ -32,17 +32,17 @@ function ChangeName() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!newName || newName.length < 1)
-      return toast.error("New name cannot be empty");
-    if (newName === name)
-      return toast.error("New name cannot be the same as the old one");
-    if (newName.endsWith(" "))
-      return toast.error("New name cannot end with a space");
+    if (!newAlias || newAlias.length < 1)
+      return toast.error("New alias cannot be empty");
+    if (newAlias === alias)
+      return toast.error("New alias cannot be the same as the old one");
+    if (newAlias.endsWith(" "))
+      return toast.error("New alias cannot end with a space");
     if (!password || password.length < 1)
       return toast.error("Password cannot be empty");
 
     try {
-      const res = await changingName(newName, password);
+      const res = await changingAlias(newAlias, password);
 
       if (!res.data.ok) throw new Error(res);
 
@@ -60,16 +60,17 @@ function ChangeName() {
         <ArrowLeft />
       </button>
       <form onSubmit={handleSubmit}>
-        <h1 className="title">Changing name</h1>
+        <h1 className="title">Changing alias</h1>
 
         <article className="field_container">
-          <label htmlFor="name">New name</label>
+          <label htmlFor="alias">New alias</label>
           <input
             type="text"
-            id="name"
+            id="alias"
             placeholder=" "
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
+            value={newAlias}
+            onKeyDown={(e) => e.key === " " && e.preventDefault()}
+            onChange={(e) => setNewAlias(e.target.value)}
           />
         </article>
 
@@ -94,7 +95,7 @@ function ChangeName() {
         </article>
 
         <button type="submit" className="btn">
-          Change name
+          Change alias
         </button>
       </form>
 
@@ -103,4 +104,4 @@ function ChangeName() {
   );
 }
 
-export default ChangeName;
+export default ChangeAlias;

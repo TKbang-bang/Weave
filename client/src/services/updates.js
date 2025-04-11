@@ -22,3 +22,12 @@ export const changingName = async (name, password) => {
 
   return res;
 };
+
+export const changingAlias = async (alias, password) => {
+  const res = await axios.post("/change_alias", {
+    alias,
+    password,
+  });
+
+  return res;
+};

@@ -1,5 +1,4 @@
 import React from "react";
-import Search from "./Search";
 import PostsContainer from "../PostsContainer";
 import { Route, Routes } from "react-router-dom";
 import Publicate from "../Publicate";
@@ -8,6 +7,7 @@ import EditProfile from "../../EditProfile";
 import SavedPosts from "../../SavedPosts";
 import Settings from "../../Settings";
 import ChangeName from "../../updates/ChangeName";
+import ChangeAlias from "../../updates/ChangeAlias";
 
 function SubMain() {
   return (
@@ -20,6 +20,7 @@ function SubMain() {
         <Route path="/savedposts" element={<SavedPosts />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/settings/changename" element={<ChangeName />} />
+        <Route path="/settings/changealias" element={<ChangeAlias />} />
       </Routes>
     </section>
   );

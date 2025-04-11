@@ -3,6 +3,7 @@ const {
   changeProfilePicture,
   profilePictureDelete,
   changeUserName,
+  changeUserAlias,
 } = require("../services/router.services/updateServices");
 
 const changingUserProfilePicture = async (req, res, next) => {
@@ -58,7 +59,34 @@ const changingName = async (req, res, next) => {
 
     res.status(200).json({ ok: true, message: "Name changed" });
   } catch (error) {
-    return next(new ServerError(error.message, 500));
+    return next(new ServerError(error.message, "server", 500));
+  }
+};
+
+const changingAlias = async (req, res, next) => {
+  try {
+    // USER DATA
+    const { alias, password } = req.body;
+
+    // CHANGING THE NAME
+    const changeAlias = await changeUserAlias(
+      alias,
+      password,
+      req.session.userID
+    );
+
+    if (!changeAlias.ok)
+      return next(
+        new ServerError(
+          changeAlias.message,
+          "name changing",
+          changeAlias.status
+        )
+      );
+
+    res.status(200).json({ ok: true, message: "Alias changed successfully" });
+  } catch (error) {
+    return next(new ServerError(error.message, "server", 500));
   }
 };
 
@@ -66,4 +94,5 @@ module.exports = {
   changingUserProfilePicture,
   deletingProfilePicture,
   changingName,
+  changingAlias,
 };

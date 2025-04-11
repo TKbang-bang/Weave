@@ -41,6 +41,42 @@ const changeUserName = async (name, password, userId) => {
   }
 };
 
+const changeUserAlias = async (alias, password, userId) => {
+  try {
+    // GETTING THE USER PASSWORD
+    const userPassword = "SELECT user_password FROM users WHERE user_id = ?";
+
+    const [getUserPassword] = await db.query(userPassword, [userId]);
+
+    if (getUserPassword.length == 0)
+      return { ok: false, message: "User not found", status: 404 };
+
+    const isMatch = await bcrypt.compare(
+      password,
+      getUserPassword[0].user_password
+    );
+
+    if (!isMatch)
+      return { ok: false, message: "Incorrect password", status: 400 };
+
+    // CHECKING IF THE ALIAS IS ALREADY IN USE
+    const sql = "SELECT user_alias FROM users WHERE user_alias = ?";
+    const [userAlias] = await db.query(sql, [alias]);
+
+    if (userAlias.length > 0)
+      return { ok: false, message: "Alias already in use", status: 400 };
+
+    const sql2 = "UPDATE users SET user_alias = ? WHERE user_id = ?";
+    const [result] = await db.query(sql2, [alias, userId]);
+
+    return result.affectedRows > 0
+      ? { ok: true }
+      : { ok: false, message: "User may not exist", status: 404 };
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const changeUserEmail = async (email, password, userId) => {
   try {
     const [user] = await db.query(
@@ -190,4 +226,5 @@ module.exports = {
   sendChangePassCode,
   changePassCode,
   profilePictureDelete,
+  changeUserAlias,
 };

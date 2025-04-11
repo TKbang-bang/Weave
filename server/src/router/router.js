@@ -43,6 +43,7 @@ const {
   changingUserProfilePicture,
   deletingProfilePicture,
   changingName,
+  changingAlias,
 } = require("../controllers/updates");
 
 const router = express.Router();
@@ -82,6 +83,7 @@ router.post(
 );
 router.delete("/delete_profile_picture", deletingProfilePicture);
 router.post("/change_name", changingName);
+router.post("/change_alias", changingAlias);
 
 // CHANGING THE EMAIL
 router.post("/change_email", async (req, res, next) => {
