@@ -18,10 +18,10 @@ function Settings() {
               <Link to={"/settings/changealias"}>Change alias</Link>
             </li>
             <li>
-              <Link>Change email</Link>
+              <Link to={"/settings/changeemail"}>Change email</Link>
             </li>
             <li>
-              <Link>Change password</Link>
+              <Link to={"/settings/changepassword"}>Change password</Link>
             </li>
           </ul>
         </article>

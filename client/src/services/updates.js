@@ -31,3 +31,12 @@ export const changingAlias = async (alias, password) => {
 
   return res;
 };
+
+export const ChangingPassword = async (password, newPassword) => {
+  const res = await axios.post("/change_password", {
+    oldPassword: password,
+    newPassword,
+  });
+
+  return res;
+};

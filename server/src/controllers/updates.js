@@ -4,6 +4,7 @@ const {
   profilePictureDelete,
   changeUserName,
   changeUserAlias,
+  changeUserPasswod,
 } = require("../services/router.services/updateServices");
 
 const changingUserProfilePicture = async (req, res, next) => {
@@ -90,9 +91,37 @@ const changingAlias = async (req, res, next) => {
   }
 };
 
+const changingPassword = async (req, res, next) => {
+  try {
+    // USER DATA
+    const { oldPassword, newPassword } = req.body;
+
+    // CHANGING THE PASSWORD
+    const changePassword = await changeUserPasswod(
+      oldPassword,
+      newPassword,
+      req.session.userID
+    );
+
+    if (!changePassword.ok)
+      return next(
+        new ServerError(
+          changePassword.message,
+          "password changing",
+          changePassword.status
+        )
+      );
+
+    res.status(201).json({ ok: true, message: changePassword.message });
+  } catch (error) {
+    return next(new ServerError(error.message, "server", 500));
+  }
+};
+
 module.exports = {
   changingUserProfilePicture,
   deletingProfilePicture,
   changingName,
   changingAlias,
+  changingPassword,
 };

@@ -8,6 +8,7 @@ import SavedPosts from "../../SavedPosts";
 import Settings from "../../Settings";
 import ChangeName from "../../updates/ChangeName";
 import ChangeAlias from "../../updates/ChangeAlias";
+import ChangePassword from "../../updates/ChangePassword";
 
 function SubMain() {
   return (
@@ -21,6 +22,7 @@ function SubMain() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/settings/changename" element={<ChangeName />} />
         <Route path="/settings/changealias" element={<ChangeAlias />} />
+        <Route path="/settings/changepassword" element={<ChangePassword />} />
       </Routes>
     </section>
   );

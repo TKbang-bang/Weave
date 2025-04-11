@@ -3,7 +3,6 @@ const upload = require("../configs/multer");
 const {
   changeUserEmail,
   emailUpdate,
-  changeUserPasswod,
   changePassCode,
   sendChangePassCode,
 } = require("../services/router.services/updateServices");
@@ -44,6 +43,7 @@ const {
   deletingProfilePicture,
   changingName,
   changingAlias,
+  changingPassword,
 } = require("../controllers/updates");
 
 const router = express.Router();
@@ -84,6 +84,7 @@ router.post(
 router.delete("/delete_profile_picture", deletingProfilePicture);
 router.post("/change_name", changingName);
 router.post("/change_alias", changingAlias);
+router.post("/change_password", changingPassword);
 
 // CHANGING THE EMAIL
 router.post("/change_email", async (req, res, next) => {
@@ -140,28 +141,6 @@ router.post("/change_email_code", async (req, res, next) => {
 });
 
 // CHANGING THE PASSWORD
-router.post("/change_password", async (req, res, next) => {
-  try {
-    // USER DATA
-    const { oldPassword, newPassword } = req.body;
-
-    // CHANGING THE PASSWORD
-    const changePassword = await changeUserPasswod(
-      oldPassword,
-      newPassword,
-      req.session.userID
-    );
-
-    if (!changePassword.ok)
-      return next(
-        new ServerError(changePassword.message, changePassword.status)
-      );
-
-    res.status(201).json({ ok: true, message: changePassword.message });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
 
 // FORGOT PASSWORD
 router.post("/email_forgot_password", async (req, res, next) => {
