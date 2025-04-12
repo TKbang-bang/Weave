@@ -97,8 +97,6 @@ router.post("/change_password", changingPassword);
 router.post("/change_email", ChangingEmail);
 router.post("/change_email_code", sendingEmailChangeCode);
 
-// CHANGING THE PASSWORD
-
 // FORGOT PASSWORD
 router.post("/email_forgot_password", async (req, res, next) => {
   try {
@@ -166,16 +164,5 @@ router.post("/code_password", async (req, res, next) => {
     return next(new ServerError(error.message, 500));
   }
 });
-// USER SETTINGS -- END
-//
-
-//
-// ACCOUNT SETTINGS -- START
-// LOGIN OUT
-
-// DELETE ACCOUNT
-
-// ACCOUNT SETTINGS -- END
-//
 
 module.exports = router;

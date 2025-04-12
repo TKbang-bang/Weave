@@ -41,7 +41,7 @@ function MyProfile() {
   };
 
   return (
-    <section className="my_profile">
+    <section className="profile">
       <article className="profile_header">
         <div className="image_container">
           <img

@@ -9,3 +9,8 @@ export const getMyUser = async () => {
   const res = await axios.get(`/user`);
   return res;
 };
+
+export const getUserById = async (id) => {
+  const res = await axios.get(`/user_/${id}`);
+  return res;
+};
