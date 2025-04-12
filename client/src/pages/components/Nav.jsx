@@ -6,7 +6,7 @@ import {
   PlusIcon,
   SavedIconfill,
   UserIcon,
-} from "../../../components/svg";
+} from "../../components/svg";
 
 function Nav() {
   return (

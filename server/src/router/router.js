@@ -4,13 +4,6 @@ const {
   changePassCode,
   sendChangePassCode,
 } = require("../services/router.services/updateServices");
-const {
-  deleteUserAccount,
-} = require("../services/router.services/accountServices");
-const {
-  usersSearch,
-  postsSearch,
-} = require("../services/router.services/searchServices");
 const ServerError = require("../error/errorClass");
 const {
   signup,
@@ -51,6 +44,7 @@ const {
   ChangingEmail,
   sendingEmailChangeCode,
 } = require("../controllers/updates");
+const { userSearching, postSearching } = require("../controllers/search");
 
 const router = express.Router();
 
@@ -73,6 +67,10 @@ router.get("/post/:post_id", getPostsById);
 router.get("/user_posts", gettingMyUserPosts);
 router.get("/user_posts_/:user_id", gettingUserPosts);
 router.get("/saved_posts", gettingSavedPosts);
+
+// SEARCH
+router.get("/user_search/:search", userSearching);
+router.get("/posts_search_by_word/:search", postSearching);
 
 // USER ACTIVITIES CONTROLLERS
 router.delete("/delete_post/:post_id", deletingPost);
@@ -178,39 +176,6 @@ router.post("/code_password", async (req, res, next) => {
 // DELETE ACCOUNT
 
 // ACCOUNT SETTINGS -- END
-//
-
-//
-// SEARCH -- START
-// SEARCHING USERS
-router.get("/user_search/:search", async (req, res, next) => {
-  try {
-    // SERACH WORD
-    const { search } = req.params;
-
-    // SEARCHING
-    const searched = await usersSearch(search, req.session.userID);
-
-    res.status(200).json({ ok: true, users: searched });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
-
-// SEARCHING POSTS
-router.get("/user_posts_by_word/:word", async (req, res, next) => {
-  try {
-    // SERACH WORD
-    const { word } = req.params;
-
-    // SEARCHING POSTS
-    const { posts } = await postsSearch(req.session.userID, word);
-    res.status(200).json({ ok: true, posts });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
-// SEARCH -- END
 //
 
 module.exports = router;

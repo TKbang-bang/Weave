@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Toaster, toast } from "sonner";
-import { deleteAccount, loginOut } from "../services/auth";
+import { deleteAccount, loginOut } from "../../services/auth";
 
 function Settings() {
   const handleLogOut = async () => {

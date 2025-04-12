@@ -1,9 +1,9 @@
-import React, { use, useEffect, useState } from "react";
-import { getMyUser } from "../services/usersServices";
+import React, { useEffect, useState } from "react";
+import { getMyUser } from "../../services/usersServices";
 import { toast, Toaster } from "sonner";
-import { ArrowLeft, Image, Trash } from "../components/svg";
+import { ArrowLeft, Image, Trash } from "../../components/svg";
 import { Link, useNavigate } from "react-router-dom";
-import { changingProfilePicture } from "../services/updates";
+import { changingProfilePicture } from "../../services/updates";
 
 function EditProfile() {
   const [file, setFile] = useState(null);

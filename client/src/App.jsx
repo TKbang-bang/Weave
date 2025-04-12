@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import axios from "axios";
-import ForgotPassword from "./pages/changes/ForgotPassword";
 import Sign from "./pages/auth/Sign";
 import Verify from "./pages/auth/Verify";
 import { userIsLogged } from "./services/global";
@@ -41,7 +40,6 @@ function App() {
       <Route path="/sign" element={<Sign />} />
       <Route path="/verify" element={<Verify />} />
       <Route path="*" element={<Display />} />
-      <Route path="/recoverpassword" element={<ForgotPassword />} />
     </Routes>
   );
 }

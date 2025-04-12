@@ -26,18 +26,40 @@ function Publicate() {
     }
   };
 
+  const handleChangeImage = (e) => {
+    if (e.target.files.length) {
+      setFile(e.target.files[0]);
+      setType("image");
+    }
+  };
+
+  const handleChangeVideo = (e) => {
+    if (e.target.files.length) {
+      setFile(e.target.files[0]);
+      setType("video");
+    }
+  };
+
+  const handleDelete = () => {
+    setFile(null);
+    setType("");
+    document.getElementById("images_input").value = "";
+    document.getElementById("videos_input").value = "";
+    // () => (setFile(null), setType(""))
+  };
+
   return (
     <section className="publicate">
       <form onSubmit={handleSubmit}>
         <h1>Publicate</h1>
 
-        <textarea
+        <input
+          type="text"
           placeholder="Write something..."
-          rows={1}
-          limit={500}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-        ></textarea>
+          maxLength={100}
+        />
 
         <div className="file_container">
           {file && (
@@ -56,13 +78,13 @@ function Publicate() {
             type="file"
             id="images_input"
             accept="image/*"
-            onChange={(e) => (setFile(e.target.files[0]), setType("image"))}
+            onChange={handleChangeImage}
           />
           <input
             type="file"
             id="videos_input"
             accept="video/*"
-            onChange={(e) => (setFile(e.target.files[0]), setType("video"))}
+            onChange={handleChangeVideo}
           />
           <label htmlFor="images_input">
             <Image />
@@ -73,7 +95,7 @@ function Publicate() {
         </div>
 
         {file && (
-          <span onClick={() => (setFile(null), setType(""))} className="del">
+          <span onClick={handleDelete} className="del">
             Delete File <Trash />
           </span>
         )}

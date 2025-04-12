@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { gettingPosts } from "../../../services/posts";
-import Post from "./Post";
-import { CloseIcon, SendIcon } from "../../../components/svg";
-import Comments from "./Comments";
-import { Toaster, toast } from "sonner";
-import { getUserId } from "../../../services/usersServices";
-import io from "socket.io-client";
-import { gettingComments } from "../../../services/activities";
 import { Link } from "react-router-dom";
+import io from "socket.io-client";
+import { Toaster, toast } from "sonner";
+import Comments from "./Comments";
+import Post from "./Post";
+import { CloseIcon, SendIcon } from "../../components/svg";
+import { getUserId } from "../../services/usersServices";
+import { gettingPosts } from "../../services/posts";
+import { gettingComments } from "../../services/activities";
 
 const socket = io("http://localhost:3000");
 

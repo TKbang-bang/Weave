@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Toaster, toast } from "sonner";
 import {
   CommentIcon,
   Heart,
@@ -6,18 +8,16 @@ import {
   SavedIcon,
   SavedIconfill,
   UnHeart,
-} from "../../../components/svg";
-import { Link } from "react-router-dom";
+} from "../../components/svg";
 import {
   deletePost,
   editingTitle,
   followConfig,
   likingPost,
   savingPost,
-} from "../../../services/activities";
-import { Toaster, toast } from "sonner";
+} from "../../services/activities";
 
-function Post({ post, post_id, del, err, sucs }) {
+function Post({ post, post_id, del }) {
   const [edit, setEdit] = useState(false);
   const [editValue, setEditValue] = useState(post.post_title);
   const [liked, setLiked] = useState(post.liked == 1 ? true : false);
@@ -28,6 +28,9 @@ function Post({ post, post_id, del, err, sucs }) {
 
   const handleEdit = async (e) => {
     e.preventDefault();
+
+    if (editValue.endsWith(" "))
+      return toast.error("Title cannot end with a space");
 
     try {
       const res = await editingTitle(post.post_id, editValue);
@@ -41,7 +44,7 @@ function Post({ post, post_id, del, err, sucs }) {
 
       setShowOptions(false);
     } catch (error) {
-      toast.error(error.response.data.message);
+      return toast.error(error.response.data.message);
     }
   };
 
@@ -59,7 +62,7 @@ function Post({ post, post_id, del, err, sucs }) {
         setLikes(likes - 1);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      return toast.error(error.response.data.message);
     }
   };
 
@@ -74,7 +77,7 @@ function Post({ post, post_id, del, err, sucs }) {
       setShowOptions(false);
       toast.success("Post deleted");
     } catch (error) {
-      toast.error(error.response.data.message);
+      return toast.error(error.response.data.message);
     }
   };
 
@@ -92,7 +95,7 @@ function Post({ post, post_id, del, err, sucs }) {
         setFollowing(false);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      return toast.error(error.response.data.message);
     }
   };
 
@@ -110,7 +113,7 @@ function Post({ post, post_id, del, err, sucs }) {
         setSaved(false);
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      return toast.error(error.response.data.message);
     }
   };
 
@@ -187,13 +190,13 @@ function Post({ post, post_id, del, err, sucs }) {
       {edit && (
         <div className="edit_container">
           <form onSubmit={handleEdit}>
-            <textarea
-              rows={1}
+            <input
+              type="text"
               value={editValue}
-              maxLength={500}
               onChange={(e) => setEditValue(e.target.value)}
               placeholder="Title..."
-            ></textarea>
+              maxLength={100}
+            />
 
             <div className="btns">
               <button className="save" type="submit">

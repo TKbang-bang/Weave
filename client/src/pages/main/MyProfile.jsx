@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { getMyUser } from "../services/usersServices";
+import { getMyUser } from "../../services/usersServices";
 import { Toaster, toast } from "sonner";
-import { PlusIcon } from "../components/svg";
-import Posts from "./main/components/Posts";
+import { PlusIcon } from "../../components/svg";
+import Posts from "../components/Posts";
 import { Link } from "react-router-dom";
-import { deletingProfilePicture } from "../services/updates";
+import { deletingProfilePicture } from "../../services/updates";
 
 function MyProfile() {
   const [user, setUser] = useState({});

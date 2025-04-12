@@ -1,5 +1,5 @@
 import React from "react";
-import Posts from "./main/components/Posts";
+import Posts from "../components/Posts";
 
 function SavedPosts() {
   return (

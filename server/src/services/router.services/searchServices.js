@@ -4,9 +4,9 @@ const myDate = require("../../configs/date_format");
 const usersSearch = async (search, userId) => {
   try {
     const sql = `
-        SELECT user_id, user_name, user_lastname, user_profile 
+        SELECT user_id, user_name, user_alias, user_profile,(select count(*) from follows where to_user_id = user_id) as followers
       FROM users 
-      WHERE (user_name LIKE ? OR user_lastname LIKE ?) 
+      WHERE (user_name LIKE ? OR user_alias LIKE ?) 
       AND user_id != ?
     `;
 
@@ -18,12 +18,12 @@ const usersSearch = async (search, userId) => {
   }
 };
 
-const postsSearch = async (userId, word) => {
+const postsSearch = async (userId, search) => {
   try {
     const sql = `
         SELECT 
-        p.post_id, p.post_title, p.post_content, p.post_date, p.user_id, 
-        u.user_name, u.user_lastname, u.user_profile, 
+        p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, p.user_id, 
+        u.user_name, u.user_alias, u.user_profile, 
         COUNT(DISTINCT f.from_user_id) AS followed, 
         COUNT(DISTINCT l.user_id) AS likes, 
         COUNT(DISTINCT IF(l.user_id = ?, 1, NULL)) AS liked, 
@@ -38,7 +38,7 @@ const postsSearch = async (userId, word) => {
       ORDER BY p.post_date DESC
     `;
 
-    const [posts] = await db.query(sql, [userId, userId, `%${word}%`]);
+    const [posts] = await db.query(sql, [userId, userId, `%${search}%`]);
 
     const today = new Date();
     const dateFormat = "yyyy-MM-dd HH:mm:ss";

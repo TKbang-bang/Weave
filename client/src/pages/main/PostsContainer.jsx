@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import Posts from "./components/Posts";
-import Search from "./components/Search";
+import React from "react";
+import Posts from "../components/Posts";
+import Search from "../components/Search";
+import { Routes, Route } from "react-router-dom";
+import Searched from "../components/Searched";
 
 function PostsContainer() {
   return (
@@ -9,7 +11,10 @@ function PostsContainer() {
         <Search />
       </article>
 
-      <Posts to={"/posts"} />
+      <Routes>
+        <Route path="/" element={<Posts to={"/posts"} />} />
+        <Route path="/search/:search" element={<Searched />} />
+      </Routes>
     </section>
   );
 }
