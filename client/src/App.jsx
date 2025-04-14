@@ -5,6 +5,7 @@ import Sign from "./pages/auth/Sign";
 import Verify from "./pages/auth/Verify";
 import { userIsLogged } from "./services/global";
 import Display from "./pages/Display";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 
 axios.defaults.baseURL = "http://localhost:3000/";
 axios.defaults.withCredentials = true;
@@ -22,8 +23,8 @@ function App() {
         throw new Error(res.response.data.message);
       } catch (error) {
         if (
-          window.location == "http://localhost:5173/recoverpassword" ||
-          window.location == "http://localhost:5173/verify"
+          window.location.pathname == "/forgotpassword" ||
+          window.location.pathname == "/verify"
         ) {
           return;
         } else {
@@ -39,6 +40,7 @@ function App() {
     <Routes>
       <Route path="/sign" element={<Sign />} />
       <Route path="/verify" element={<Verify />} />
+      <Route path="/forgotpassword" element={<ForgotPassword />} />
       <Route path="*" element={<Display />} />
     </Routes>
   );

@@ -160,7 +160,7 @@ const changeUserPasswod = async (oldPassword, newPassword, userId) => {
 const sendChangePassCode = async (email) => {
   try {
     const [userEmailCheck] = await db.query(
-      "SELECT user_email FROM users WHERE user_email = ?",
+      "SELECT user_email, user_id FROM users WHERE user_email = ?",
       [email]
     );
 
@@ -172,7 +172,7 @@ const sendChangePassCode = async (email) => {
     if (!sendMail.ok)
       return { ok: false, message: "Failed to send email", status: 500 };
 
-    return { ok: true, code: sendMail.code };
+    return { ok: true, code: sendMail.code, userId: userEmailCheck[0].user_id };
   } catch (error) {
     throw new Error(error);
   }

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Eye, EyeSplash } from "../svg";
 import { loginData } from "../../services/auth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
   const [seePassword, setSeePassword] = useState(false);
@@ -90,7 +90,7 @@ function Login() {
         Log in
       </button>
 
-      <a href="">have you forgotten your password?</a>
+      <Link to="/forgotpassword">have you forgotten your password?</Link>
     </form>
   );
 }

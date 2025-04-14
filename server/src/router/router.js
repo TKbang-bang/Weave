@@ -1,11 +1,6 @@
 const express = require("express");
 const upload = require("../configs/multer");
 const {
-  changePassCode,
-  sendChangePassCode,
-} = require("../services/router.services/updateServices");
-const ServerError = require("../error/errorClass");
-const {
   signup,
   verify,
   login,
@@ -43,6 +38,8 @@ const {
   changingPassword,
   ChangingEmail,
   sendingEmailChangeCode,
+  emailForgotPassword,
+  codeEmailForgotPasword,
 } = require("../controllers/updates");
 const { userSearching, postSearching } = require("../controllers/search");
 
@@ -98,71 +95,7 @@ router.post("/change_email", ChangingEmail);
 router.post("/change_email_code", sendingEmailChangeCode);
 
 // FORGOT PASSWORD
-router.post("/email_forgot_password", async (req, res, next) => {
-  try {
-    // USER DATA
-    const { email } = req.body;
-
-    // SENDING A VERIFY CODE TO THE USER EMAIL
-    const forgotPassword = await sendChangePassCode(email);
-
-    if (!forgotPassword.ok)
-      return next(
-        new ServerError(forgotPassword.message, forgotPassword.status)
-      );
-
-    // CREATING EMAIL AND CODE VARIABLES IN THE SESSION
-    req.session.code = forgotPassword.code;
-    req.session.user_email = email;
-
-    // DELETING THE CODE FROM THE SESSION AFTER 3 MINS
-    setTimeout(() => {
-      delete req.session.code;
-      delete req.session.user_email;
-      req.session.save();
-    }, [180000]);
-
-    res.status(201).json({ ok: true });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
-
-// VERIFYING THE CODE FROM FORGOT PASSWORD
-router.post("/code_password", async (req, res, next) => {
-  try {
-    // USER DATA
-    const { code, password } = req.body;
-
-    // VERIFYING THE CODE
-    if (!req.session.code)
-      return next(new ServerError("Code may expired", 400));
-
-    if (req.session.code != code)
-      return next(new ServerError("The code is incorrect", 400));
-
-    // UPDATING THE PASSWORD
-    const changePassword = await changePassCode(
-      req.session.user_email,
-      password
-    );
-
-    if (!changePassword.ok)
-      return next(
-        new ServerError(changePassword.message, changePassword.status)
-      );
-
-    // DELETING THE CODE AND EMAIL FROM THE SESSION
-    delete req.session.code;
-    delete req.session.user_email;
-    req.session.save();
-
-    res
-      .status(201)
-      .json({ ok: true, message: "Password changed successfully" });
-  } catch (error) {
-    return next(new ServerError(error.message, 500));
-  }
-});
+router.post("/email_forgot_password", emailForgotPassword);
+router.post("/code_email_forgot_password", codeEmailForgotPasword);
 
 module.exports = router;

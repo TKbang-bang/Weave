@@ -24,3 +24,16 @@ export const deleteAccount = async () => {
   const res = await axios.delete("/delete_account");
   return res;
 };
+
+export const forgotPassword = async (email) => {
+  const res = await axios.post("/email_forgot_password", { email });
+  return res;
+};
+
+export const changePassCode = async (code, password) => {
+  const res = await axios.post("/code_email_forgot_password", {
+    code,
+    password,
+  });
+  return res;
+};
