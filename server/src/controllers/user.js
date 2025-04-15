@@ -1,5 +1,8 @@
 const ServerError = require("../error/errorClass");
-const { getUserById } = require("../services/router.services/userServices");
+const {
+  getUserById,
+  followingUsers,
+} = require("../services/router.services/userServices");
 
 const getUserId = (req, res, next) => {
   try {
@@ -42,4 +45,19 @@ const gettingUserById = async (req, res, next) => {
   }
 };
 
-module.exports = { getUserId, getUserCredentials, gettingUserById };
+const gettingFollowingUsers = async (req, res, next) => {
+  try {
+    const users = await followingUsers(req.session.userID);
+
+    res.status(200).json({ ok: true, users });
+  } catch (error) {
+    return next(new ServerError(error.message, 500));
+  }
+};
+
+module.exports = {
+  getUserId,
+  getUserCredentials,
+  gettingUserById,
+  gettingFollowingUsers,
+};

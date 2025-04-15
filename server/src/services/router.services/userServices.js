@@ -89,10 +89,32 @@ const getUserById = async (myId, userId) => {
   }
 };
 
+const followingUsers = async (myId) => {
+  try {
+    const sql = `
+      SELECT 
+        user_id,
+        user_name, 
+        user_alias, 
+        user_profile, 
+        (SELECT COUNT(*) FROM follows WHERE to_user_id = ?) AS followers
+      FROM users 
+      WHERE user_id IN (SELECT to_user_id FROM follows WHERE from_user_id = ?)
+    `;
+
+    const [users] = await db.query(sql, [myId, myId]);
+
+    return users;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 module.exports = {
   getUserByEmail,
   getUserId,
   createUser,
   getUserById,
   getUserByAlias,
+  followingUsers,
 };

@@ -82,7 +82,7 @@ function Settings() {
         </article>
       </div>
 
-      <Toaster position="top-center" richColors />
+      {/* <Toaster position="top-center" richColors /> */}
     </section>
   );
 }

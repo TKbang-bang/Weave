@@ -115,7 +115,7 @@ function EditProfile() {
         </button>
       </form>
 
-      <Toaster position="top-center" richColors />
+      {/* <Toaster position="top-center" richColors /> */}
     </section>
   );
 }

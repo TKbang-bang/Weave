@@ -34,7 +34,7 @@ function Search() {
         </button>
       </form>
 
-      <Toaster position="top-center" richColors duration={1500} />
+      {/* <Toaster position="top-center" richColors duration={1500} /> */}
     </article>
   );
 }

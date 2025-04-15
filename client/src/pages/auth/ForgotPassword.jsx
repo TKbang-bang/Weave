@@ -129,7 +129,7 @@ function ForgotPassword() {
         </form>
       </div>
 
-      <Toaster position="top-center" richColors />
+      {/* <Toaster position="top-center" richColors /> */}
     </section>
   );
 }

@@ -66,19 +66,27 @@ function Post({ post, post_id, del }) {
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      const res = await deletePost(post.post_id);
+  const handleDelete = () => {
+    toast("Are you sure you want to delete this post?", {
+      action: {
+        label: "Yes, delete",
+        onClick: async () => {
+          try {
+            const res = await deletePost(post.post_id);
 
-      if (!res.data.ok) throw new Error(res);
+            if (!res.data.ok) throw new Error(res);
 
-      del(post.post_id);
-
-      setShowOptions(false);
-      toast.success("Post deleted");
-    } catch (error) {
-      return toast.error(error.response.data.message);
-    }
+            del(post.post_id);
+            setShowOptions(false);
+            toast.success("Post deleted");
+          } catch (error) {
+            const message =
+              error.response?.data?.message || "Failed to delete the post";
+            toast.error(message);
+          }
+        },
+      },
+    });
   };
 
   const handleFollow = async () => {
@@ -267,7 +275,7 @@ function Post({ post, post_id, del }) {
         </div>
       </div>
 
-      <Toaster position="top-center" richColors />
+      {/* <Toaster position="top-center" richColors duration={3000} /> */}
     </article>
   );
 }

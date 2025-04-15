@@ -83,7 +83,7 @@ function MyProfile() {
 
       <Posts to={`/user_posts`} />
 
-      <Toaster position="top-center" richColors />
+      {/* <Toaster position="top-center" richColors /> */}
     </section>
   );
 }

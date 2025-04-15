@@ -88,7 +88,7 @@ function Profile() {
 
       <Posts to={`/user_posts_/${id}`} />
 
-      <Toaster position="top-center" richColors />
+      {/* <Toaster position="top-center" richColors /> */}
     </section>
   );
 }

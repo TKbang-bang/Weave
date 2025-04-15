@@ -45,12 +45,16 @@ function Posts({ to }) {
       );
     };
 
-    socket.off("server_comment", newComment);
     socket.on("server_comment", newComment);
 
     socket.on("server_error", (errTxt) => {
       toast.error(errTxt);
     });
+
+    return () => {
+      socket.off("server_comment", newComment);
+      socket.off("server_error");
+    };
   }, [socket]);
 
   const handleCommenting = async (e) => {
@@ -97,8 +101,6 @@ function Posts({ to }) {
               del={(id) =>
                 setPosts((prev) => prev.filter((post) => post.post_id != id))
               }
-              err={(errTxt) => toast.error(errTxt)}
-              sucs={(sucsTxt) => toast.success(sucsTxt)}
             />
           ))}
 
@@ -142,7 +144,7 @@ function Posts({ to }) {
         </section>
       )}
 
-      <Toaster position="top-center" richColors />
+      {/* <Toaster position="top-center" richColors /> */}
     </section>
   );
 }

@@ -29,6 +29,7 @@ const {
   getUserId,
   getUserCredentials,
   gettingUserById,
+  gettingFollowingUsers,
 } = require("../controllers/user");
 const {
   changingUserProfilePicture,
@@ -80,6 +81,7 @@ router.post("/save", savingPost);
 // GETTING USER CREDENTIALS CONTROLLERS
 router.get("/user", getUserCredentials);
 router.get("/user_/:user_id", gettingUserById);
+router.get("/user_following", gettingFollowingUsers);
 
 // ACCOUNT SETTINGS CONTROLLERS
 router.post(

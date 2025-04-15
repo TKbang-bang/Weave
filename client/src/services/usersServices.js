@@ -14,3 +14,8 @@ export const getUserById = async (id) => {
   const res = await axios.get(`/user_/${id}`);
   return res;
 };
+
+export const gettingFollowingUsers = async () => {
+  const res = await axios.get("/user_following");
+  return res;
+};
