@@ -103,3 +103,16 @@
     }
   }
 }
+
+@media screen and (max-width: 1024px) {
+  .posts_container {
+    width: 100%;
+    padding-inline: 3rem;
+
+    & > .header {
+      padding-block: 1rem;
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+}

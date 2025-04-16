@@ -103,3 +103,23 @@
     }
   }
 }
+
+@media screen and (max-width: 1024px) {
+  .publicate {
+    padding-inline: 3rem;
+
+    & form {
+      width: 100%;
+      margin-bottom: 3rem;
+
+      & .file_container {
+        max-height: fit-content;
+
+        & img,
+        & video {
+          max-height: 35rem;
+        }
+      }
+    }
+  }
+}

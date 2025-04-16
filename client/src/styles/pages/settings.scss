@@ -56,3 +56,14 @@
     }
   }
 }
+
+@media screen and (max-width: 1024px) {
+  .settings_container {
+    padding: 0;
+
+    & .settings {
+      border-radius: 0;
+      width: 100%;
+    }
+  }
+}

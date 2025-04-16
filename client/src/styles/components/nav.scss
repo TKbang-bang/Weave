@@ -89,3 +89,86 @@
     }
   }
 }
+
+@media screen and (max-width: 1024px) {
+  .nav {
+    background: $white;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5rem;
+    max-height: 6rem;
+
+    & .logo {
+      display: none;
+    }
+
+    & .nav_links {
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      flex-direction: row;
+      width: 100%;
+      height: fit-content;
+      list-style-type: none;
+
+      & li {
+        width: fit-content;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        height: 100%;
+
+        & a {
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          gap: 0.5rem;
+          text-decoration: none;
+          color: rgba($black, 0.6);
+          fill: rgba($black, 0.6);
+          transition: ease-in-out 0.2s;
+          width: 100%;
+
+          & p {
+            display: none;
+          }
+
+          &:hover {
+            color: $black;
+            fill: $black;
+          }
+
+          &.active {
+            color: $primary;
+            fill: $primary;
+            transition: ease-in-out 0.2s;
+
+            & p {
+              display: block;
+            }
+          }
+
+          &.active::after {
+            content: "";
+            width: 100%;
+            height: 0.2rem;
+            background: $primary;
+            position: absolute;
+            top: 0;
+            transition: ease-in-out 0.2s;
+          }
+
+          & svg {
+            width: 1.5rem;
+            height: 1.5rem;
+          }
+        }
+      }
+    }
+  }
+}

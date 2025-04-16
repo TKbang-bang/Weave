@@ -111,3 +111,33 @@
     }
   }
 }
+
+@media screen and (max-width: 1024px) {
+  .edit_profile {
+    display: flex;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    padding-inline: 3rem;
+    gap: 1rem;
+
+    & > a {
+      position: relative;
+      align-self: flex-start;
+    }
+
+    & form {
+      width: 100%;
+      margin-bottom: 3rem;
+
+      & .file_container {
+        max-height: fit-content;
+
+        & img {
+          max-height: 35rem;
+        }
+      }
+    }
+  }
+}

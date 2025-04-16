@@ -153,3 +153,160 @@
     }
   }
 }
+
+@media screen and (max-width: 1024px) {
+  .profile {
+    padding-inline: 3rem;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    gap: 4rem;
+
+    & .back {
+      width: 2.5rem;
+      height: 2.5rem;
+      margin: 1rem;
+      padding: 0.5rem;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: $white;
+      display: block;
+      position: absolute;
+      left: 0.5rem;
+      cursor: pointer;
+      border: none;
+
+      & svg {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    & .profile_header {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      flex-direction: column;
+
+      & .image_container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 1rem;
+        padding-block: 1rem;
+        width: 100%;
+        position: relative;
+
+        & img {
+          width: 15rem;
+          height: 15rem;
+          object-fit: cover;
+          border-radius: 50%;
+          background: $white;
+        }
+
+        & .profile_options {
+          position: absolute;
+          bottom: 0;
+          right: 25%;
+          border: 1px solid $primary;
+          width: fit-content;
+          z-index: 2;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+
+          & button,
+          & a {
+            width: 10rem;
+            height: 2.5rem;
+            border: none;
+            background: $white;
+            color: $primary;
+            cursor: pointer;
+            font-size: 1rem;
+            background: $white;
+
+            &.delete {
+              color: $error;
+            }
+
+            &.edit {
+              color: $primary;
+              position: relative;
+              display: block;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              text-decoration: none;
+
+              &::after {
+                content: "";
+                position: absolute;
+                width: 100%;
+                height: 1px;
+                background: $primary;
+                bottom: 0;
+                left: 0;
+              }
+            }
+          }
+        }
+      }
+
+      & .plus {
+        background: $white;
+        fill: $primary;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        padding: 0.2rem;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+
+        & svg {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      & .profile_info {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      & .follow,
+      & .unfollow {
+        width: 10rem;
+        height: 2.5rem;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        border-radius: 0.2rem;
+        margin-top: 1rem;
+      }
+
+      & .follow {
+        background: $primary;
+        color: $white;
+      }
+
+      & .unfollow {
+        background: none;
+        color: $primary;
+        border: 1px solid $primary;
+      }
+    }
+  }
+}

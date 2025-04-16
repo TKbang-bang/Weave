@@ -49,6 +49,7 @@ function ChangeEmail() {
       setLoading(false);
     } catch (error) {
       toast.error(error.response.data.message);
+      setLoading(false);
     }
   };
 

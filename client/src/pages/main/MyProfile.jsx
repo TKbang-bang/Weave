@@ -28,16 +28,26 @@ function MyProfile() {
   }, []);
 
   const handleDelete = async () => {
-    try {
-      const res = await deletingProfilePicture();
+    if (!user.user_profile || user.user_profile == null)
+      return toast.error("You don't have a profile picture");
 
-      if (!res.data.ok) throw new Error(res.response.data.message);
+    toast("Are you sure you want to delete your profile picture?", {
+      action: {
+        label: "Yes, delete",
+        onClick: async () => {
+          try {
+            const res = await deletingProfilePicture();
 
-      setImageDelete(true);
-      toast.success(res.data.message);
-    } catch (error) {
-      toast.error(error.response.data.message);
-    }
+            if (!res.data.ok) throw new Error(res.response.data.message);
+
+            setImageDelete(true);
+            toast.success(res.data.message);
+          } catch (error) {
+            toast.error(error.response.data.message);
+          }
+        },
+      },
+    });
   };
 
   return (
