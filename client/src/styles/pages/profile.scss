@@ -179,6 +179,7 @@
       left: 0.5rem;
       cursor: pointer;
       border: none;
+      z-index: 2;
 
       & svg {
         width: 100%;
@@ -306,6 +307,21 @@
         background: none;
         color: $primary;
         border: 1px solid $primary;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .profile {
+    padding-inline: 1rem;
+
+    & .profile_header {
+      & .image_container {
+        & img {
+          width: 12rem;
+          height: 12rem;
+        }
       }
     }
   }

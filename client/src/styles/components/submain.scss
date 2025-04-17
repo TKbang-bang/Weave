@@ -94,3 +94,15 @@
     }
   }
 }
+
+@media screen and (max-width: 768px) {
+  .sub_main {
+    gap: 2rem;
+
+    & > section {
+      &.saved_posts {
+        padding-inline: 1rem;
+      }
+    }
+  }
+}

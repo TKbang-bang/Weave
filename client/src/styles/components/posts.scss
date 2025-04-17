@@ -347,3 +347,58 @@
     }
   }
 }
+
+@media screen and (max-width: 768px) {
+  .posts {
+    width: 100%;
+
+    & .post {
+      padding: 1rem;
+
+      & .post_header {
+        & .post_profile {
+          & img {
+            width: 3rem;
+            height: 3rem;
+          }
+        }
+
+        & > button {
+          width: 5rem;
+          height: 2rem;
+          border-radius: 0.4rem;
+        }
+
+        & .options {
+          & button {
+            width: 6rem;
+            height: 2.5rem;
+          }
+        }
+      }
+
+      & .post_content {
+        & .file {
+          max-height: 32rem;
+        }
+      }
+
+      & .post_footer {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-inline: 1rem;
+
+        & div {
+          & span {
+            & svg {
+              width: 2rem;
+              height: 2rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}

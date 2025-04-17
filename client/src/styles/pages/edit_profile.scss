@@ -141,3 +141,14 @@
     }
   }
 }
+
+@media screen and (max-width: 768px) {
+  .edit_profile {
+    padding-inline: 1rem;
+
+    & > a {
+      position: relative;
+      align-self: flex-start;
+    }
+  }
+}

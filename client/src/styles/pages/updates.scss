@@ -200,7 +200,7 @@
 
     & form {
       background: $white;
-      width: 35rem;
+      width: 100%;
       border-radius: 0.5rem;
       display: flex;
       flex-direction: column;
@@ -285,6 +285,42 @@
         color: $white;
         border-radius: 0.2rem;
       }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .updates_container {
+    padding-inline: 1rem;
+
+    & .one {
+      padding-inline: 1rem;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    & .two {
+      width: 100%;
+      max-width: 100%;
+      padding-inline: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    &.active {
+      & .one {
+        left: -150%;
+      }
+
+      & .two {
+        right: auto;
+      }
+    }
+
+    & form {
+      background: $white;
+      width: 100%;
     }
   }
 }

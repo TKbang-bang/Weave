@@ -116,3 +116,25 @@
     }
   }
 }
+
+@media screen and (max-width: 768px) {
+  .posts_container {
+    width: 100%;
+    padding-inline: 1rem;
+
+    & > .header {
+      & .search {
+        width: 100%;
+
+        & form {
+          width: 100%;
+          max-width: 100%;
+
+          & input {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}

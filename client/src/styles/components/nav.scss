@@ -97,7 +97,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 5rem;
+    height: 6rem;
     max-height: 6rem;
 
     & .logo {
@@ -112,6 +112,7 @@
       width: 100%;
       height: fit-content;
       list-style-type: none;
+      gap: 0;
 
       & li {
         width: fit-content;
@@ -166,6 +167,36 @@
           & svg {
             width: 1.5rem;
             height: 1.5rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .nav {
+    // border: 1px solid #000;
+    width: 100svw;
+    max-width: 100svw;
+
+    & .nav_links {
+      justify-content: space-around;
+      gap: 0;
+      width: 100%;
+      padding: 0;
+      height: 100%;
+
+      & li {
+        // border: 1px solid #000;
+        width: fit-content;
+        padding: 0;
+
+        & a {
+          gap: 0.2rem;
+
+          &.active {
+            margin-top: 1rem;
           }
         }
       }

@@ -92,7 +92,7 @@
     height: 100%;
     width: 100%;
     max-width: 100%;
-    gap: 0;
+    gap: 1rem;
 
     & .back {
       display: block;
@@ -103,7 +103,7 @@
 
     & .users {
       width: 100%;
-      margin-top: 2rem;
+      margin: 0;
 
       & .users_container {
         gap: 1rem;
@@ -112,6 +112,33 @@
           & img {
             width: 100%;
             height: 12rem;
+            object-fit: cover;
+          }
+        }
+      }
+    }
+
+    & .posts_ {
+      width: 100%;
+      padding-bottom: 5rem;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .searched {
+    & .users {
+      width: 100%;
+      margin-top: 2rem;
+
+      & .users_container {
+        gap: 1rem;
+        grid-template-columns: repeat(2, 1fr);
+
+        & .user {
+          & img {
+            width: 100%;
+            height: 10rem;
             object-fit: cover;
           }
         }
