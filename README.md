@@ -58,9 +58,9 @@
 
 <h3>1. Clone the repository</h3>
 
-```bash
-git clone https://github.com/yourusername/weave.git
+git clone https://github.com/TKbang-bang/Weave.git
 cd weave
+
 <h3>2. Set up the client</h3>
 bash
 Copiar
@@ -82,11 +82,15 @@ Editar
 # Client URL (e.g., http://localhost:5173)
 CLIENT_URL=http://localhost:5173
 
-# Secret key for sessions or JWT
+# Secret key for sessions
+
 MY_SECRET_KEY=your_secret_key
 
 # Email credentials for Nodemailer
+
 EMAIL=your_email@gmail.com
 PASSWORD=your_email_app_password
+
 <p><strong>⚠️ Important:</strong> If you're using Gmail, enable 2-Step Verification and generate an <strong>App Password</strong>.
-```
+
+<h2>🧠 Author</h2> <p> Developed with 💻 by Woodley Tanis K.<a href="https://github.com/TKbang-bang/" target="_blank">tk</a> fullstack dev</p>
