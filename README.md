@@ -54,6 +54,10 @@
   <li>Nodemailer (email sending)</li>
 </ul>
 
+<img src="/client/public/preview1.png" alt="preview 1">
+<img src="/client/public/preview2.png" alt="preview 2">
+<img src="/client/public/preview3.png" alt="preview 3">
+
 <h2>⚙️ Installation & Setup</h2>
 
 <h3>1. Clone the repository</h3>
