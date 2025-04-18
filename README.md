@@ -60,7 +60,7 @@
 
 git clone https://github.com/TKbang-bang/Weave.git
 
-> cd weave
+cd weave
 
 <h3>2. Set up the client</h3>
 <p><strong>>cd client</strong></p>
@@ -88,4 +88,4 @@ PASSWORD=your_email_app_password
 <p><strong>⚠️ Important:</strong> If you're using Gmail, enable 2-Step Verification and generate an <strong>App Password</strong>.
 
 <h2>🧠 Author</h2> <p> Developed with 💻Windows, by Woodley Tanis K. <a href="https://github.com/TKbang-bang/" target="_blank">tk</a> a fullstack dev</p>
-<small>The next Mark Zukerberg</small>
+<small>The next Mark Zukerberg 😊</small>
