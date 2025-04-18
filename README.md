@@ -62,23 +62,16 @@ git clone https://github.com/TKbang-bang/Weave.git
 cd weave
 
 <h3>2. Set up the client</h3>
-bash
-Copiar
-Editar
-cd client
-npm install
-npm run dev
+<p><strong>cd client</strong></p>
+<p><strong>npm installt</strong></p>
+<p><strong>npm run dev</strong></p>
+
 <h3>3. Set up the server</h3>
-bash
-Copiar
-Editar
-cd server
-npm install
-npm run dev
+<p><strong>cd server</strong></p>
+<p><strong>npm installt</strong></p>
+<p><strong>npm run dev</strong></p>
 <p><strong>Don't forget to create a <code>.env</code> file inside the <code>server/</code> directory. You can use the provided <code>.env.example</code> as a template.</strong></p> <h2>📄 Environment Variables</h2>
 env
-Copiar
-Editar
 # Client URL (e.g., http://localhost:5173)
 CLIENT_URL=http://localhost:5173
 
@@ -93,4 +86,4 @@ PASSWORD=your_email_app_password
 
 <p><strong>⚠️ Important:</strong> If you're using Gmail, enable 2-Step Verification and generate an <strong>App Password</strong>.
 
-<h2>🧠 Author</h2> <p> Developed with 💻 by Woodley Tanis K.<a href="https://github.com/TKbang-bang/" target="_blank">tk</a> fullstack dev</p>
+<h2>🧠 Author</h2> <p> Developed with 💻 by Woodley Tanis K. <a href="https://github.com/TKbang-bang/" target="_blank">tk</a> fullstack dev</p>
