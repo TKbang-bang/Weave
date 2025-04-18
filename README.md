@@ -55,9 +55,9 @@
 </ul>
 
 <h1>Previews</h1>
-<img src="/client/public/preview1.png" alt="preview 1" width="300px">
-<img src="/client/public/preview2.png" alt="preview 2" width="300px">
-<img src="/client/public/preview3.png" alt="preview 3" width="300px">
+<img src="/client/public/preview1.png" alt="preview 1" width="600px">
+<img src="/client/public/preview2.png" alt="preview 2" width="600px">
+<img src="/client/public/preview3.png" alt="preview 3" width="600px">
 
 <h2>⚙️ Installation & Setup</h2>
 
