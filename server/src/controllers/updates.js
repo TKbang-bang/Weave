@@ -13,6 +13,7 @@ const {
 
 const changingUserProfilePicture = async (req, res, next) => {
   try {
+    // FILE
     const { filename } = req.file;
 
     // CHANGING THE PROFILE PICTURE
@@ -20,7 +21,6 @@ const changingUserProfilePicture = async (req, res, next) => {
       filename,
       req.session.userID
     );
-
     if (!profileUpdate) {
       return next(
         new ServerError("Something went wrong", "profile picture", 500)
@@ -29,15 +29,14 @@ const changingUserProfilePicture = async (req, res, next) => {
 
     res.status(200).json({ ok: true, message: "Profile picture updated" });
   } catch (error) {
-    console.log(error);
     return next(new ServerError(error.message, "server", 500));
   }
 };
 
 const deletingProfilePicture = async (req, res, next) => {
   try {
+    // DELETING THE PROFILE PICTURE
     const deleted = await profilePictureDelete(req.session.userID);
-
     if (!deleted)
       return next(
         new ServerError(deleted.message, "profile delete", deleted.status)
@@ -56,7 +55,6 @@ const changingName = async (req, res, next) => {
 
     // CHANGING THE NAME
     const changeName = await changeUserName(name, password, req.session.userID);
-
     if (!changeName.ok)
       return next(
         new ServerError(changeName.message, "name changing", changeName.status)
@@ -79,7 +77,6 @@ const changingAlias = async (req, res, next) => {
       password,
       req.session.userID
     );
-
     if (!changeAlias.ok)
       return next(
         new ServerError(
@@ -97,7 +94,7 @@ const changingAlias = async (req, res, next) => {
 
 const changingPassword = async (req, res, next) => {
   try {
-    // USER DATA
+    // PASSWORDS FROM USER
     const { oldPassword, newPassword } = req.body;
 
     // CHANGING THE PASSWORD
@@ -106,7 +103,6 @@ const changingPassword = async (req, res, next) => {
       newPassword,
       req.session.userID
     );
-
     if (!changePassword.ok)
       return next(
         new ServerError(
@@ -133,7 +129,6 @@ const ChangingEmail = async (req, res, next) => {
       password,
       req.session.userID
     );
-
     if (!changeEmail.ok)
       return next(
         new ServerError(
@@ -166,6 +161,7 @@ const sendingEmailChangeCode = async (req, res, next) => {
     if (!req.session.code)
       return next(new ServerError("Code may expired", "code", 400));
 
+    // VERIFYING IF THE CODE IS CORRECT
     if (req.session.code != req.body.code)
       return next(new ServerError("The code is incorrect", "code", 400));
 
@@ -187,7 +183,6 @@ const emailForgotPassword = async (req, res, next) => {
 
     // SENDING A VERIFY CODE TO THE USER EMAIL
     const forgotPassword = await sendChangePassCode(email);
-
     if (!forgotPassword.ok)
       return next(
         new ServerError(
@@ -228,6 +223,7 @@ const codeEmailForgotPasword = async (req, res, next) => {
     if (!req.session.code)
       return next(new ServerError("Code may expired", "code", 400));
 
+    // VERIFYING IF THE CODE IS CORRECT
     if (req.session.code != code)
       return next(new ServerError("The code is incorrect", "code", 400));
 
@@ -236,7 +232,6 @@ const codeEmailForgotPasword = async (req, res, next) => {
       req.session.user_email,
       password
     );
-
     if (!changePassword.ok)
       return next(
         new ServerError(
@@ -246,10 +241,11 @@ const codeEmailForgotPasword = async (req, res, next) => {
         )
       );
 
-    // DELETING THE CODE AND EMAIL FROM THE SESSION
+    // SAVING THE USER ID IN THE SESSION
     req.session.userID = req.session.userId;
     req.session.save();
 
+    // DELETING THE CODE AND EMAIL FROM THE SESSION
     delete req.session.code;
     delete req.session.user_email;
     req.session.save();

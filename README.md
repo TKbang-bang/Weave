@@ -1,94 +1,92 @@
-Social Network - Share Photos and Connect with Friends
+<h1 align="center">🧵 Weave</h1>
 
-Project Description
+<p align="center">
+  A modern fullstack social media web application.
+  <br />
+  Built with <strong>React, Node.js, Express, and MySQL</strong>.
+</p>
 
-This project is a social network similar to Instagram or Facebook, designed for users to share photos publicly, follow other users, like posts, comment on others' posts, and search for users.
+<hr />
 
-Technologies Used
+<h2>🚀 Features</h2>
+<ul>
+  <li>✅ User registration and login</li>
+  <li>📧 Email verification via Nodemailer</li>
+  <li>🔍 Search for posts and users</li>
+  <li>👥 Follow and unfollow users</li>
+  <li>🖼 Upload and post images or videos</li>
+  <li>✏️ Edit titles of your own posts</li>
+  <li>❤️ Like and unlike posts</li>
+  <li>💬 Comment on posts</li>
+  <li>💾 Save posts to your collection</li>
+  <li>👤 View other users' profiles</li>
+  <li>🙋 View and edit your own profile</li>
+  <li>🖼 Change profile picture</li>
+  <li>⚙️ Edit account credentials (name, alias, email, password)</li>
+  <li>🗑 Delete account</li>
+  <li>🚪 Logout</li>
+</ul>
 
-Frontend (Client-side)
+<h2>🧩 Tech Stack</h2>
 
-Framework: React.js
+<h3>Frontend</h3>
+<ul>
+  <li>React</li>
+  <li>Axios</li>
+  <li>React Router DOM</li>
+  <li>SASS</li>
+  <li>Socket.io-client</li>
+  <li>Sonner (notifications)</li>
+</ul>
 
-Libraries:
+<h3>Backend</h3>
+<ul>
+  <li>Node.js + Express</li>
+  <li>MySQL</li>
+  <li>Express-session & Express-mysql-session</li>
+  <li>Socket.io</li>
+  <li>Multer (file uploads)</li>
+  <li>Bcrypt (password hashing)</li>
+  <li>CORS</li>
+  <li>Date-fns</li>
+  <li>Dotenv</li>
+  <li>Nanoid (unique tokens)</li>
+  <li>Nodemailer (email sending)</li>
+</ul>
 
-axios
-react-router-dom
-socket.io-client
+<h2>⚙️ Installation & Setup</h2>
 
-Backend (Server-side)
+<h3>1. Clone the repository</h3>
 
-Framework: Node.js with Express.js
+```bash
+git clone https://github.com/yourusername/weave.git
+cd weave
+<h3>2. Set up the client</h3>
+bash
+Copiar
+Editar
+cd client
+npm install
+npm run dev
+<h3>3. Set up the server</h3>
+bash
+Copiar
+Editar
+cd server
+npm install
+npm run dev
+<p><strong>Don't forget to create a <code>.env</code> file inside the <code>server/</code> directory. You can use the provided <code>.env.example</code> as a template.</strong></p> <h2>📄 Environment Variables</h2>
+env
+Copiar
+Editar
+# Client URL (e.g., http://localhost:5173)
+CLIENT_URL=http://localhost:5173
 
-Libraries:
+# Secret key for sessions or JWT
+MY_SECRET_KEY=your_secret_key
 
-bcrypt
-cors
-date-fns
-dotenv
-express
-express-mysql-session
-express-session
-multer
-mysql2
-nanoid
-nodemailer
-socket.io
-
-Features
-
-User Authentication: Register and log in securely.
-
-Post Management:
-
-View both personal and public posts.
-
-Create and share posts with images.
-
-User Interaction:
-
-Follow and unfollow other users.
-
-Like and comment on posts.
-
-Profile Management:
-
-View both personal and other users' profiles.
-
-Update profile picture, name, email, and password.
-
-Delete account permanently.
-
-Search Functionality:
-
-Search for users.
-
-Search for posts.
-
-Session Control:
-
-Log out securely.
-
-Purpose of the Project
-
-This web application was developed solely to enhance the creator's (tk) programming logic and to serve as a portfolio project, both on and off GitHub.
-
-Contribution
-
-Contributions are welcome! If you'd like to contribute:
-
-Fork the repository.
-
-Create a new branch:
-
-git checkout -b new-feature
-
-Make changes and commit:
-
-git commit -m "Added new feature"
-
-Push the branch:
-
-git push origin new-feature
-
-Open a Pull Request.
+# Email credentials for Nodemailer
+EMAIL=your_email@gmail.com
+PASSWORD=your_email_app_password
+<p><strong>⚠️ Important:</strong> If you're using Gmail, enable 2-Step Verification and generate an <strong>App Password</strong>.
+```

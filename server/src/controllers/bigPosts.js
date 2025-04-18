@@ -2,6 +2,7 @@ const {
   getAllPosts,
   getPostById,
   savedPosts,
+  getAllFollowingPosts,
 } = require("../services/router.services/bigPostsServices");
 const ServerError = require("../error/errorClass");
 
@@ -19,7 +20,7 @@ const getPosts = async (req, res, next) => {
 const getFollowingPosts = async (req, res, next) => {
   try {
     // GETTING ALL POSTS
-    const posts = await getAllPosts(req.session.userID);
+    const posts = await getAllFollowingPosts(req.session.userID);
 
     res.status(200).json({ ok: true, posts });
   } catch (error) {
@@ -36,7 +37,6 @@ const getPostsById = async (req, res, next) => {
     const post = await getPostById(req.session.userID, post_id);
     // GETTING THE COMMENTS
     const comments = await getCommentsByPostId(post_id);
-
     if (!post) {
       return next(new ServerError("Post not found", "post", 404));
     }
@@ -53,7 +53,6 @@ const gettingSavedPosts = async (req, res, next) => {
   try {
     // GETTING ALL POSTS
     const posts = await savedPosts(req.session.userID);
-
     if (!posts) return next(new ServerError("Posts not found", "post", 404));
 
     res.status(200).json({ ok: true, posts });

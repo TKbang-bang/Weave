@@ -43,5 +43,8 @@ app.use(
 // ROUTES
 app.use(router);
 
+// ERROR HANDLER
 app.use(errorHandler);
+
+// STARTING SERVER
 server.listen(app.get("port"), () => console.log("Server running"));

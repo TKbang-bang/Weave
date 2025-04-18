@@ -7,11 +7,13 @@ const { createPost } = require("../services/router.services/postServices");
 
 const posting = async (req, res, next) => {
   try {
-    // POST DATA
+    // CHECKING IF A FILE WAS UPLOADED
     if (!req.file)
       return next(new ServerError("No file uploaded", "server", 400));
 
+    // POST DATA
     const { title, type } = req.body;
+    // FILE
     const file = req.file.filename;
 
     // CREATING THE POST

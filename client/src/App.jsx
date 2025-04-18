@@ -6,7 +6,6 @@ import Verify from "./pages/auth/Verify";
 import { userIsLogged } from "./services/global";
 import Display from "./pages/Display";
 import ForgotPassword from "./pages/auth/ForgotPassword";
-import { Toaster } from "sonner";
 
 axios.defaults.baseURL = "http://localhost:3000/";
 axios.defaults.withCredentials = true;

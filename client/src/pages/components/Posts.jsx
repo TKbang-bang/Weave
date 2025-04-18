@@ -138,7 +138,7 @@ function Posts({ to }) {
         </>
       ) : (
         <section className="no_posts">
-          <h1>No posts yet</h1>
+          <h1>No posts found</h1>
           <p>Make the first move</p>
           <Link to={"/publicate"}>Publicate</Link>
         </section>

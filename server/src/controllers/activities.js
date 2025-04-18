@@ -72,6 +72,7 @@ const deletingPost = async (req, res, next) => {
 
     // DELETING THE POST
     await deletePost(post_id);
+
     res.status(201).json({ ok: true, message: "Post deleted" });
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));

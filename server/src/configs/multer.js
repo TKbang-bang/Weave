@@ -1,7 +1,6 @@
 const multer = require("multer");
 const path = require("path");
 
-// Configuración del almacenamiento
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, "../../public/uploads"));
@@ -13,7 +12,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// Filtro de archivos: solo imágenes o videos
 const fileFilter = (req, file, cb) => {
   const isImage = file.mimetype.startsWith("image/");
   const isVideo = file.mimetype.startsWith("video/");
@@ -24,7 +22,6 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Middleware de carga con límites
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,

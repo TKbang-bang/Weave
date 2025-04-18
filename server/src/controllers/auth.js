@@ -13,9 +13,11 @@ const bcrypt = require("bcrypt");
 
 const userIsLogged = async (req, res, next) => {
   try {
+    // CHECKING IF THE USERID IS IN THE SESSION
     if (!req.session.userID)
       return next(new ServerError("User is not logged", "auth", 401));
 
+    // GETTING THE USER ID
     const gettingUserId = await getUserId(req.session.userID);
     if (!gettingUserId)
       return next(new ServerError("User not found", "auth", 404));
@@ -24,8 +26,6 @@ const userIsLogged = async (req, res, next) => {
   } catch (error) {
     next(new ServerError(error.message, "server", 500));
   }
-
-  // console.log(req.session.userID);
 };
 
 const signup = async (req, res, next) => {
@@ -35,18 +35,16 @@ const signup = async (req, res, next) => {
 
     // CHECKING IF THE USER ALREADY EXISTS
     const userByEmail = await getUserByEmail(email);
-
     if (userByEmail)
       return next(new ServerError("Email already registered", "email", 409));
 
+    // CHECKING IF THE ALIAS ALREADY EXISTS
     const userByAlias = await getUserByAlias(alias);
-
     if (userByAlias)
       return next(new ServerError("Alias already registered", "alias", 409));
 
     // SENDING A VERIFY CODE TO THE USER EMAIL
     const sendMail = await emialSend(email);
-
     if (!sendMail.ok)
       return next(new ServerError(sendMail.message, "email", 500));
 
@@ -78,6 +76,7 @@ const verify = async (req, res, next) => {
     if (!req.session.code)
       return next(new ServerError("Code may expired", "session", 400));
 
+    // VERIFYING IF THE CODE IS CORRECT
     if (req.session.code != code)
       return next(new ServerError("The code is incorrect", "code", 400));
 
@@ -113,7 +112,6 @@ const login = async (req, res, next) => {
 
     // CHECKING THE PASSWORD
     const validPassword = await bcrypt.compare(password, user.user_password);
-
     if (!validPassword)
       return next(new ServerError("Wrong password", "password", 400));
 
@@ -134,7 +132,6 @@ const deletingAccount = async (req, res, next) => {
 
     // DELETING THE ACCOUNT
     const accountDeleted = await deleteUserAccount(userId);
-
     if (!accountDeleted.ok)
       return next(
         new ServerError(accountDeleted.message, "account deleting", 500)
