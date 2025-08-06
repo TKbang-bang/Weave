@@ -7,7 +7,7 @@ import { userIsLogged } from "./services/global";
 import Display from "./pages/Display";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 
-axios.defaults.baseURL = "http://localhost:3000/";
+axios.defaults.baseURL = `${import.meta.env.VITE_BACKEND_URL}`;
 axios.defaults.withCredentials = true;
 
 function App() {
