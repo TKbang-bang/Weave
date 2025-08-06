@@ -1,6 +1,6 @@
 import axios from "axios";
 
 export const userIsLogged = async () => {
-  const res = await axios.get("/user_is_logged");
+  const res = await axios.get("/is_user_logged");
   return res;
 };

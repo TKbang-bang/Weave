@@ -18,9 +18,7 @@ function App() {
       try {
         const res = await userIsLogged();
 
-        if (res.status == 204 || res.status == 200 || res.status == 201) return;
-
-        throw new Error(res.response.data.message);
+        if (res.status == 204) throw new Error(res.response.data.message);
       } catch (error) {
         if (
           window.location.pathname == "/forgotpassword" ||

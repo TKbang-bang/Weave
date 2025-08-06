@@ -27,32 +27,4 @@ const deleteUserAccount = async (userId) => {
   }
 };
 
-const emialSend = async (email) => {
-  const code = await nanoid();
-
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: `${process.env.EMAIL}`,
-      pass: `${process.env.PASSWORD}`,
-    },
-  });
-
-  const mailOptions = {
-    from: process.env.EMAIL,
-    to: `${email}`,
-    subject: "Verification code",
-    html: `<div>
-      <p>Verification code</p>
-      <h1>${code}</h1>
-    </div>`,
-  };
-
-  const info = await transporter.sendMail(mailOptions);
-
-  return info.accepted
-    ? { ok: true, code }
-    : { ok: false, message: "Mail failed to send, try again" };
-};
-
-module.exports = { deleteUserAccount, emialSend };
+module.exports = { deleteUserAccount };

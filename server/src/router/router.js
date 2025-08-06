@@ -4,8 +4,8 @@ const {
   signup,
   verify,
   login,
-  userIsLogged,
   deletingAccount,
+  isUserLogged,
 } = require("../controllers/auth");
 const {
   getPosts,
@@ -43,11 +43,12 @@ const {
   codeEmailForgotPasword,
 } = require("../controllers/updates");
 const { userSearching, postSearching } = require("../controllers/search");
+const sessionMiddleware = require("../middlewares/session.middleware");
 
 const router = express.Router();
 
 // AUTH CONTROLLERS
-router.get("/user_is_logged", userIsLogged);
+router.get("/is_user_logged", sessionMiddleware, isUserLogged);
 router.post("/signup", signup);
 router.post("/verify", verify);
 router.post("/login", login);

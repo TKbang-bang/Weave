@@ -1,13 +1,13 @@
 const db = require("../../database/db");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const { User } = require("../../../models");
 
 const getUserByEmail = async (email) => {
   try {
-    const [users] = await db.query("SELECT * FROM users WHERE user_email = ?", [
-      email,
-    ]);
-    return users.length > 0 ? users[0] : null;
+    const user = await User.findOne({ where: { email } });
+
+    return user ? user : null;
   } catch (error) {
     throw new Error(error);
   }
@@ -15,10 +15,9 @@ const getUserByEmail = async (email) => {
 
 const getUserByAlias = async (alias) => {
   try {
-    const [users] = await db.query("SELECT * FROM users WHERE user_alias = ?", [
-      alias,
-    ]);
-    return users.length > 0 ? users[0] : null;
+    const user = await User.findOne({ where: { alias } });
+
+    return user ? user : null;
   } catch (error) {
     throw new Error(error);
   }
@@ -38,17 +37,9 @@ const getUserId = async (userID) => {
 
 const createUser = async (name, alias, email, password) => {
   try {
-    const userId = crypto.randomUUID();
+    const { dataValues } = await User.create({ name, alias, email, password });
 
-    const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(password, salt);
-
-    await db.query(
-      "INSERT INTO users (user_name, user_alias, user_email, user_password, user_id) VALUES (?, ?, ?, ?, ?)",
-      [name, alias, email, hashPassword, userId]
-    );
-
-    return userId;
+    return dataValues.id;
   } catch (error) {
     throw new Error(error);
   }

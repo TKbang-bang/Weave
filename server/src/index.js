@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -7,7 +8,7 @@ const myStore = require("./configs/session_store");
 const router = require("./router/router");
 const { mySocket } = require("./services/socket.services/socketService");
 const errorHandler = require("./error/errorHandler");
-require("dotenv").config();
+const cookieParser = require("cookie-parser");
 
 // STARTING APPLICATION
 const app = express();
@@ -23,10 +24,12 @@ app.use(
     origin: `${process.env.CLIENT_URL}`,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "access-token", "Authorization"],
   })
 );
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "../public")));
+app.use(cookieParser());
 
 // EXPRESS-SESSION MANAGEMENT
 app.use(

@@ -30,13 +30,15 @@ function Signup() {
     try {
       const res = await registerData(name, alias, email, password);
 
-      if (!res.data.ok) throw new Error(res);
+      if (res.status != 201) throw new Error(res);
 
       navigate("/verify");
     } catch (error) {
       if (error.response.data.about == "email") {
         setEmailErr(true);
+        setLoading(false);
         setEmailErrTxt(error.response.data.message);
+        console.log(error.response ? error.response.data.message : error);
       }
 
       if (error.response.data.about == "alias") {
