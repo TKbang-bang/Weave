@@ -116,23 +116,29 @@ const verify = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    // USER DATA
+    // user credentials
     const { email, password } = req.body;
 
-    // CHECKING IF THE USER EXISTS
+    // verifying if the user exists
     const user = await getUserByEmail(email);
     if (!user) return next(new ServerError("Email not found", "email", 404));
 
-    // CHECKING THE PASSWORD
-    const validPassword = await bcrypt.compare(password, user.user_password);
+    // verifying the password
+    const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword)
       return next(new ServerError("Wrong password", "password", 400));
 
-    // SAVING THE USER ID IN THE SESSION
-    req.session.userID = user.user_id;
-    req.session.save();
+    // creating the tokens
+    const accessToken = createAccessToken(user.id);
+    const refreshToken = createRefreshToken(user.id);
 
-    res.status(201).json({ ok: true });
+    res
+      .cookie("refreshToken", refreshToken, refreshTokenOptions)
+      .status(200)
+      .json({
+        accessToken,
+        message: "User logged",
+      });
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }

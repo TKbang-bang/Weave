@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Eye, EyeSplash } from "../svg";
 import { loginData } from "../../services/auth";
 import { Link, useNavigate } from "react-router-dom";
+import { getAccessToken, setAccessToken } from "../../services/token.service";
 
 function Login() {
   const [seePassword, setSeePassword] = useState(false);
@@ -26,7 +27,9 @@ function Login() {
     try {
       const res = await loginData(email, password);
 
-      if (!res.data.ok) throw new Error(res);
+      if (res.status != 200) throw new Error(res.data.message);
+
+      setAccessToken(res.data.accessToken);
 
       navigate("/");
     } catch (error) {
