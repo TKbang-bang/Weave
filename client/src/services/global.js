@@ -1,6 +1,6 @@
-import axios from "axios";
+import api from "./api.service";
 
 export const userIsLogged = async () => {
-  const res = await axios.get("/is_user_logged");
+  const res = await api.get("/is_user_logged");
   return res;
 };

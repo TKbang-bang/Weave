@@ -10,9 +10,9 @@ const userSearching = async (req, res, next) => {
     const { search } = req.params;
 
     // SEARCHING
-    const searched = await usersSearch(search, req.session.userID);
+    const searched = await usersSearch(search, req.userId);
 
-    res.status(200).json({ ok: true, users: searched });
+    res.status(200).json({ users: searched });
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }
@@ -24,10 +24,9 @@ const postSearching = async (req, res, next) => {
     const { search } = req.params;
 
     // SEARCHING POSTS
-    const { posts } = await postsSearch(req.session.userID, search);
-    res.status(200).json({ ok: true, posts });
+    const posts = await postsSearch(req.userId, search);
+    res.status(200).json(posts);
   } catch (error) {
-    console.log(error);
     return next(new ServerError(error.message, "server", 500));
   }
 };

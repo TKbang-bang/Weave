@@ -33,8 +33,6 @@ function Search() {
           <SearchIcon />
         </button>
       </form>
-
-      {/* <Toaster position="top-center" richColors duration={1500} /> */}
     </article>
   );
 }

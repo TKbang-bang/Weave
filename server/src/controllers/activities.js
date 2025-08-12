@@ -1,14 +1,6 @@
 const ServerError = require("../error/errorClass");
-const {
-  isFollowing,
-  followUser,
-  unFollowUser,
-} = require("../services/router.services/followServices");
-const {
-  hasLiked,
-  unLike,
-  like,
-} = require("../services/router.services/likesServices");
+const { setFollow } = require("../services/router.services/followServices");
+const { liking } = require("../services/router.services/likesServices");
 const {
   postOwner,
   postUpdate,
@@ -18,48 +10,32 @@ const {
 
 const editTitle = async (req, res, next) => {
   try {
-    // POST DATA
+    // post data
     const { title } = req.body;
     const { post_id } = req.params;
 
-    // CHECKING IF THE POST BELONGS TO THE USER
-    const isPostOwner = await postOwner(req.session.userID, post_id);
+    // verifiying if the post exists
+    const updated = await postUpdate(title, post_id, req.userId);
 
-    if (!isPostOwner)
-      return next(
-        new ServerError(
-          "You are not the owner of this post",
-          "incorrect user",
-          403
-        )
-      );
+    if (!updated.ok)
+      return next(new ServerError(updated.message, "post", updated.status));
 
-    // UPDATING THE POST
-    await postUpdate(title, post_id);
-
-    res.json({ ok: true });
+    return res.status(204).end();
   } catch (error) {
+    console.log(error);
     return next(new ServerError(error.message, "server", 500));
   }
 };
 
 const likingPost = async (req, res, next) => {
   try {
-    // POST ID
+    // post id
     const { post_id } = req.body;
 
-    // CHECKING IF THE POST IS ALREADY LIKED
-    const liked = await hasLiked(req.session.userID, post_id);
+    // liking the post
+    const like = await liking(req.userId, post_id);
 
-    if (liked) {
-      // UNLIKING THE POST
-      await unLike(req.session.userID, post_id);
-      res.status(200).json({ ok: true, liked: false });
-    } else {
-      // LIKING THE POST
-      await like(req.session.userID, post_id);
-      res.status(200).json({ ok: true, liked: true });
-    }
+    return res.status(200).json({ liked: like.liking });
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }
@@ -71,9 +47,12 @@ const deletingPost = async (req, res, next) => {
     const { post_id } = req.params;
 
     // DELETING THE POST
-    await deletePost(post_id);
+    const deleted = await deletePost(post_id, req.userId);
 
-    res.status(201).json({ ok: true, message: "Post deleted" });
+    if (!deleted.ok)
+      return next(new ServerError(deleted.message, "post", deleted.status));
+
+    res.status(204).end();
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }
@@ -82,20 +61,12 @@ const deletingPost = async (req, res, next) => {
 const following = async (req, res, next) => {
   try {
     // USER ID
-    const { user_id } = req.body;
+    const { userId } = req.body;
 
-    // CHECKING IF THE USER IS ALREADY FOLLOWING
-    const following = await isFollowing(req.session.userID, user_id);
+    // un/following
+    const follow = await setFollow(req.userId, userId);
 
-    if (!following) {
-      // FOLLOWING THE USER
-      await followUser(req.session.userID, user_id);
-      res.status(200).json({ ok: true, followed: true });
-    } else {
-      // UNFOLLOWING THE USER
-      await unFollowUser(req.session.userID, user_id);
-      res.status(200).json({ ok: true, followed: false });
-    }
+    res.status(200).json({ followed: follow });
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }
@@ -103,16 +74,13 @@ const following = async (req, res, next) => {
 
 const savingPost = async (req, res, next) => {
   try {
-    // POST ID
-    const { post_id } = req.body;
+    // post id
+    const { postId } = req.body;
 
     // SAVING THE POST
-    const saved = await savePost(req.session.userID, post_id);
+    const saved = await savePost(req.userId, postId);
 
-    if (!saved)
-      return next(new ServerError("Post not saved", "post saving", 500));
-
-    res.status(200).json(saved);
+    res.status(200).json({ saved });
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }

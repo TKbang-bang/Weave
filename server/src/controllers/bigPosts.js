@@ -2,28 +2,17 @@ const {
   getAllPosts,
   getPostById,
   savedPosts,
-  getAllFollowingPosts,
 } = require("../services/router.services/bigPostsServices");
 const ServerError = require("../error/errorClass");
 
 const getPosts = async (req, res, next) => {
   try {
     // GETTING ALL POSTS
-    const posts = await getAllPosts(req.session.userID);
+    const posts = await getAllPosts(req.userId);
 
-    res.status(200).json({ ok: true, posts });
+    res.status(200).json(posts);
   } catch (error) {
-    return next(new ServerError(error.message, "server", 500));
-  }
-};
-
-const getFollowingPosts = async (req, res, next) => {
-  try {
-    // GETTING ALL POSTS
-    const posts = await getAllFollowingPosts(req.session.userID);
-
-    res.status(200).json({ ok: true, posts });
-  } catch (error) {
+    console.log(error);
     return next(new ServerError(error.message, "server", 500));
   }
 };
@@ -52,10 +41,10 @@ const getPostsById = async (req, res, next) => {
 const gettingSavedPosts = async (req, res, next) => {
   try {
     // GETTING ALL POSTS
-    const posts = await savedPosts(req.session.userID);
+    const posts = await savedPosts(req.userId);
     if (!posts) return next(new ServerError("Posts not found", "post", 404));
 
-    res.status(200).json({ ok: true, posts });
+    res.status(200).json(posts);
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }
@@ -63,7 +52,6 @@ const gettingSavedPosts = async (req, res, next) => {
 
 module.exports = {
   getPosts,
-  getFollowingPosts,
   getPostsById,
   gettingSavedPosts,
 };

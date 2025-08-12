@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { userSearching } from "../../services/search";
 import Posts from "./Posts";
 import { ArrowLeft } from "../../components/svg";
+import { toast } from "sonner";
 
 function Searched() {
   const [users, setUsers] = useState([]);
@@ -14,10 +15,11 @@ function Searched() {
       try {
         const usersSearch = await userSearching(search);
 
+        if (usersSearch.status != 200) throw new Error(usersSearch);
+
         setUsers(usersSearch.data.users);
       } catch (error) {
-        console.log(error);
-        // toast.error(error.response.data.message);
+        return toast.error(error.response.data.message);
       }
     };
 
@@ -36,11 +38,11 @@ function Searched() {
           <div className="users_container">
             {users.map((user) => {
               return (
-                <div className="user" key={user.user_id}>
+                <div className="user" key={user.id}>
                   <img
                     src={
-                      user.user_profile
-                        ? `http://localhost:3000/uploads/${user.user_profile}`
+                      user.profile
+                        ? `http://localhost:3000/uploads/${user.profile}`
                         : `/no_user.png`
                     }
                     alt=""
@@ -50,10 +52,10 @@ function Searched() {
                     {user.followers}{" "}
                     {user.followers == 1 ? "follower" : "followers"}
                   </p>
-                  <h3>{user.user_name}</h3>
-                  <p className="alias">@{user.user_alias}</p>
+                  <h3>{user.name}</h3>
+                  <p className="alias">@{user.alias}</p>
 
-                  <Link to={`/profile/${user.user_id}`}>Go to profile</Link>
+                  <Link to={`/profile/${user.id}`}>Go to profile</Link>
                 </div>
               );
             })}

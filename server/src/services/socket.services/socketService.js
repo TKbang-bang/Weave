@@ -14,11 +14,9 @@ function mySocket(server) {
 
     socket.on("client_comment", async (data) => {
       try {
-        const newComment = await commentService.addComment(data);
-        io.emit("server_comment", newComment);
+        await commentService.addComment(data, socket);
       } catch (error) {
-        console.error("Socket error:", error);
-        socket.emit("server_error", { message: "Server error" });
+        socket.emit("server_error", { message: "Internal server error" });
       }
     });
 

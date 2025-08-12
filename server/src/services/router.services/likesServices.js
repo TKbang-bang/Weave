@@ -1,22 +1,22 @@
 const db = require("../../database/db");
+const { Like } = require("../../../models");
 
-const hasLiked = async (userId, postId) => {
-  const sql = "SELECT COUNT(*) FROM likes WHERE user_id = ? AND post_id = ?";
+const liking = async (userId, postId) => {
+  try {
+    const like = await Like.findOne({
+      where: { userId, postId },
+    });
 
-  const [[result]] = await db.query(sql, [userId, postId]);
-
-  return result["COUNT(*)"] > 0 ? true : false;
+    if (like) {
+      await like.destroy();
+      return { liking: false };
+    } else {
+      await Like.create({ userId, postId });
+      return { liking: true };
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
-const unLike = async (userId, postId) => {
-  const sql = "DELETE FROM likes WHERE user_id = ? AND post_id = ?";
-  db.query(sql, [userId, postId]);
-};
-
-const like = async (userId, postId) => {
-  const sql = "INSERT INTO likes (like_id, user_id, post_id) VALUES (?, ?, ?)";
-
-  db.query(sql, [crypto.randomUUID(), userId, postId]);
-};
-
-module.exports = { hasLiked, unLike, like };
+module.exports = { liking };

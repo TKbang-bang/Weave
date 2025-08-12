@@ -22,7 +22,7 @@ const isUserLogged = async (req, res, next) => {
     if (!req.userId)
       return next(new ServerError("User is not logged", "user auth", 401));
 
-    return res.status(204).json({ message: "User is logged" });
+    return res.status(200).end();
   } catch (error) {
     next(new ServerError(error.message, "server", 500));
   }
@@ -147,21 +147,51 @@ const login = async (req, res, next) => {
 const deletingAccount = async (req, res, next) => {
   try {
     // MY USER ID
-    const userId = req.session.userID;
+    const userId = req.userId;
 
     // DELETING THE ACCOUNT
     const accountDeleted = await deleteUserAccount(userId);
     if (!accountDeleted.ok)
       return next(
-        new ServerError(accountDeleted.message, "account deleting", 500)
+        new ServerError(
+          accountDeleted.message,
+          "account deleting",
+          accountDeleted.status
+        )
       );
 
     // DESTROYING THE SESSION
-    req.session.destroy();
-    res.status(201).json({ ok: true, message: accountDeleted.message });
+
+    req.userId = null;
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+    });
+
+    res.status(204).end();
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }
 };
 
-module.exports = { signup, verify, login, isUserLogged, deletingAccount };
+const verifyToken = async (req, res, next) => {
+  try {
+    if (!req.userId)
+      return next(new ServerError("User is not logged", "user auth", 401));
+
+    return res.status(200).json({ message: "Your token is valid" });
+  } catch (error) {
+    return next(new ServerError(error.message, "server", 500));
+  }
+};
+
+module.exports = {
+  signup,
+  verify,
+  login,
+  isUserLogged,
+  deletingAccount,
+  verifyToken,
+};

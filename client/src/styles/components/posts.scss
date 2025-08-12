@@ -196,6 +196,9 @@
 
           & button,
           & span {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             height: 2.5rem;
             flex-grow: 1;
             border: none;

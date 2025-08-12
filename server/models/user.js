@@ -36,6 +36,18 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "userId",
         as: "comments",
       });
+
+      User.hasMany(models.Save, {
+        foreignKey: "userId",
+        as: "saves",
+      });
+    }
+    toJSON() {
+      const values = { ...this.get() };
+      delete values.password;
+      delete values.createdAt;
+      delete values.updatedAt;
+      return values;
     }
   }
   User.init(

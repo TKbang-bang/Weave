@@ -10,6 +10,7 @@ const {
   sendChangePassCode,
   changePassCode,
 } = require("../services/router.services/updateServices");
+const jwt = require("jsonwebtoken");
 
 const changingUserProfilePicture = async (req, res, next) => {
   try {
@@ -17,17 +18,18 @@ const changingUserProfilePicture = async (req, res, next) => {
     const { filename } = req.file;
 
     // CHANGING THE PROFILE PICTURE
-    const profileUpdate = await changeProfilePicture(
-      filename,
-      req.session.userID
-    );
-    if (!profileUpdate) {
+    const profileUpdate = await changeProfilePicture(filename, req.userId);
+    if (!profileUpdate.ok) {
       return next(
-        new ServerError("Something went wrong", "profile picture", 500)
+        new ServerError(
+          profileUpdate.message,
+          "profile picture",
+          profileUpdate.status
+        )
       );
     }
 
-    res.status(200).json({ ok: true, message: "Profile picture updated" });
+    res.status(204).end();
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }
@@ -36,13 +38,13 @@ const changingUserProfilePicture = async (req, res, next) => {
 const deletingProfilePicture = async (req, res, next) => {
   try {
     // DELETING THE PROFILE PICTURE
-    const deleted = await profilePictureDelete(req.session.userID);
-    if (!deleted)
+    const deleted = await profilePictureDelete(req.userId);
+    if (!deleted.ok)
       return next(
         new ServerError(deleted.message, "profile delete", deleted.status)
       );
 
-    res.status(200).json({ ok: true, message: "Profile picture deleted" });
+    res.status(204).end();
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }
@@ -54,13 +56,13 @@ const changingName = async (req, res, next) => {
     const { name, password } = req.body;
 
     // CHANGING THE NAME
-    const changeName = await changeUserName(name, password, req.session.userID);
+    const changeName = await changeUserName(name, password, req.userId);
     if (!changeName.ok)
       return next(
         new ServerError(changeName.message, "name changing", changeName.status)
       );
 
-    res.status(200).json({ ok: true, message: "Name changed" });
+    res.status(204).end();
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }
@@ -72,11 +74,7 @@ const changingAlias = async (req, res, next) => {
     const { alias, password } = req.body;
 
     // CHANGING THE NAME
-    const changeAlias = await changeUserAlias(
-      alias,
-      password,
-      req.session.userID
-    );
+    const changeAlias = await changeUserAlias(alias, password, req.userId);
     if (!changeAlias.ok)
       return next(
         new ServerError(
@@ -86,7 +84,7 @@ const changingAlias = async (req, res, next) => {
         )
       );
 
-    res.status(200).json({ ok: true, message: "Alias changed successfully" });
+    res.status(204).end();
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }
@@ -101,7 +99,7 @@ const changingPassword = async (req, res, next) => {
     const changePassword = await changeUserPasswod(
       oldPassword,
       newPassword,
-      req.session.userID
+      req.userId
     );
     if (!changePassword.ok)
       return next(
@@ -112,7 +110,7 @@ const changingPassword = async (req, res, next) => {
         )
       );
 
-    res.status(201).json({ ok: true, message: changePassword.message });
+    res.status(204).end();
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }
@@ -124,11 +122,7 @@ const ChangingEmail = async (req, res, next) => {
     const { email, password } = req.body;
 
     // CHANGING THE EMAIL
-    const changeEmail = await changeUserEmail(
-      email,
-      password,
-      req.session.userID
-    );
+    const changeEmail = await changeUserEmail(email, password, req.userId);
     if (!changeEmail.ok)
       return next(
         new ServerError(
@@ -138,18 +132,21 @@ const ChangingEmail = async (req, res, next) => {
         )
       );
 
-    // CREATING EMAIL AND CODE VARIABLES IN THE SESSION
-    req.session.user_email = email;
-    req.session.code = changeEmail.code;
+    const changeEmailCode = jwt.sign(
+      { email, code: changeEmail.code },
+      process.env.EMAIL_TOKEN_SECRET,
+      { expiresIn: "5m" }
+    );
 
-    // DELETING THE CODE FROM THE SESSION AFTER 3 MINS
-    setTimeout(() => {
-      delete req.session.code;
-      delete req.session.user_email;
-      req.session.save();
-    }, 180000);
-
-    res.json({ ok: true, message: "A code has been sent to your new email" });
+    res
+      .cookie("emailChangeCode", changeEmailCode, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 1000 * 60 * 5,
+      })
+      .status(200)
+      .json({ message: "A code has been sent to your new email" });
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }
@@ -157,20 +154,21 @@ const ChangingEmail = async (req, res, next) => {
 
 const sendingEmailChangeCode = async (req, res, next) => {
   try {
-    // VERIFYING THE CODE
-    if (!req.session.code)
-      return next(new ServerError("Code may expired", "code", 400));
+    const { code } = req.body;
+    const payload = jwt.verify(
+      req.cookies.emailChangeCode,
+      process.env.EMAIL_TOKEN_SECRET
+    );
+    if (!payload) return next(new ServerError("Code may expired", "code", 400));
 
-    // VERIFYING IF THE CODE IS CORRECT
-    if (req.session.code != req.body.code)
+    // verifiying if the codes match
+    if (payload.code !== code)
       return next(new ServerError("The code is incorrect", "code", 400));
 
-    // TAKING THE USER DATA FROM THE TEMPORARY SESSION VARIABLE
-    const { user_email } = req.session;
-    // UPDATING THE EMAIL
-    await emailUpdate(user_email, req.session.userID);
+    // updating the email
+    await emailUpdate(payload.email, req.userId);
 
-    res.status(201).json({ ok: true, message: "Email updated" });
+    res.status(204).end();
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }

@@ -19,6 +19,14 @@ module.exports = (sequelize, DataTypes) => {
         as: "post",
       });
     }
+
+    toJSON() {
+      const comments = { ...this.get() };
+      delete comments.createdAt;
+      delete comments.updatedAt;
+      delete comments.userId;
+      return comments;
+    }
   }
   Comment.init(
     {
@@ -37,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       content: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
       },
     },

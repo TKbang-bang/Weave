@@ -6,19 +6,20 @@ function Comments({ comments }) {
       {comments.length > 0 ? (
         <>
           {comments.map((comment) => (
-            <article className="comment" key={comment.comment_id}>
+            <article className="comment" key={comment.id}>
               <img
                 src={
-                  comment.user_profile
-                    ? `http://localhost:3000/uploads/${comment.user_profile}`
+                  comment.user.profile
+                    ? `http://localhost:3000/uploads/${comment.user.profile}`
                     : `/no_user.png`
                 }
                 alt=""
               />
 
               <div className="comment_info">
-                <h3>{comment.user_name}</h3>
-                <p>{comment.comment_content}</p>
+                <h3>{comment.user.name}</h3>
+                <p>{comment.content}</p>
+                <span className="date">{comment.since_date}</span>
               </div>
             </article>
           ))}

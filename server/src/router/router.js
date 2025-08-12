@@ -6,6 +6,7 @@ const {
   login,
   deletingAccount,
   isUserLogged,
+  verifyToken,
 } = require("../controllers/auth");
 const {
   getPosts,
@@ -26,7 +27,6 @@ const {
   savingPost,
 } = require("../controllers/activities");
 const {
-  getUserId,
   getUserCredentials,
   gettingUserById,
   gettingFollowingUsers,
@@ -49,53 +49,65 @@ const router = express.Router();
 
 // AUTH CONTROLLERS
 router.get("/is_user_logged", sessionMiddleware, isUserLogged);
+router.get("/verifyToken", sessionMiddleware, verifyToken);
 router.post("/signup", signup);
 router.post("/verify", verify);
 router.post("/login", login);
-router.get("/logout", (req, res) => {
-  req.session.destroy();
-  res.status(201).json({ ok: true, message: "Loged out successful" });
+router.get("/logout", sessionMiddleware, (req, res) => {
+  req.userId = null;
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    path: "/",
+  });
+
+  res.status(204).end();
 });
-router.delete("/delete_account", deletingAccount);
+router.delete("/delete_account", sessionMiddleware, deletingAccount);
 
 // POSTS CONTROLLERS
-router.post("/publicate", upload.single("file"), posting);
-router.get("/posts", getPosts);
-router.get("/comments/:post_id", gettingComments);
+router.post("/publicate", sessionMiddleware, upload.single("file"), posting);
+router.get("/posts", sessionMiddleware, getPosts);
+router.get("/comments/:postId", sessionMiddleware, gettingComments);
 router.get("/post/:post_id", getPostsById);
-router.get("/user_posts", gettingMyUserPosts);
-router.get("/user_posts_/:user_id", gettingUserPosts);
-router.get("/saved_posts", gettingSavedPosts);
+router.get("/user_posts", sessionMiddleware, gettingMyUserPosts);
+router.get("/user_posts_/:user_id", sessionMiddleware, gettingUserPosts);
+router.get("/saved_posts", sessionMiddleware, gettingSavedPosts);
 
 // SEARCH
-router.get("/user_search/:search", userSearching);
-router.get("/posts_search_by_word/:search", postSearching);
+router.get("/user_search/:search", sessionMiddleware, userSearching);
+router.get("/posts_search_by_word/:search", sessionMiddleware, postSearching);
 
 // USER ACTIVITIES CONTROLLERS
-router.delete("/delete_post/:post_id", deletingPost);
-router.post("/follow", following);
-router.put("/edit_post/:post_id", editTitle);
-router.post("/like", likingPost);
-router.get("/user_id", getUserId);
-router.post("/save", savingPost);
+router.delete("/delete_post/:post_id", sessionMiddleware, deletingPost);
+router.post("/follow", sessionMiddleware, following);
+router.put("/edit_post/:post_id", sessionMiddleware, editTitle);
+router.post("/like", sessionMiddleware, likingPost);
+router.post("/save", sessionMiddleware, savingPost);
 
 // GETTING USER CREDENTIALS CONTROLLERS
-router.get("/user", getUserCredentials);
-router.get("/user_/:user_id", gettingUserById);
+router.get("/user", sessionMiddleware, getUserCredentials);
+router.get("/user_/:user_id", sessionMiddleware, gettingUserById);
 router.get("/user_following", gettingFollowingUsers);
 
 // ACCOUNT SETTINGS CONTROLLERS
 router.post(
   "/change_profile_picture",
+  sessionMiddleware,
   upload.single("file"),
   changingUserProfilePicture
 );
-router.delete("/delete_profile_picture", deletingProfilePicture);
-router.post("/change_name", changingName);
-router.post("/change_alias", changingAlias);
-router.post("/change_password", changingPassword);
-router.post("/change_email", ChangingEmail);
-router.post("/change_email_code", sendingEmailChangeCode);
+router.delete(
+  "/delete_profile_picture",
+  sessionMiddleware,
+  deletingProfilePicture
+);
+router.post("/change_name", sessionMiddleware, changingName);
+router.post("/change_alias", sessionMiddleware, changingAlias);
+router.post("/change_password", sessionMiddleware, changingPassword);
+router.post("/change_email", sessionMiddleware, ChangingEmail);
+router.post("/change_email_code", sessionMiddleware, sendingEmailChangeCode);
 
 // FORGOT PASSWORD
 router.post("/email_forgot_password", emailForgotPassword);

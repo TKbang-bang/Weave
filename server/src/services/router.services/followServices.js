@@ -1,24 +1,30 @@
 const db = require("../../database/db");
+const { Follows } = require("../../../models");
 
-const isFollowing = async (fromUser, toUser) => {
-  const sql =
-    "SELECT COUNT(*) FROM follows WHERE from_user_id = ? AND to_user_id = ?";
+const setFollow = async (fromUser, toUser) => {
+  try {
+    const follow = await Follows.findOne({
+      where: {
+        fromUser,
+        toUser,
+      },
+    });
 
-  const [[result]] = await db.query(sql, [fromUser, toUser]);
-
-  return result["COUNT(*)"] > 0 ? true : false;
+    // un/following
+    if (follow) {
+      await follow.destroy();
+      return false;
+    } else {
+      await Follows.create({
+        fromUser,
+        toUser,
+      });
+      return true;
+    }
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }
 };
 
-const unFollowUser = async (fromUser, toUser) => {
-  const sql = "DELETE FROM follows WHERE from_user_id = ? AND to_user_id = ?";
-  db.query(sql, [fromUser, toUser]);
-};
-
-const followUser = async (fromUser, toUser) => {
-  const sql =
-    "INSERT INTO follows (follow_id, from_user_id, to_user_id) VALUES (?, ?, ?)";
-
-  db.query(sql, [crypto.randomUUID(), fromUser, toUser]);
-};
-
-module.exports = { isFollowing, unFollowUser, followUser };
+module.exports = { setFollow };

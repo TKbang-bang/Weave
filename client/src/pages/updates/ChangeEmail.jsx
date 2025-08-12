@@ -18,10 +18,10 @@ function ChangeEmail() {
       try {
         const res = await getMyUser();
 
-        if (!res.data.ok) throw new Error(res);
+        if (res.status != 200) throw new Error(res);
 
-        setName(res.data.user.user_name);
-        setNewName(res.data.user.user_name);
+        setName(res.data.user.name);
+        setNewName(res.data.user.name);
       } catch (error) {
         toast.error(error.response.data.message);
       }
@@ -41,7 +41,7 @@ function ChangeEmail() {
     try {
       const res = await changingEmail(email, password);
 
-      if (!res.data.ok) throw new Error(res);
+      if (res.status != 200) throw new Error(res);
 
       toast.success(res.data.message);
       document.querySelector(".updates_container").classList.add("active");
@@ -61,11 +61,11 @@ function ChangeEmail() {
     try {
       const res = await sendingChangeEmailCode(code);
 
-      if (!res.data.ok) throw new Error(res);
+      if (res.status != 204) throw new Error(res);
 
-      toast.success(res.data.message);
+      toast.success("Email has been changed");
 
-      setTimeout(() => navigate("/settings"), 1000);
+      navigate("/settings");
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -148,8 +148,6 @@ function ChangeEmail() {
           </button>
         </form>
       </div>
-
-      {/* <Toaster position="top-center" richColors /> */}
     </section>
   );
 }

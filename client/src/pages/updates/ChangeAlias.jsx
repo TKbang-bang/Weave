@@ -17,10 +17,10 @@ function ChangeAlias() {
       try {
         const res = await getMyUser();
 
-        if (!res.data.ok) throw new Error(res);
+        if (res.status != 200) throw new Error(res);
 
-        setAlias(res.data.user.user_alias);
-        setNewAlias(res.data.user.user_alias);
+        setAlias(res.data.user.alias);
+        setNewAlias(res.data.user.alias);
       } catch (error) {
         toast.error(error.response.data.message);
       }
@@ -44,13 +44,13 @@ function ChangeAlias() {
     try {
       const res = await changingAlias(newAlias, password);
 
-      if (!res.data.ok) throw new Error(res);
+      if (res.status != 204) throw new Error(res);
 
-      toast.success(res.data.message);
+      toast.success("Alias has been changed");
 
-      setTimeout(() => navigate("/settings"), 1000);
+      navigate("/settings");
     } catch (error) {
-      toast.error(error.response.data.message);
+      return toast.error(error.response.data.message);
     }
   };
 
@@ -98,8 +98,6 @@ function ChangeAlias() {
           Change alias
         </button>
       </form>
-
-      {/* <Toaster position="top-center" richColors /> */}
     </section>
   );
 }

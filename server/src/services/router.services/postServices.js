@@ -1,18 +1,18 @@
 const db = require("../../database/db");
 const { format } = require("date-fns");
 const { getCommentsByPostId } = require("./bigPostsServices");
+const { Post, Save } = require("../../../models");
 
-const createPost = async (title, file, type, userID) => {
+const createPost = async (title, file, type, userId) => {
   try {
-    const postId = crypto.randomUUID();
-    const date = format(new Date(), "yyyy-MM-dd HH:mm:ss");
+    const { dataValues } = await Post.create({
+      title,
+      media: file,
+      media_type: type,
+      userId,
+    });
 
-    await db.query(
-      "INSERT INTO posts (post_id, post_title, post_media, post_media_type, post_date, user_id) VALUES (?, ?, ?, ?, ?, ?)",
-      [postId, title, file, type, date, userID]
-    );
-
-    return postId;
+    return dataValues.id;
   } catch (error) {
     throw new Error(error);
   }
@@ -25,51 +25,67 @@ const postOwner = async (userId, postID) => {
   return result.length > 0 ? true : false;
 };
 
-const postUpdate = async (title, postID) => {
-  const sql = "UPDATE posts SET post_title = ? WHERE post_id = ?";
-  await db.query(sql, [title, postID]);
-};
-
-const deletePost = async (postId) => {
+const postUpdate = async (title, postId, userId) => {
   try {
-    await db.beginTransaction();
+    const post = await Post.findOne({
+      where: { id: postId },
+    });
 
-    await db.query("DELETE FROM likes WHERE post_id = ?", [postId]);
-    await db.query("DELETE FROM comments WHERE post_id = ?", [postId]);
-    await db.query("DELETE FROM posts WHERE post_id = ?", [postId]);
-    await db.query("DELETE FROM saved WHERE post_id = ?", [postId]);
+    // verifiying if the post belongs to the user
+    if (!post) return { ok: false, message: "Post not found", status: 404 };
+    if (post.userId != userId)
+      return {
+        ok: false,
+        message: "You are not the owner of this post",
+        status: 403,
+      };
 
-    await db.commit();
+    await post.update({ title });
 
     return { ok: true };
   } catch (error) {
-    await db.rollback();
+    throw new Error(error);
+  }
+};
+
+const deletePost = async (postId, userId) => {
+  try {
+    // verifiying if the post exists
+    const post = await Post.findOne({ where: { id: postId } });
+    if (!post) return { ok: false, message: "Post not found", status: 404 };
+
+    // verifiying if the post belongs to the user
+    if (post.userId != userId)
+      return {
+        ok: false,
+        message: "You are not the owner of this post",
+        status: 403,
+      };
+
+    await post.destroy();
+
+    return { ok: true, message: "Post deleted" };
+  } catch (error) {
     throw new Error(error);
   }
 };
 
 const savePost = async (userId, postId) => {
   try {
-    // CHECKING IF THE POST IS ALREADY SAVED
-    const [saved] = await db.query(
-      "SELECT * FROM saved WHERE user_id = ? AND post_id = ?",
-      [userId, postId]
-    );
+    const save = await Save.findOne({
+      where: { userId, postId },
+    });
 
-    if (saved.length > 0) {
-      await db.query("DELETE FROM saved WHERE user_id = ? AND post_id = ?", [
+    if (save) {
+      await save.destroy();
+      return false;
+    } else {
+      await Save.create({
         userId,
         postId,
-      ]);
-      return { ok: true, saved: false, message: "Post unsaved successfully" };
+      });
+      return true;
     }
-
-    await db.query(
-      "INSERT INTO saved (saved_id, user_id, post_id) VALUES (?, ?, ?)",
-      [crypto.randomUUID(), userId, postId]
-    );
-
-    return { ok: true, saved: true, message: "Post saved successfully" };
   } catch (error) {
     throw new Error(error);
   }

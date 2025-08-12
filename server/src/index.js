@@ -24,7 +24,7 @@ app.use(
     origin: `${process.env.CLIENT_URL}`,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "access-token", "Authorization"],
+    exposedHeaders: ["access-token"],
   })
 );
 app.use(express.json());

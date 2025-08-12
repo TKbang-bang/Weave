@@ -6,7 +6,7 @@ import {
 } from "./token.service";
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_BACKEND_URL}/protected`,
+  baseURL: `${import.meta.env.VITE_BACKEND_URL}`,
   withCredentials: true,
 });
 
@@ -23,6 +23,7 @@ api.interceptors.response.use(
   (response) => {
     const newToken = response.headers["access-token"]?.split(" ")[1];
     if (newToken) setAccessToken(newToken);
+
     return response;
   },
   async (error) => {

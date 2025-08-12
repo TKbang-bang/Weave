@@ -1,16 +1,19 @@
 const db = require("../../database/db");
 const myDate = require("../../configs/date_format");
+const { User, Post, sequelize } = require("../../../models");
+const { Op } = require("sequelize");
 
 const usersSearch = async (search, userId) => {
   try {
-    const sql = `
-        SELECT user_id, user_name, user_alias, user_profile,(select count(*) from follows where to_user_id = user_id) as followers
-      FROM users 
-      WHERE (user_name LIKE ? OR user_alias LIKE ?) 
-      AND user_id != ?
-    `;
-
-    const [users] = await db.query(sql, [`${search}%`, `${search}%`, userId]);
+    const users = await User.findAll({
+      where: {
+        [Op.or]: [
+          { name: { [Op.like]: `%${search}%` } },
+          { alias: { [Op.like]: `%${search}%` } },
+        ],
+        id: { [Op.ne]: userId },
+      },
+    });
 
     return users;
   } catch (error) {
@@ -20,37 +23,77 @@ const usersSearch = async (search, userId) => {
 
 const postsSearch = async (userId, search) => {
   try {
-    const sql = `
-        SELECT 
-        p.post_id, p.post_title, p.post_media, p.post_media_type, p.post_date, p.user_id, 
-        u.user_name, u.user_alias, u.user_profile, 
-        COUNT(DISTINCT f.from_user_id) AS followed, 
-        COUNT(DISTINCT l.user_id) AS likes, 
-        COUNT(DISTINCT IF(l.user_id = ?, 1, NULL)) AS liked, 
-        COUNT(DISTINCT c.comment_id) AS comments
-      FROM posts p
-      JOIN users u ON u.user_id = p.user_id
-      LEFT JOIN follows f ON f.to_user_id = u.user_id AND f.from_user_id = ?
-      LEFT JOIN likes l ON l.post_id = p.post_id
-      LEFT JOIN comments c ON c.post_id = p.post_id
-      WHERE p.post_title LIKE ?
-      GROUP BY p.post_id
-      ORDER BY p.post_date DESC
-    `;
+    const posts = await Post.findAll({
+      where: {
+        title: { [Op.like]: `%${search}%` },
+      },
+      attributes: [
+        "id",
+        "title",
+        "media",
+        "media_type",
+        "createdAt",
+        [
+          sequelize.literal(
+            '(SELECT COUNT(*) FROM "Likes" WHERE "Likes"."postId" = "Post"."id")'
+          ),
+          "likes",
+        ],
+        [
+          sequelize.literal(
+            '(SELECT COUNT(*) FROM "Comments" WHERE "Comments"."postId" = "Post"."id")'
+          ),
+          "comments",
+        ],
+        [
+          sequelize.literal(
+            `(SELECT COUNT(*) FROM "Saves" WHERE "Saves"."postId" = "Post"."id" AND "Saves"."userId" = '${userId}')`
+          ),
+          "saved",
+        ],
+        [
+          sequelize.literal(
+            `(SELECT COUNT(*) FROM "Likes" WHERE "Likes"."postId" = "Post"."id" AND "Likes"."userId" = '${userId}')`
+          ),
+          "liked",
+        ],
+      ],
+      include: [
+        {
+          model: User,
+          as: "owner",
+          attributes: [
+            "id",
+            "name",
+            "alias",
+            "profile",
+            [
+              sequelize.literal(
+                `(SELECT COUNT(*) FROM "Follows" WHERE "Follows"."fromUser" = '${userId}' AND "Follows"."toUser" = "owner"."id")`
+              ),
+              "following",
+            ],
+          ],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+      group: ["Post.id", "owner.id"],
+    });
 
-    const [posts] = await db.query(sql, [userId, userId, `%${search}%`]);
+    const newPosts = posts.map((post) => {
+      {
+        const plainPosts = post.get({ plain: true });
 
-    const today = new Date();
-    const dateFormat = "yyyy-MM-dd HH:mm:ss";
+        return {
+          ...plainPosts,
+          since_date: myDate(plainPosts.createdAt),
+          me: plainPosts.owner.id == userId,
+          comment_section: false,
+        };
+      }
+    });
 
-    const formattedPosts = posts.map((post) => ({
-      ...post,
-      since_date: myDate(post.post_date, today, dateFormat),
-      me: post.user_id === userId,
-      comment_section: false,
-    }));
-
-    return { ok: true, posts: formattedPosts };
+    return newPosts;
   } catch (error) {
     throw new Error(error);
   }

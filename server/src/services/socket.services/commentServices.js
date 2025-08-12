@@ -1,36 +1,39 @@
-const db = require("../../database/db");
-const crypto = require("crypto");
+const { Comment, User } = require("../../../models");
+const jwt = require("jsonwebtoken");
+const myDate = require("../../configs/date_format");
 
-async function addComment(data) {
+async function addComment(data, socket) {
   try {
-    const comment_id = crypto.randomUUID();
-    const insertQuery =
-      "INSERT INTO comments (comment_id, post_id, user_id, comment_content) VALUES (?, ?, ?, ?)";
+    const { userId } = jwt.verify(data.token, process.env.ACCESS_TOKEN_SECRET);
 
-    await db.query(insertQuery, [
-      comment_id,
-      data.post_id,
-      data.user_id,
-      data.comment_content,
-    ]);
+    if (!userId)
+      return socket.emit("server_error", { message: "Invalid token" });
 
-    const userQuery =
-      "SELECT user_name, user_profile FROM users WHERE user_id = ?";
-    const [userResult] = await db.query(userQuery, [data.user_id]);
+    const { dataValues } = await Comment.create({
+      content: data.content,
+      postId: data.postId,
+      userId,
+    });
 
-    if (userResult.length === 0) {
-      throw new Error("User not found");
-    }
+    console.log("comment => ", dataValues);
 
-    return {
-      comment_id,
-      comment_content: data.comment_content,
-      user_name: userResult[0].user_name,
-      user_profile: userResult[0].user_profile,
-    };
+    const comment = await Comment.findOne({
+      where: { id: dataValues.id },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "name", "alias", "profile"],
+        },
+      ],
+    });
+    const date = myDate(comment.createdAt);
+    comment.dataValues.since_date = date;
+
+    return socket.emit("server_comment", comment.toJSON());
   } catch (error) {
-    console.error("Error adding comment:", error);
-    throw new Error("Server error");
+    console.log("error b => ", error);
+    return socket.emit("server_error", { message: "Internal server error" });
   }
 }
 

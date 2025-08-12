@@ -3,7 +3,6 @@ const { createAccessToken, createRefreshToken } = require("../utils/token");
 const { refreshTokenOptions } = require("../utils/token");
 
 const sessionMiddleware = async (req, res, next) => {
-  // getting tokens
   const accessToken = req.headers.authorization?.split(" ")[1];
   const refreshToken = req.cookies.refreshToken;
 

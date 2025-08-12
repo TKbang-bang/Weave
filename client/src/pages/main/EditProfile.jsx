@@ -17,9 +17,9 @@ function EditProfile() {
       try {
         const res = await getMyUser();
 
-        if (!res.data.ok) throw new Error(res);
+        if (res.status != 200) throw new Error(res);
 
-        setFile(res.data.user.user_profile);
+        setFile(res.data.user.profile);
       } catch (error) {
         toast.error(error.response.data.message);
       }
@@ -42,7 +42,7 @@ function EditProfile() {
       try {
         const res = await changingProfilePicture(formData);
 
-        if (!res.data.ok) throw new Error(res);
+        if (res.status != 204) throw new Error(res);
 
         setFile(null);
         setNoFile(true);
@@ -50,7 +50,7 @@ function EditProfile() {
 
         navigate("/myprofile");
       } catch (error) {
-        toast.error(error.response.data.message);
+        return toast.error(error.response.data.message);
       }
     }
   };
@@ -114,8 +114,6 @@ function EditProfile() {
           Save
         </button>
       </form>
-
-      {/* <Toaster position="top-center" richColors /> */}
     </section>
   );
 }

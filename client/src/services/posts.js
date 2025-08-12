@@ -1,7 +1,8 @@
 import axios from "axios";
+import api from "./api.service";
 
 export const gettingPosts = async ({ link }) => {
-  const res = await axios.get(`${link}`);
+  const res = await api.get(`${link}`);
   return res;
 };
 

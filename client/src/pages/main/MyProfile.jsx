@@ -16,7 +16,7 @@ function MyProfile() {
       try {
         const res = await getMyUser();
 
-        if (!res.data.ok) throw new Error(res);
+        if (res.status != 200) throw new Error(res);
 
         setUser(res.data.user);
       } catch (error) {
@@ -28,7 +28,7 @@ function MyProfile() {
   }, []);
 
   const handleDelete = async () => {
-    if (!user.user_profile || user.user_profile == null)
+    if (!user.profile || user.profile == null)
       return toast.error("You don't have a profile picture");
 
     toast("Are you sure you want to delete your profile picture?", {
@@ -38,10 +38,10 @@ function MyProfile() {
           try {
             const res = await deletingProfilePicture();
 
-            if (!res.data.ok) throw new Error(res.response.data.message);
+            if (res.status != 204) throw new Error(res.response.data.message);
 
             setImageDelete(true);
-            toast.success(res.data.message);
+            toast.success("Profile picture deleted");
           } catch (error) {
             toast.error(error.response.data.message);
           }
@@ -56,9 +56,9 @@ function MyProfile() {
         <div className="image_container">
           <img
             src={
-              imageDelete || !user.user_profile
+              imageDelete || !user.profile
                 ? `/no_user.png`
-                : `http://localhost:3000/uploads/${user.user_profile}`
+                : `http://localhost:3000/uploads/${user.profile}`
             }
             alt=""
           />
@@ -83,8 +83,8 @@ function MyProfile() {
         </div>
 
         <div className="profile_info">
-          <h3>{user.user_name}</h3>
-          <p>@{user.user_alias}</p>
+          <h3>{user.name}</h3>
+          <p>@{user.alias}</p>
           <p>
             {user.followers} {user.followers == 1 ? "follower" : "followers"}
           </p>
@@ -92,8 +92,6 @@ function MyProfile() {
       </article>
 
       <Posts to={`/user_posts`} />
-
-      {/* <Toaster position="top-center" richColors /> */}
     </section>
   );
 }

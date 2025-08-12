@@ -23,6 +23,18 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "postId",
         as: "comments",
       });
+
+      Post.hasMany(models.Save, {
+        foreignKey: "postId",
+        as: "saves",
+      });
+    }
+
+    toJSON() {
+      const posts = { ...this.get() };
+      delete posts.createdAt;
+      delete posts.updatedAt;
+      return posts;
     }
   }
   Post.init(

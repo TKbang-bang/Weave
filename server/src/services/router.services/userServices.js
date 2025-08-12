@@ -1,7 +1,7 @@
 const db = require("../../database/db");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const { User } = require("../../../models");
+const { User, sequelize } = require("../../../models");
 
 const getUserByEmail = async (email) => {
   try {
@@ -48,34 +48,48 @@ const createUser = async (name, alias, email, password) => {
 const getUserById = async (myId, userId) => {
   try {
     if (myId == userId) {
-      const sql = `
-      SELECT 
-        user_name, 
-        user_alias, 
-        user_profile, 
-        (SELECT COUNT(*) FROM follows WHERE to_user_id = ?) AS followers 
-      FROM users 
-      WHERE user_id = ?
-    `;
+      const user = await User.findByPk(userId, {
+        attributes: [
+          "name",
+          "alias",
+          "profile",
+          "id",
+          [
+            sequelize.literal(
+              `(SELECT COUNT(*) FROM "Follows" WHERE "Follows"."toUser" = '${userId}')`
+            ),
+            "followers",
+          ],
+        ],
+      });
 
-      const [user] = await db.query(sql, [userId, userId]);
-      return user.length > 0 ? user[0] : null;
+      return user ? user : null;
     } else {
-      const sql = `
-      SELECT 
-        user_name, 
-        user_alias, 
-        user_profile, 
-        (SELECT COUNT(*) FROM follows WHERE to_user_id = ?) AS followers,
-        (SELECT COUNT(*) FROM follows WHERE from_user_id = ? AND to_user_id = ?) AS followed 
-      FROM users 
-      WHERE user_id = ?
-    `;
+      const user = await User.findByPk(userId, {
+        attributes: [
+          "name",
+          "alias",
+          "profile",
+          "id",
+          [
+            sequelize.literal(
+              `(SELECT COUNT(*) FROM "Follows" WHERE "Follows"."toUser" = '${userId}')`
+            ),
+            "followers",
+          ],
+          [
+            sequelize.literal(
+              `(SELECT COUNT(*) FROM "Follows" WHERE "Follows"."fromUser" = '${myId}' AND "Follows"."toUser" = '${userId}')`
+            ),
+            "following",
+          ],
+        ],
+      });
 
-      const [user] = await db.query(sql, [userId, myId, userId, userId]);
-      return user.length > 0 ? user[0] : null;
+      return user ? user : null;
     }
   } catch (error) {
+    console.log("error => ", error);
     throw new Error("Error on getting user by id", error);
   }
 };
@@ -88,9 +102,9 @@ const followingUsers = async (myId) => {
         user_name, 
         user_alias, 
         user_profile, 
-        (SELECT COUNT(*) FROM follows WHERE to_user_id = ?) AS followers
+        (SELECT COUNT(*) FROM "Follows" WHERE toUser = ?) AS followers
       FROM users 
-      WHERE user_id IN (SELECT to_user_id FROM follows WHERE from_user_id = ?)
+      WHERE userId IN (SELECT toUser FROM "Follows" WHERE fromUser = ?)
     `;
 
     const [users] = await db.query(sql, [myId, myId]);

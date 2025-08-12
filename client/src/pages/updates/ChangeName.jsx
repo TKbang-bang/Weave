@@ -17,10 +17,10 @@ function ChangeName() {
       try {
         const res = await getMyUser();
 
-        if (!res.data.ok) throw new Error(res);
+        if (res.status != 200) throw new Error(res);
 
-        setName(res.data.user.user_name);
-        setNewName(res.data.user.user_name);
+        setName(res.data.user.name);
+        setNewName(res.data.user.name);
       } catch (error) {
         toast.error(error.response.data.message);
       }
@@ -44,13 +44,13 @@ function ChangeName() {
     try {
       const res = await changingName(newName, password);
 
-      if (!res.data.ok) throw new Error(res);
+      if (res.status != 204) throw new Error(res);
 
-      toast.success(res.data.message);
+      toast.success("Name has been changed");
 
-      setTimeout(() => navigate("/settings"), 1000);
+      navigate("/settings");
     } catch (error) {
-      toast.error(error.response.data.message);
+      return toast.error(error.response.data.message);
     }
   };
 
@@ -97,8 +97,6 @@ function ChangeName() {
           Change name
         </button>
       </form>
-
-      {/* <Toaster position="top-center" richColors /> */}
     </section>
   );
 }

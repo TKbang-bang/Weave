@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
+import io from "socket.io-client";
 import {
   CommentIcon,
   Heart,
@@ -19,11 +20,13 @@ import {
 
 function Post({ post, post_id, del }) {
   const [edit, setEdit] = useState(false);
-  const [editValue, setEditValue] = useState(post.post_title);
+  const [editValue, setEditValue] = useState(post.title);
   const [liked, setLiked] = useState(post.liked == 1 ? true : false);
   const [likes, setLikes] = useState(post.likes);
   const [showOptions, setShowOptions] = useState(false);
-  const [following, setFollowing] = useState(post.followed == 1 ? true : false);
+  const [following, setFollowing] = useState(
+    post.owner.following == 1 ? true : false
+  );
   const [saved, setSaved] = useState(post.saved == 1 ? true : false);
 
   const handleEdit = async (e) => {
@@ -33,14 +36,14 @@ function Post({ post, post_id, del }) {
       return toast.error("Title cannot end with a space");
 
     try {
-      const res = await editingTitle(post.post_id, editValue);
+      const res = await editingTitle(post.id, editValue);
 
-      if (!res.data.ok) throw new Error(res);
+      if (res.status != 204) throw new Error(res);
 
       setEdit(false);
       toast.success("Title updated");
 
-      post.post_title = editValue;
+      post.title = editValue;
 
       setShowOptions(false);
     } catch (error) {
@@ -50,16 +53,16 @@ function Post({ post, post_id, del }) {
 
   const handleLike = async () => {
     try {
-      const res = await likingPost(post.post_id);
+      const res = await likingPost(post.id);
 
-      if (!res.data.ok) throw new Error(res);
+      if (res.status != 200) throw new Error(res);
 
       if (res.data.liked) {
         setLiked(true);
-        setLikes(likes + 1);
+        setLikes(parseInt(likes) + 1);
       } else {
         setLiked(false);
-        setLikes(likes - 1);
+        setLikes(parseInt(likes) - 1);
       }
     } catch (error) {
       return toast.error(error.response.data.message);
@@ -72,34 +75,33 @@ function Post({ post, post_id, del }) {
         label: "Yes, delete",
         onClick: async () => {
           try {
-            const res = await deletePost(post.post_id);
+            const res = await deletePost(post.id);
 
-            if (!res.data.ok) throw new Error(res);
+            if (res.status != 204) throw new Error(res.data.message);
 
-            del(post.post_id);
+            del(post.id);
             setShowOptions(false);
             toast.success("Post deleted");
           } catch (error) {
             const message =
               error.response?.data?.message || "Failed to delete the post";
-            toast.error(message);
+            return toast.error(message);
           }
         },
       },
     });
   };
-
   const handleFollow = async () => {
     try {
-      const res = await followConfig(post.user_id);
+      const res = await followConfig(post.owner.id);
 
-      if (!res.data.ok) throw new Error(res);
+      if (res.status != 200) throw new Error(res);
 
       if (res.data.followed) {
-        post.followed = 1;
+        post.owner.following = 1;
         setFollowing(true);
       } else {
-        post.followed = 0;
+        post.owner.following = 0;
         setFollowing(false);
       }
     } catch (error) {
@@ -109,9 +111,9 @@ function Post({ post, post_id, del }) {
 
   const handleSave = async () => {
     try {
-      const res = await savingPost(post.post_id);
+      const res = await savingPost(post.id);
 
-      if (!res.data.ok) throw new Error(res);
+      if (res.status != 200) throw new Error(res);
 
       if (res.data.saved) {
         post.saved = 1;
@@ -128,11 +130,14 @@ function Post({ post, post_id, del }) {
   return (
     <article className="post">
       <div className="post_header">
-        <Link to={`/profile/${post.user_id}`} className="post_profile">
+        <Link
+          to={post.me ? "/myprofile" : `/profile/${post.owner.id}`}
+          className="post_profile"
+        >
           <img
             src={
-              post.user_profile
-                ? `http://localhost:3000/uploads/${post.user_profile}`
+              post.owner.profile
+                ? `http://localhost:3000/uploads/${post.owner.profile}`
                 : `/no_user.png`
             }
             alt=""
@@ -141,10 +146,10 @@ function Post({ post, post_id, del }) {
 
         <div className="post_info">
           <Link
-            to={post.me ? "/myprofile" : `/profile/${post.user_id}`}
+            to={post.me ? "/myprofile" : `/profile/${post.userId}`}
             className="name"
           >
-            {post.user_name}
+            {post.owner.name}
           </Link>
           <p className="date">{post.since_date}</p>
         </div>
@@ -210,33 +215,33 @@ function Post({ post, post_id, del }) {
               <button className="save" type="submit">
                 Save
               </button>
-              <button
+              <span
                 className="cancel"
                 onClick={() => (
                   setEdit(false),
-                  setEditValue(post.post_title),
+                  setEditValue(post.title),
                   setShowOptions(false)
                 )}
               >
                 Cancel
-              </button>
+              </span>
             </div>
           </form>
         </div>
       )}
 
       <div className="post_content">
-        {!edit && <p className="post_title">{post.post_title}</p>}
-        {post.post_media_type === "image" ? (
+        {!edit && <p className="post_title">{post.title}</p>}
+        {post.media_type === "image" ? (
           <img
             className="file"
-            src={`http://localhost:3000/uploads/${post.post_media}`}
+            src={`http://localhost:3000/uploads/${post.media}`}
             alt=""
             loading="lazy"
           />
         ) : (
           <video controls className="file" loading="lazy">
-            <source src={`http://localhost:3000/uploads/${post.post_media}`} />
+            <source src={`http://localhost:3000/uploads/${post.media}`} />
           </video>
         )}
       </div>
@@ -255,7 +260,7 @@ function Post({ post, post_id, del }) {
           <p>{likes}</p>
         </div>
 
-        <div className="comments" onClick={() => post_id(post.post_id)}>
+        <div className="comments" onClick={() => post_id(post.id)}>
           <span>
             <CommentIcon />
           </span>

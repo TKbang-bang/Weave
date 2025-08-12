@@ -5,9 +5,9 @@ import { Toaster, toast } from "sonner";
 import Comments from "./Comments";
 import Post from "./Post";
 import { CloseIcon, SendIcon } from "../../components/svg";
-import { getUserId } from "../../services/usersServices";
 import { gettingPosts } from "../../services/posts";
 import { gettingComments } from "../../services/activities";
+import { getAccessToken, verifyToken } from "../../services/token.service";
 
 const socket = io("http://localhost:3000");
 
@@ -19,27 +19,32 @@ function Posts({ to }) {
 
   useEffect(() => {
     const getPostst = async () => {
-      const res = await gettingPosts({ link: to });
-      setPosts(res.data.posts);
+      try {
+        const res = await gettingPosts({ link: to });
+
+        if (res.status != 200) throw new Error(res);
+
+        setPosts(res.data);
+      } catch (error) {
+        return toast.error(error.response.data.message);
+      }
     };
+
     getPostst();
   }, [to]);
 
   useEffect(() => {
     const newComment = (data) => {
       setAllComments((prev) => {
-        const exists = prev.some(
-          (comment) => comment.comment_id === data.comment_id
-        );
+        const exists = prev.some((comment) => comment.id === data.id);
         if (exists) return prev;
         return [data, ...prev];
       });
       setCommentValue("");
-
       setPosts((prev) =>
         prev.map((post) =>
-          post.post_id == post_id
-            ? { ...post, comments: post.comments + 1 }
+          parseInt(post.id) == parseInt(data.postId)
+            ? { ...post, comments: parseInt(post.comments) + 1 }
             : post
         )
       );
@@ -47,8 +52,8 @@ function Posts({ to }) {
 
     socket.on("server_comment", newComment);
 
-    socket.on("server_error", (errTxt) => {
-      toast.error(errTxt);
+    socket.on("server_error", ({ message }) => {
+      toast.error(message);
     });
 
     return () => {
@@ -56,23 +61,28 @@ function Posts({ to }) {
       socket.off("server_error");
     };
   }, [socket]);
-
   const handleCommenting = async (e) => {
     e.preventDefault();
+
     try {
-      const res = await getUserId();
+      let token = getAccessToken();
 
-      if (!res.data.ok) throw new Error(res);
+      if (!token) {
+        const res = await verifyToken();
 
-      const getId = await res.data.user_id;
+        if (res.status != 200) throw new Error(res);
+        if (!res.headers["access-token"]) throw new Error("Token not found");
 
-      socket.emit("client_comment", {
-        post_id: post_id,
-        comment_content: commentValue,
-        user_id: getId,
+        token = res.headers["access-token"].split(" ")[1];
+      }
+
+      return socket.emit("client_comment", {
+        postId: post_id,
+        content: commentValue,
+        token,
       });
     } catch (error) {
-      toast.error(error.response.data.message);
+      return toast.error(error.response.data.message);
     }
   };
 
@@ -81,12 +91,13 @@ function Posts({ to }) {
       setPostId(id);
 
       const res = await gettingComments(id);
-      setAllComments(res.data.comments);
-    } catch (error) {
-      console.log(error);
-    }
+      if (res.status != 200) throw new Error(res);
 
-    document.querySelector(".comments_section").classList.remove("hide");
+      setAllComments(res.data.comments);
+      document.querySelector(".comments_section").classList.remove("hide");
+    } catch (error) {
+      return toast.error(error.response.data.message);
+    }
   };
 
   return (
@@ -95,11 +106,11 @@ function Posts({ to }) {
         <>
           {posts.map((post) => (
             <Post
-              key={post.post_id}
+              key={post.id}
               post={post}
               post_id={(id) => handlePostId(id)}
               del={(id) =>
-                setPosts((prev) => prev.filter((post) => post.post_id != id))
+                setPosts((prev) => prev.filter((post) => post.id != id))
               }
             />
           ))}

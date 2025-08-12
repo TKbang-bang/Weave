@@ -17,7 +17,7 @@ const posting = async (req, res, next) => {
     const file = req.file.filename;
 
     // CREATING THE POST
-    await createPost(title, file, type, req.session.userID);
+    await createPost(title, file, type, req.userId);
 
     res.status(201).json({ ok: true, message: "Post created" });
   } catch (error) {
@@ -28,8 +28,8 @@ const posting = async (req, res, next) => {
 const gettingMyUserPosts = async (req, res, next) => {
   try {
     // GETTING USER POSTS
-    const posts = await getUserPosts(req.session.userID, req.session.userID);
-    res.json({ ok: true, posts });
+    const posts = await getUserPosts(req.userId, req.userId);
+    res.status(200).json(posts);
   } catch (error) {
     return next(new ServerError(error.message, 500));
   }
@@ -38,11 +38,11 @@ const gettingMyUserPosts = async (req, res, next) => {
 const gettingComments = async (req, res, next) => {
   try {
     // POST ID
-    const { post_id } = req.params;
+    const { postId } = req.params;
 
     // GETTING THE COMMENTS
-    const comments = await getCommentsByPostId(post_id);
-    res.status(200).json({ ok: true, comments });
+    const comments = await getCommentsByPostId(postId);
+    res.status(200).json({ comments });
   } catch (error) {
     return next(new ServerError(error.message, "server", "server", 500));
   }
@@ -54,8 +54,8 @@ const gettingUserPosts = async (req, res, next) => {
     const { user_id } = req.params;
 
     // GETTING USER POSTS
-    const posts = await getUserPosts(req.session.userID, user_id);
-    res.status(200).json({ ok: true, posts });
+    const posts = await getUserPosts(req.userId, user_id);
+    res.status(200).json(posts);
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }

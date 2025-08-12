@@ -17,7 +17,7 @@ function SubMain() {
     <section className="sub_main">
       <Routes>
         <Route path="*" element={<PostsContainer />} />
-        {/* <Route path="/publicate" element={<Publicate />} />
+        <Route path="/publicate" element={<Publicate />} />
         <Route path="/myprofile" element={<MyProfile />} />
         <Route path="/editprofile" element={<EditProfile />} />
         <Route path="/savedposts" element={<SavedPosts />} />
@@ -26,7 +26,7 @@ function SubMain() {
         <Route path="/settings/changename" element={<ChangeName />} />
         <Route path="/settings/changealias" element={<ChangeAlias />} />
         <Route path="/settings/changepassword" element={<ChangePassword />} />
-        <Route path="/settings/changeemail" element={<ChangeEmail />} /> */}
+        <Route path="/settings/changeemail" element={<ChangeEmail />} />
       </Routes>
     </section>
   );

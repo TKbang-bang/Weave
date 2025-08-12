@@ -28,11 +28,11 @@ function ChangePassword() {
     try {
       const res = await ChangingPassword(password, newPassword);
 
-      if (!res.data.ok) throw new Error(res);
+      if (res.status != 204) throw new Error(res);
 
-      toast.success(res.data.message);
+      toast.success("Password has been changed");
 
-      setTimeout(() => navigate("/settings"), 1000);
+      navigate("/settings");
     } catch (error) {
       return toast.error(error.response.data.message);
     }
