@@ -22,7 +22,7 @@ function ForgotPassword() {
     try {
       const res = await forgotPassword(email);
 
-      if (!res.data.ok) throw new Error(res);
+      if (res.status != 200) throw new Error(res);
 
       toast.success(res.data.message);
       document.querySelector(".forgot_password").classList.add("active");
@@ -43,10 +43,10 @@ function ForgotPassword() {
     try {
       const res = await changePassCode(code, password);
 
-      if (!res.data.ok) throw new Error(res);
+      if (res.status != 204) throw new Error(res);
 
       setLoading(false);
-      navigate("/");
+      navigate("/sign");
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -128,8 +128,6 @@ function ForgotPassword() {
           </div>
         </form>
       </div>
-
-      {/* <Toaster position="top-center" richColors /> */}
     </section>
   );
 }

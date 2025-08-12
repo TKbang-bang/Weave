@@ -51,6 +51,7 @@
       height: 3rem;
       background: $bgColor;
       border-radius: 50%;
+      object-fit: cover;
     }
 
     & .comment_info {

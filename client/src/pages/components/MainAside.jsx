@@ -10,7 +10,7 @@ function MainAside() {
       try {
         const res = await getMyUser();
 
-        if (!res.data.ok) throw new Error(res);
+        if (res.status != 200) throw new Error(res);
 
         setUser(res.data.user);
       } catch (error) {
@@ -26,14 +26,14 @@ function MainAside() {
       <article className="user_info">
         <img
           src={
-            user.user_profile
-              ? `http://localhost:3000/uploads/${user.user_profile}`
+            user.profile
+              ? `http://localhost:3000/uploads/${user.profile}`
               : `/no_user.png`
           }
-          alt={user.user_name}
+          alt={user.name}
         />
-        <h3>{user.user_name}</h3>
-        <p className="alias">@{user.user_alias}</p>
+        <h3>{user.name}</h3>
+        <p className="alias">@{user.alias}</p>
         <p className="followers">
           {user.followers} {user.followers == 1 ? "follower" : "followers"}
         </p>

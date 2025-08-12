@@ -23,13 +23,10 @@ function App() {
         return;
       } catch (error) {
         if (
-          window.location.pathname == "/forgotpassword" ||
-          window.location.pathname == "/verify"
-        ) {
-          return;
-        } else {
+          window.location.pathname != "/forgotpassword" ||
+          window.location.pathname != "/verify"
+        )
           navigate("/sign");
-        }
       }
     };
 
@@ -40,7 +37,9 @@ function App() {
     <Routes>
       <Route path="/sign" element={<Sign />} />
       <Route path="/verify" element={<Verify />} />
+
       <Route path="/forgotpassword" element={<ForgotPassword />} />
+
       <Route path="*" element={<Display />} />
     </Routes>
   );

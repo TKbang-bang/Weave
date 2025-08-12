@@ -27,12 +27,12 @@ export const deleteAccount = async () => {
 };
 
 export const forgotPassword = async (email) => {
-  const res = await api.post("/email_forgot_password", { email });
+  const res = await axios.post("/email_forgot_password", { email });
   return res;
 };
 
 export const changePassCode = async (code, password) => {
-  const res = await api.post("/code_email_forgot_password", {
+  const res = await axios.post("/code_email_forgot_password", {
     code,
     password,
   });

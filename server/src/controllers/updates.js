@@ -168,7 +168,15 @@ const sendingEmailChangeCode = async (req, res, next) => {
     // updating the email
     await emailUpdate(payload.email, req.userId);
 
-    res.status(204).end();
+    res
+      .clearCookie("emailChangeCode", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/",
+      })
+      .status(204)
+      .end();
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }
@@ -190,23 +198,21 @@ const emailForgotPassword = async (req, res, next) => {
         )
       );
 
-    // CREATING EMAIL AND CODE VARIABLES IN THE SESSION
-    req.session.code = forgotPassword.code;
-    req.session.user_email = email;
-    req.session.userId = forgotPassword.userId;
-    req.session.save();
-
-    // DELETING THE CODE FROM THE SESSION AFTER 3 MINS
-    setTimeout(() => {
-      delete req.session.code;
-      delete req.session.user_email;
-      delete req.session.userId;
-      req.session.save();
-    }, [180000]);
+    const forgotPassCode = jwt.sign(
+      { email, code: forgotPassword.code },
+      process.env.PASSWORD_TOKEN_SECRET,
+      { expiresIn: "5m" }
+    );
 
     res
-      .status(201)
-      .json({ ok: true, message: "A code has been sent to your email" });
+      .cookie("forgotPassCode", forgotPassCode, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 1000 * 60 * 5,
+      })
+      .status(200)
+      .json({ message: "A code has been sent to your email" });
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }
@@ -216,41 +222,28 @@ const codeEmailForgotPasword = async (req, res, next) => {
   try {
     // USER DATA
     const { code, password } = req.body;
+    const payload = jwt.verify(
+      req.cookies.forgotPassCode,
+      process.env.PASSWORD_TOKEN_SECRET
+    );
+    if (!payload) return next(new ServerError("Code may expired", "code", 400));
 
-    // VERIFYING THE CODE
-    if (!req.session.code)
-      return next(new ServerError("Code may expired", "code", 400));
-
-    // VERIFYING IF THE CODE IS CORRECT
-    if (req.session.code != code)
+    // VERIFYING IF THE CODES MATCH
+    if (payload.code !== code)
       return next(new ServerError("The code is incorrect", "code", 400));
 
-    // UPDATING THE PASSWORD
-    const changePassword = await changePassCode(
-      req.session.user_email,
-      password
-    );
-    if (!changePassword.ok)
-      return next(
-        new ServerError(
-          changePassword.message,
-          "change password",
-          changePassword.status
-        )
-      );
-
-    // SAVING THE USER ID IN THE SESSION
-    req.session.userID = req.session.userId;
-    req.session.save();
-
-    // DELETING THE CODE AND EMAIL FROM THE SESSION
-    delete req.session.code;
-    delete req.session.user_email;
-    req.session.save();
+    // updating the password
+    await changePassCode(payload.email, password);
 
     res
-      .status(201)
-      .json({ ok: true, message: "Password changed successfully" });
+      .clearCookie("forgotPassCode", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/",
+      })
+      .status(204)
+      .end();
   } catch (error) {
     return next(new ServerError(error.message, "server", 500));
   }

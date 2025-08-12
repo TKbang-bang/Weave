@@ -118,9 +118,9 @@ const sendChangePassCode = async (email) => {
     const sendMail = await emailSend(email);
 
     if (!sendMail.ok)
-      return { ok: false, message: "Failed to send email", status: 500 };
+      return { ok: false, message: sendMail.message, status: 500 };
 
-    return { ok: true, code: sendMail.code, userId: user.id };
+    return { ok: true, code: sendMail.code };
   } catch (error) {
     throw new Error(error);
   }
@@ -128,19 +128,8 @@ const sendChangePassCode = async (email) => {
 
 const changePassCode = async (email, password) => {
   try {
-    const salt = bcrypt.genSaltSync(10);
-    const hashPassword = bcrypt.hashSync(password, salt);
-
-    const [passwordUpdate] = await db.query(
-      "UPDATE users SET user_password = ? WHERE user_email = ?",
-      [hashPassword, email]
-    );
-
-    if (!passwordUpdate.affectedRows > 0) {
-      return { ok: false, message: "User not found", status: 404 };
-    }
-
-    return { ok: true };
+    const user = await User.findOne({ where: { email } });
+    await user.update({ password });
   } catch (error) {
     throw new Error(error);
   }
