@@ -1,7 +1,5 @@
-const myDate = require("../../configs/date_format");
-const db = require("../../database/db");
+const myDate = require("../../utils/date_format");
 const { User, Post, sequelize, Comment, Save } = require("../../../models");
-const { user } = require("../../configs/database_config");
 
 const getAllPosts = async (userId) => {
   try {

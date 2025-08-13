@@ -1,6 +1,3 @@
-const db = require("../../database/db");
-const bcrypt = require("bcrypt");
-const crypto = require("crypto");
 const { User, sequelize } = require("../../../models");
 
 const getUserByEmail = async (email) => {

@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import io from "socket.io-client";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import Comments from "./Comments";
 import Post from "./Post";
 import { CloseIcon, SendIcon } from "../../components/svg";
-import { gettingPosts } from "../../services/posts";
-import { gettingComments } from "../../services/activities";
+import { gettingPosts, gettingComments } from "../../services/posts.service";
 import { getAccessToken, verifyToken } from "../../services/token.service";
-
-const socket = io("http://localhost:3000");
+import { SocketContext } from "../Display";
 
 function Posts({ to }) {
   const [posts, setPosts] = useState([]);
   const [post_id, setPostId] = useState("");
   const [allComments, setAllComments] = useState([]);
   const [commentValue, setCommentValue] = useState("");
+  const socket = useContext(SocketContext);
 
   useEffect(() => {
     const getPostst = async () => {
@@ -52,13 +51,15 @@ function Posts({ to }) {
 
     socket.on("server_comment", newComment);
 
-    socket.on("server_error", ({ message }) => {
+    const serverError = ({ message }) => {
       toast.error(message);
-    });
+    };
+
+    socket.on("server_error", serverError);
 
     return () => {
       socket.off("server_comment", newComment);
-      socket.off("server_error");
+      socket.off("server_error", serverError);
     };
   }, [socket]);
   const handleCommenting = async (e) => {
@@ -154,8 +155,6 @@ function Posts({ to }) {
           <Link to={"/publicate"}>Publicate</Link>
         </section>
       )}
-
-      {/* <Toaster position="top-center" richColors /> */}
     </section>
   );
 }

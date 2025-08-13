@@ -1,4 +1,3 @@
-const db = require("../../database/db");
 const { Follows } = require("../../../models");
 
 const setFollow = async (fromUser, toUser) => {

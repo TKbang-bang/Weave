@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import io from "socket.io-client";
 import {
   CommentIcon,
   Heart,
@@ -11,12 +10,12 @@ import {
   UnHeart,
 } from "../../components/svg";
 import {
-  deletePost,
   editingTitle,
   followConfig,
   likingPost,
   savingPost,
-} from "../../services/activities";
+} from "../../services/activities.service";
+import { deletePost } from "../../services/posts.service";
 
 function Post({ post, post_id, del }) {
   const [edit, setEdit] = useState(false);
@@ -137,7 +136,9 @@ function Post({ post, post_id, del }) {
           <img
             src={
               post.owner.profile
-                ? `http://localhost:3000/uploads/${post.owner.profile}`
+                ? `${import.meta.env.VITE_BACKEND_URL}/uploads/${
+                    post.owner.profile
+                  }`
                 : `/no_user.png`
             }
             alt=""
@@ -146,7 +147,7 @@ function Post({ post, post_id, del }) {
 
         <div className="post_info">
           <Link
-            to={post.me ? "/myprofile" : `/profile/${post.userId}`}
+            to={post.me ? "/myprofile" : `/profile/${post.owner.id}`}
             className="name"
           >
             {post.owner.name}
@@ -235,13 +236,15 @@ function Post({ post, post_id, del }) {
         {post.media_type === "image" ? (
           <img
             className="file"
-            src={`http://localhost:3000/uploads/${post.media}`}
+            src={`${import.meta.env.VITE_BACKEND_URL}/uploads/${post.media}`}
             alt=""
             loading="lazy"
           />
         ) : (
           <video controls className="file" loading="lazy">
-            <source src={`http://localhost:3000/uploads/${post.media}`} />
+            <source
+              src={`${import.meta.env.VITE_BACKEND_URL}/uploads/${post.media}`}
+            />
           </video>
         )}
       </div>
@@ -279,8 +282,6 @@ function Post({ post, post_id, del }) {
           )}
         </div>
       </div>
-
-      {/* <Toaster position="top-center" richColors duration={3000} /> */}
     </article>
   );
 }

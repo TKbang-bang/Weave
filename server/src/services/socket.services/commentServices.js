@@ -1,6 +1,6 @@
 const { Comment, User } = require("../../../models");
 const jwt = require("jsonwebtoken");
-const myDate = require("../../configs/date_format");
+const myDate = require("../../utils/date_format");
 
 async function addComment(data, socket) {
   try {
@@ -14,8 +14,6 @@ async function addComment(data, socket) {
       postId: data.postId,
       userId,
     });
-
-    console.log("comment => ", dataValues);
 
     const comment = await Comment.findOne({
       where: { id: dataValues.id },

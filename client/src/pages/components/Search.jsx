@@ -1,7 +1,7 @@
 import React from "react";
 import { SearchIcon } from "../../components/svg";
 import { useNavigate } from "react-router-dom";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 
 function Search() {
   const [search, setSearch] = React.useState("");

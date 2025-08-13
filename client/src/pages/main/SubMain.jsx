@@ -23,10 +23,10 @@ function SubMain() {
         <Route path="/savedposts" element={<SavedPosts />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/profile/:id" element={<Profile />} />
-        <Route path="/settings/changename" element={<ChangeName />} />
-        <Route path="/settings/changealias" element={<ChangeAlias />} />
-        <Route path="/settings/changepassword" element={<ChangePassword />} />
-        <Route path="/settings/changeemail" element={<ChangeEmail />} />
+        <Route path="/settings/update/name" element={<ChangeName />} />
+        <Route path="/settings/update/alias" element={<ChangeAlias />} />
+        <Route path="/settings/update/password" element={<ChangePassword />} />
+        <Route path="/settings/update/email" element={<ChangeEmail />} />
       </Routes>
     </section>
   );

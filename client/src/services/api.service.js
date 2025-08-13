@@ -6,7 +6,7 @@ import {
 } from "./token.service";
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_BACKEND_URL}`,
+  baseURL: `${import.meta.env.VITE_BACKEND_URL}/protected`,
   withCredentials: true,
 });
 
@@ -36,7 +36,11 @@ api.interceptors.response.use(
         const retry = await api(originalRequest);
         return retry;
       } catch (e) {
-        if (window.location.pathname !== "/sign") {
+        if (
+          window.location.pathname !== "/sign" ||
+          window.location.pathname !== "/verify" ||
+          window.location.pathname !== "/forgotpassword"
+        ) {
           window.location.href = "/sign";
         }
         removeAccessToken();

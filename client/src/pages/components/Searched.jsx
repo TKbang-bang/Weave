@@ -42,7 +42,9 @@ function Searched() {
                   <img
                     src={
                       user.profile
-                        ? `http://localhost:3000/uploads/${user.profile}`
+                        ? `${import.meta.env.VITE_BACKEND_URL}/uploads/${
+                            user.profile
+                          }`
                         : `/no_user.png`
                     }
                     alt=""

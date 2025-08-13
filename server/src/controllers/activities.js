@@ -41,23 +41,6 @@ const likingPost = async (req, res, next) => {
   }
 };
 
-const deletingPost = async (req, res, next) => {
-  try {
-    // POST ID
-    const { post_id } = req.params;
-
-    // DELETING THE POST
-    const deleted = await deletePost(post_id, req.userId);
-
-    if (!deleted.ok)
-      return next(new ServerError(deleted.message, "post", deleted.status));
-
-    res.status(204).end();
-  } catch (error) {
-    return next(new ServerError(error.message, "server", 500));
-  }
-};
-
 const following = async (req, res, next) => {
   try {
     // USER ID
@@ -86,4 +69,4 @@ const savingPost = async (req, res, next) => {
   }
 };
 
-module.exports = { editTitle, likingPost, deletingPost, following, savingPost };
+module.exports = { editTitle, likingPost, following, savingPost };

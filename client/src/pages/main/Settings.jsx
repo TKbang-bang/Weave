@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import { deleteAccount, loginOut } from "../../services/auth";
 import {
   removeAccessToken,
@@ -58,16 +58,16 @@ function Settings() {
 
           <ul className="changes_list">
             <li>
-              <Link to={"/settings/changename"}>Change name</Link>
+              <Link to={"/settings/update/name"}>Change name</Link>
             </li>
             <li>
-              <Link to={"/settings/changealias"}>Change alias</Link>
+              <Link to={"/settings/update/alias"}>Change alias</Link>
             </li>
             <li>
-              <Link to={"/settings/changeemail"}>Change email</Link>
+              <Link to={"/settings/update/email"}>Change email</Link>
             </li>
             <li>
-              <Link to={"/settings/changepassword"}>Change password</Link>
+              <Link to={"/settings/update/password"}>Change password</Link>
             </li>
           </ul>
         </article>

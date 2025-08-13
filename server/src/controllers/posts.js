@@ -3,7 +3,10 @@ const {
   getUserPosts,
   getCommentsByPostId,
 } = require("../services/router.services/bigPostsServices");
-const { createPost } = require("../services/router.services/postServices");
+const {
+  createPost,
+  deletePost,
+} = require("../services/router.services/postServices");
 
 const posting = async (req, res, next) => {
   try {
@@ -61,9 +64,27 @@ const gettingUserPosts = async (req, res, next) => {
   }
 };
 
+const deletingPost = async (req, res, next) => {
+  try {
+    // POST ID
+    const { post_id } = req.params;
+
+    // DELETING THE POST
+    const deleted = await deletePost(post_id, req.userId);
+
+    if (!deleted.ok)
+      return next(new ServerError(deleted.message, "post", deleted.status));
+
+    res.status(204).end();
+  } catch (error) {
+    return next(new ServerError(error.message, "server", 500));
+  }
+};
+
 module.exports = {
   posting,
   gettingMyUserPosts,
   gettingComments,
   gettingUserPosts,
+  deletingPost,
 };

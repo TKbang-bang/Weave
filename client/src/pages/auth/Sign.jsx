@@ -1,8 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Login from "../../components/auth/Login";
 import Signup from "../../components/auth/Signup";
+import { userIsLogged } from "../../services/global";
+import { useNavigate } from "react-router-dom";
 
 function Sign() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const verifyingUser = async () => {
+      try {
+        const res = await userIsLogged();
+
+        if (res.status == 200) return navigate("/");
+      } catch (error) {
+        return;
+      }
+    };
+
+    verifyingUser();
+  }, []);
+
   return (
     <div className="sign_container">
       <div className="sign">

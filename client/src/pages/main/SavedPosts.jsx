@@ -6,7 +6,7 @@ function SavedPosts() {
     <section className="saved_posts">
       <h1 className="title">SavedPosts</h1>
 
-      <Posts to="/saved_posts" />
+      <Posts to="/posts/saved" />
     </section>
   );
 }

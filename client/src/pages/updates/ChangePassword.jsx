@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ArrowLeft, Eye, EyeSplash } from "../../components/svg";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import { ChangingPassword } from "../../services/updates";
 import { useNavigate } from "react-router-dom";
 
@@ -44,7 +44,7 @@ function ChangePassword() {
         <ArrowLeft />
       </button>
       <form onSubmit={handleSubmit}>
-        <h1 className="title">Changing name</h1>
+        <h1 className="title">Changing password</h1>
 
         <article className="field_container">
           <label htmlFor="password">Current password</label>
@@ -107,11 +107,9 @@ function ChangePassword() {
         </article>
 
         <button type="submit" className="btn">
-          Change name
+          Change Password
         </button>
       </form>
-
-      {/* <Toaster position="top-center" richColors /> */}
     </section>
   );
 }

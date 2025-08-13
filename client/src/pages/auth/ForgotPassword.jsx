@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Eye, EyeSplash } from "../../components/svg";
 import { toast, Toaster } from "sonner";
 import { changePassCode, forgotPassword } from "../../services/auth";
 import { useNavigate } from "react-router-dom";
+import { userIsLogged } from "../../services/global";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -12,6 +13,20 @@ function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [two, setTwo] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const verifyingUser = async () => {
+      try {
+        const res = await userIsLogged();
+
+        if (res.status == 200) return navigate("/");
+      } catch (error) {
+        return;
+      }
+    };
+
+    verifyingUser();
+  }, []);
 
   const handleEmail = async (e) => {
     e.preventDefault();

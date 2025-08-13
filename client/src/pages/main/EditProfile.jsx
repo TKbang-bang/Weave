@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getMyUser } from "../../services/usersServices";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { ArrowLeft, Image, Trash } from "../../components/svg";
 import { Link, useNavigate } from "react-router-dom";
 import { changingProfilePicture } from "../../services/updates";
@@ -74,7 +74,10 @@ function EditProfile() {
           {noFile ? (
             <>
               {typeof file == "string" ? (
-                <img src={`http://localhost:3000/uploads/${file}`} alt="" />
+                <img
+                  src={`${import.meta.env.VITE_BACKEND_URL}/uploads/${file}`}
+                  alt=""
+                />
               ) : (
                 <img src="/no_user.png" alt="" />
               )}

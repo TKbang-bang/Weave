@@ -1,4 +1,3 @@
-const db = require("../../database/db");
 const { Like } = require("../../../models");
 
 const liking = async (userId, postId) => {

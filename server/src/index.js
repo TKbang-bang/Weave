@@ -2,9 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const session = require("express-session");
 const http = require("http");
-const myStore = require("./configs/session_store");
 const router = require("./router/router");
 const { mySocket } = require("./services/socket.services/socketService");
 const errorHandler = require("./error/errorHandler");
@@ -30,18 +28,6 @@ app.use(
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "../public")));
 app.use(cookieParser());
-
-// EXPRESS-SESSION MANAGEMENT
-app.use(
-  session({
-    key: "session_cookie_name",
-    secret: `${process.env.MY_SECRET_KEY}`,
-    store: myStore,
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false },
-  })
-);
 
 // ROUTES
 app.use(router);

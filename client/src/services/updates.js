@@ -1,7 +1,7 @@
 import api from "./api.service";
 
 export const changingProfilePicture = async (file) => {
-  const res = await api.post("/change_profile_picture", file, {
+  const res = await api.post("/updates/profile", file, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -10,12 +10,12 @@ export const changingProfilePicture = async (file) => {
 };
 
 export const deletingProfilePicture = async () => {
-  const res = await api.delete("/delete_profile_picture");
+  const res = await api.delete("/updates/profile");
   return res;
 };
 
 export const changingName = async (name, password) => {
-  const res = await api.post("/change_name", {
+  const res = await api.post("/updates/name", {
     name,
     password,
   });
@@ -24,7 +24,7 @@ export const changingName = async (name, password) => {
 };
 
 export const changingAlias = async (alias, password) => {
-  const res = await api.post("/change_alias", {
+  const res = await api.post("/updates/alias", {
     alias,
     password,
   });
@@ -33,7 +33,7 @@ export const changingAlias = async (alias, password) => {
 };
 
 export const ChangingPassword = async (password, newPassword) => {
-  const res = await api.post("/change_password", {
+  const res = await api.post("/updates/password", {
     oldPassword: password,
     newPassword,
   });
@@ -42,7 +42,7 @@ export const ChangingPassword = async (password, newPassword) => {
 };
 
 export const changingEmail = async (email, password) => {
-  const res = await api.post("/change_email", {
+  const res = await api.post("/updates/email", {
     email,
     password,
   });
@@ -51,6 +51,6 @@ export const changingEmail = async (email, password) => {
 };
 
 export const sendingChangeEmailCode = async (code) => {
-  const res = await api.post("/change_email_code", { code });
+  const res = await api.post("/updates/email/code", { code });
   return res;
 };

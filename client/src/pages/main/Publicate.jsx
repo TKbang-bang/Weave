@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Image, Trash, Video } from "../../components/svg";
-import { Toaster, toast } from "sonner";
-import { postingPost } from "../../services/posts";
+import { toast } from "sonner";
+import { postingPost } from "../../services/posts.service";
 
 function Publicate() {
   const [file, setFile] = useState(null);
@@ -45,7 +45,6 @@ function Publicate() {
     setType("");
     document.getElementById("images_input").value = "";
     document.getElementById("videos_input").value = "";
-    // () => (setFile(null), setType(""))
   };
 
   return (
@@ -104,8 +103,6 @@ function Publicate() {
           Publicate
         </button>
       </form>
-
-      {/* <Toaster position="top-center" richColors /> */}
     </section>
   );
 }

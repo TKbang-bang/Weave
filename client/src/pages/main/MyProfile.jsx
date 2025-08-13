@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getMyUser } from "../../services/usersServices";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import { PlusIcon } from "../../components/svg";
 import Posts from "../components/Posts";
 import { Link } from "react-router-dom";
@@ -58,9 +58,9 @@ function MyProfile() {
             src={
               imageDelete || !user.profile
                 ? `/no_user.png`
-                : `http://localhost:3000/uploads/${user.profile}`
+                : `${import.meta.env.VITE_BACKEND_URL}/uploads/${user.profile}`
             }
-            alt=""
+            alt={user.name}
           />
 
           <button
@@ -91,7 +91,7 @@ function MyProfile() {
         </div>
       </article>
 
-      <Posts to={`/user_posts`} />
+      <Posts to={`/posts/me`} />
     </section>
   );
 }

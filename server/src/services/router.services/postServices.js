@@ -1,6 +1,3 @@
-const db = require("../../database/db");
-const { format } = require("date-fns");
-const { getCommentsByPostId } = require("./bigPostsServices");
 const { Post, Save } = require("../../../models");
 
 const createPost = async (title, file, type, userId) => {

@@ -1,4 +1,3 @@
-const db = require("../../database/db");
 const bcrypt = require("bcrypt");
 const { User } = require("../../../models");
 const emailSend = require("../../utils/nodemailer");

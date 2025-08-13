@@ -10,7 +10,9 @@ function Comments({ comments }) {
               <img
                 src={
                   comment.user.profile
-                    ? `http://localhost:3000/uploads/${comment.user.profile}`
+                    ? `${import.meta.env.VITE_BACKEND_URL}/uploads/${
+                        comment.user.profile
+                      }`
                     : `/no_user.png`
                 }
                 alt=""

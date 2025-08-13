@@ -1,5 +1,4 @@
-const db = require("../../database/db");
-const myDate = require("../../configs/date_format");
+const myDate = require("../../utils/date_format");
 const { User, Post, sequelize } = require("../../../models");
 const { Op } = require("sequelize");
 

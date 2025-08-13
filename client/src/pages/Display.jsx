@@ -1,16 +1,23 @@
-import React from "react";
+import React, { createContext, useMemo } from "react";
 import Nav from "./components/Nav";
 import Main from "./main/Main";
 import { Toaster } from "sonner";
+import io from "socket.io-client";
+
+export const SocketContext = createContext(null);
 
 function Display() {
-  return (
-    <div className="display">
-      <Nav />
-      <Main />
+  const socket = useMemo(() => io(`${import.meta.env.VITE_BACKEND_URL}`), []);
 
-      <Toaster position="top-center" richColors duration={2500} />
-    </div>
+  return (
+    <SocketContext.Provider value={socket}>
+      <div className="display">
+        <Nav />
+        <Main />
+
+        <Toaster position="top-center" richColors duration={2500} />
+      </div>
+    </SocketContext.Provider>
   );
 }
 

@@ -1,6 +1,18 @@
+import axios from "axios";
 import api from "./api.service";
+import { getAccessToken } from "./token.service";
 
 export const userIsLogged = async () => {
-  const res = await api.get("/is_user_logged");
-  return res;
+  const token = getAccessToken();
+  if (token) {
+    const res = await axios.get("/protected/session/logged", {
+      withCredentials: true,
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return res;
+  } else {
+    const res = await axios.get("/protected/session/logged");
+    return res;
+  }
 };

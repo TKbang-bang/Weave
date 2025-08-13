@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import { getUserById } from "../../services/usersServices";
 import Posts from "../components/Posts";
-import { followConfig } from "../../services/activities";
+import { followConfig } from "../../services/activities.service";
 import { ArrowLeft } from "../../components/svg";
 
 function Profile() {
@@ -60,7 +59,7 @@ function Profile() {
           <img
             src={
               user.profile
-                ? `http://localhost:3000/uploads/${user.profile}`
+                ? `${import.meta.env.VITE_BACKEND_URL}/uploads/${user.profile}`
                 : "/no_user.png"
             }
             alt={user.name}
@@ -86,7 +85,7 @@ function Profile() {
         )}
       </article>
 
-      <Posts to={`/user_posts_/${id}`} />
+      <Posts to={`/posts/user/${id}`} />
     </section>
   );
 }

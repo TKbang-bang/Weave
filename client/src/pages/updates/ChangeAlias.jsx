@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ArrowLeft, Eye, EyeSplash } from "../../components/svg";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import { getMyUser } from "../../services/usersServices";
 import { changingAlias } from "../../services/updates";
 import { useNavigate } from "react-router-dom";

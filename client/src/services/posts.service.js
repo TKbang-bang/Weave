@@ -1,4 +1,3 @@
-import axios from "axios";
 import api from "./api.service";
 
 export const gettingPosts = async ({ link }) => {
@@ -12,6 +11,16 @@ export const postingPost = async ({ file, title, type }) => {
   formData.append("title", title);
   formData.append("type", type);
 
-  const res = await axios.post("/publicate", formData);
+  const res = await api.post("/posts", formData);
+  return res;
+};
+
+export const gettingComments = async (id) => {
+  const res = await api.get(`/posts/${id}/comments`);
+  return res;
+};
+
+export const deletePost = async (post_id) => {
+  const res = await api.delete(`/posts/${post_id}`);
   return res;
 };

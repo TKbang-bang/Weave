@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ArrowLeft, Eye, EyeSplash } from "../../components/svg";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import { getMyUser } from "../../services/usersServices";
 import { changingEmail, sendingChangeEmailCode } from "../../services/updates";
 import { useNavigate } from "react-router-dom";
@@ -12,23 +12,6 @@ function ChangeEmail() {
   const [seePassword, setSeePassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const res = await getMyUser();
-
-        if (res.status != 200) throw new Error(res);
-
-        setName(res.data.user.name);
-        setNewName(res.data.user.name);
-      } catch (error) {
-        toast.error(error.response.data.message);
-      }
-    };
-
-    getUserData();
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -120,9 +103,6 @@ function ChangeEmail() {
               <span></span>
               <span></span>
               <span></span>
-              {/* <span></span>
-              <span></span>
-              <span></span> */}
             </div>
           )}
         </form>

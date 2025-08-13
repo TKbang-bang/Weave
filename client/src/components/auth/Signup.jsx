@@ -38,7 +38,6 @@ function Signup() {
         setEmailErr(true);
         setLoading(false);
         setEmailErrTxt(error.response.data.message);
-        console.log(error.response ? error.response.data.message : error);
       }
 
       if (error.response.data.about == "alias") {

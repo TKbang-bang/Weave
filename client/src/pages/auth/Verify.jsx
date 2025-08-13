@@ -1,14 +1,28 @@
 import React, { useEffect, useState } from "react";
-// import { Eye, EyeSplash, SocialIllustration } from "../../components/svg.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import { codeVerify } from "../../services/auth.js";
 import { setAccessToken } from "../../services/token.service.js";
+import { userIsLogged } from "../../services/global.js";
 
 function Verify() {
   const [codeErr, setCodeErr] = useState(false);
   const [codeErrortxt, setCodeErrortxt] = useState("");
   const [code, setCode] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const verifyingUser = async () => {
+      try {
+        const res = await userIsLogged();
+
+        if (res.status == 200) return navigate("/");
+      } catch (error) {
+        return;
+      }
+    };
+
+    verifyingUser();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
