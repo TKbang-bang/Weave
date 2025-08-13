@@ -3,7 +3,7 @@
 <p align="center">
   A modern fullstack social media web application.
   <br />
-  Built with <strong>React, Node.js, Express, and MySQL</strong>.
+  Built with <strong>React, Node.js, Express, and PostgreSQL</strong>.
 </p>
 
 <hr />
@@ -42,8 +42,8 @@
 <h3>Backend</h3>
 <ul>
   <li>Node.js + Express</li>
-  <li>MySQL</li>
-  <li>Express-session & Express-mysql-session</li>
+  <li>PostgreSQL + Sequelize ORM</li>
+  <li>JWT (Access & Refresh Tokens with HttpOnly cookies)</li>
   <li>Socket.io</li>
   <li>Multer (file uploads)</li>
   <li>Bcrypt (password hashing)</li>
@@ -54,7 +54,7 @@
   <li>Nodemailer (email sending)</li>
 </ul>
 
-<h1>Previews</h1>
+<h1>📸 Previews</h1>
 <img src="/client/public/preview1.png" alt="preview 1" width="600px">
 <img src="/client/public/preview2.png" alt="preview 2" width="600px">
 <img src="/client/public/preview3.png" alt="preview 3" width="600px">
@@ -62,35 +62,76 @@
 <h2>⚙️ Installation & Setup</h2>
 
 <h3>1. Clone the repository</h3>
-
+<pre>
 git clone https://github.com/TKbang-bang/Weave.git
-
 cd weave
+</pre>
 
 <h3>2. Set up the client</h3>
-<p><strong>>cd client</strong></p>
-<p><strong>>npm install</strong></p>
-<p><strong>>npm run dev</strong></p>
+<pre>
+cd client
+npm install
+npm run dev
+</pre>
+
+<p>Create a <code>.env</code> file in the <strong>client/</strong> folder:</p>
+<pre>
+# URL of the backend API
+VITE_BACKEND_URL=http://localhost:4000
+</pre>
 
 <h3>3. Set up the server</h3>
-<p><strong>>cd server</strong></p>
-<p><strong>>npm install</strong></p>
-<p><strong>>npm run dev</strong></p>
-<p><strong>Don't forget to create a <code>.env</code> file inside the <code>server/</code> directory. You can use the provided <code>.env.example</code> as a template.</strong></p> <h2>📄 Environment Variables</h2>
-env
-# Client URL (e.g., http://localhost:5173)
+<pre>
+cd server
+npm install
+npx sequelize db:migrate
+npm run dev
+</pre>
+
+<p>Create a <code>.env</code> file in the <strong>server/</strong> folder:</p>
+<pre>
+# Frontend URL
 CLIENT_URL=http://localhost:5173
 
-# Secret key for sessions
-
-MY_SECRET_KEY=your_secret_key
+# JWT Secrets
+ACCESS_TOKEN_SECRET=your_access_token_secret
+REFRESH_TOKEN_SECRET=your_refresh_token_secret
+CODE_TOKEN_SECRET=your_code_token_secret
+EMAIL_TOKEN_SECRET=your_email_token_secret
+PASSWORD_TOKEN_SECRET=your_password_token_secret
 
 # Email credentials for Nodemailer
-
 EMAIL=your_email@gmail.com
 PASSWORD=your_email_app_password
 
-<p><strong>⚠️ Important:</strong> If you're using Gmail, enable 2-Step Verification and generate an <strong>App Password</strong>.
+# Database connection (PostgreSQL)
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_PORT=5432
+DB_HOST=localhost
+DB_NAME=weave_db
+DB_DIALECT=postgres
+</pre>
 
-<h2>🧠 Author</h2> <p> Developed with 💻Windows, by Woodley Tanis K. <a href="https://github.com/TKbang-bang/" target="_blank">tk</a> a fullstack dev</p>
-<small>The next Mark Zukerberg 😊</small>
+<p><strong>⚠️ Important:</strong> If you're using Gmail, enable 2-Step Verification and generate an <strong>App Password</strong>.</p>
+
+<h2>📄 Environment Variables Explained</h2>
+<ul>
+  <li><strong>CLIENT_URL</strong>: URL of the frontend (React).</li>
+  <li><strong>ACCESS_TOKEN_SECRET</strong>: Secret key for signing access tokens (JWT).</li>
+  <li><strong>REFRESH_TOKEN_SECRET</strong>: Secret key for signing refresh tokens.</li>
+  <li><strong>CODE_TOKEN_SECRET</strong>: Secret key for generating temporary verification codes.</li>
+  <li><strong>EMAIL_TOKEN_SECRET</strong>: Secret key for validating email verification links.</li>
+  <li><strong>PASSWORD_TOKEN_SECRET</strong>: Secret key for generating secure password reset links.</li>
+  <li><strong>EMAIL</strong>: Email address used to send notifications (Nodemailer).</li>
+  <li><strong>PASSWORD</strong>: Email password or app password.</li>
+  <li><strong>DB_USER</strong>: PostgreSQL database user.</li>
+  <li><strong>DB_PASSWORD</strong>: PostgreSQL database password.</li>
+  <li><strong>DB_PORT</strong>: Database connection port (default is 5432 for PostgreSQL).</li>
+  <li><strong>DB_HOST</strong>: Database server address.</li>
+  <li><strong>DB_NAME</strong>: Name of the database.</li>
+  <li><strong>DB_DIALECT</strong>: Database dialect (postgres).</li>
+</ul>
+
+<h2>🧠 Author</h2>
+<p>Developed with 💻 Windows, by <a href="https://github.com/TKbang-bang/" target="_blank">Woodley Tanis K.</a> — Backend-focused Fullstack Developer</p>
