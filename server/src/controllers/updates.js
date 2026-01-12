@@ -226,7 +226,10 @@ const codeEmailForgotPasword = async (req, res, next) => {
       req.cookies.forgotPassCode,
       process.env.PASSWORD_TOKEN_SECRET
     );
+    console.log("Code may expired");
     if (!payload) return next(new ServerError("Code may expired", "code", 400));
+
+    console.log("The code is incorrect");
 
     // VERIFYING IF THE CODES MATCH
     if (payload.code !== code)

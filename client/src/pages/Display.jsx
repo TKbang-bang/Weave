@@ -14,8 +14,6 @@ function Display() {
       <div className="display">
         <Nav />
         <Main />
-
-        <Toaster position="top-center" richColors duration={2500} />
       </div>
     </SocketContext.Provider>
   );

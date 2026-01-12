@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Eye, EyeSplash } from "../../components/svg";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { changePassCode, forgotPassword } from "../../services/auth";
 import { useNavigate } from "react-router-dom";
 import { userIsLogged } from "../../services/global";
@@ -63,7 +63,8 @@ function ForgotPassword() {
       setLoading(false);
       navigate("/sign");
     } catch (error) {
-      toast.error(error.response.data.message);
+      setLoading(false);
+      return toast.error(error.response.data.message);
     }
   };
 

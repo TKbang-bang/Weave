@@ -86,7 +86,6 @@ const getUserById = async (myId, userId) => {
       return user ? user : null;
     }
   } catch (error) {
-    console.log("error => ", error);
     throw new Error("Error on getting user by id", error);
   }
 };

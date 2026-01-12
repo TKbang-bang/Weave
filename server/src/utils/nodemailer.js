@@ -16,7 +16,7 @@ const emailSend = async (email) => {
   });
 
   const mailOptions = {
-    from: process.env.EMAIL,
+    from: `"Weave Security" <${process.env.EMAIL}>`,
     to: `${email}`,
     subject: "Verification code",
     html: `

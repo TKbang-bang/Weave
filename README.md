@@ -3,7 +3,7 @@
 <p align="center">
   A modern fullstack social media web application.
   <br />
-  Built with <strong>React, Node.js, Express, and PostgreSQL</strong>.
+  Built with <strong>React, Node.js, Express, Sequelize, and PostgreSQL</strong>.
 </p>
 
 <hr />
@@ -34,7 +34,7 @@
   <li>React</li>
   <li>Axios</li>
   <li>React Router DOM</li>
-  <li>SASS</li>
+  <li>SASS (scss)</li>
   <li>Socket.io-client</li>
   <li>Sonner (notifications)</li>
 </ul>
@@ -63,8 +63,7 @@
 
 <h3>1. Clone the repository</h3>
 <pre>
-git clone https://github.com/TKbang-bang/Weave.git
-cd weave
+git clone https://github.com/TKbang-bang/Weave.git .
 </pre>
 
 <h3>2. Set up the client</h3>
@@ -77,7 +76,7 @@ npm run dev
 <p>Create a <code>.env</code> file in the <strong>client/</strong> folder:</p>
 <pre>
 # URL of the backend API
-VITE_BACKEND_URL=http://localhost:4000
+VITE_BACKEND_URL=your_backend_url
 </pre>
 
 <h3>3. Set up the server</h3>
@@ -91,9 +90,10 @@ npm run dev
 <p>Create a <code>.env</code> file in the <strong>server/</strong> folder:</p>
 <pre>
 # Frontend URL
-CLIENT_URL=http://localhost:5173
+CLIENT_URL=your_client_url default(http://localhost:5173)
 
 # JWT Secrets
+
 ACCESS_TOKEN_SECRET=your_access_token_secret
 REFRESH_TOKEN_SECRET=your_refresh_token_secret
 CODE_TOKEN_SECRET=your_code_token_secret
@@ -101,16 +101,19 @@ EMAIL_TOKEN_SECRET=your_email_token_secret
 PASSWORD_TOKEN_SECRET=your_password_token_secret
 
 # Email credentials for Nodemailer
+
 EMAIL=your_email@gmail.com
 PASSWORD=your_email_app_password
 
 # Database connection (PostgreSQL)
+
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 DB_PORT=5432
-DB_HOST=localhost
-DB_NAME=weave_db
+DB_HOST=your_database_host default(localhost)
+DB_NAME=your_database_name
 DB_DIALECT=postgres
+
 </pre>
 
 <p><strong>⚠️ Important:</strong> If you're using Gmail, enable 2-Step Verification and generate an <strong>App Password</strong>.</p>

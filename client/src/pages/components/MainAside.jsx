@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getMyUser, gettingFollowingUsers } from "../../services/usersServices";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 
 function MainAside() {
   const [user, setUser] = useState({});

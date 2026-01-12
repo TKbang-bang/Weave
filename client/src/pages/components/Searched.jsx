@@ -74,7 +74,7 @@ function Searched() {
 
       <article className="posts_">
         <h3>Posts</h3>
-        <Posts to={`/posts_search_by_word/${search}`} />
+        <Posts to={`/search/posts/${search}`} />
       </article>
     </section>
   );

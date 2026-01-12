@@ -33,6 +33,8 @@ const signup = async (req, res, next) => {
     // user credentials
     const { name, alias, email, password } = req.body;
 
+    console.log({ name, alias, email, password });
+
     // checking if the email is already in use
     const userByEmail = await getUserByEmail(email);
     if (userByEmail)
@@ -73,6 +75,7 @@ const signup = async (req, res, next) => {
       .status(201)
       .json({ message: "Code sent to your email" });
   } catch (error) {
+    console.log(error);
     return next(new ServerError(error.message, "server", 500));
   }
 };
