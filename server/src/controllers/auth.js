@@ -33,8 +33,6 @@ const signup = async (req, res, next) => {
     // user credentials
     const { name, alias, email, password } = req.body;
 
-    console.log({ name, alias, email, password });
-
     // checking if the email is already in use
     const userByEmail = await getUserByEmail(email);
     if (userByEmail)
@@ -52,7 +50,13 @@ const signup = async (req, res, next) => {
 
     // user credentials and code together
     const data = {
-      name,
+      name: name
+        .trim()
+        .split(" ")
+        .map(
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        )
+        .join(" "),
       alias,
       email,
       password,
@@ -143,6 +147,7 @@ const login = async (req, res, next) => {
         message: "User logged",
       });
   } catch (error) {
+    console.log(error);
     return next(new ServerError(error.message, "server", 500));
   }
 };

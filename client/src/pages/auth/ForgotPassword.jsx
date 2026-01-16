@@ -43,6 +43,7 @@ function ForgotPassword() {
       document.querySelector(".forgot_password").classList.add("active");
       setLoading(false);
     } catch (error) {
+      setLoading(false);
       toast.error(error.response.data.message);
     }
   };

@@ -21,6 +21,9 @@ function Publicate() {
       setTitle("");
       setFile(null);
       setType("");
+
+      document.getElementById("images_input").value = "";
+      document.getElementById("videos_input").value = "";
     } catch (error) {
       toast.error(error.response.data.message);
     }

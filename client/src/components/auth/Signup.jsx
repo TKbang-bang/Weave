@@ -34,6 +34,8 @@ function Signup() {
 
       navigate("/verify");
     } catch (error) {
+      setLoading(false);
+      
       if (error.response.data.about == "email") {
         setEmailErr(true);
         setLoading(false);

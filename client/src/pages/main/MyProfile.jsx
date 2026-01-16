@@ -42,6 +42,8 @@ function MyProfile() {
 
             setImageDelete(true);
             toast.success("Profile picture deleted");
+
+            window.location.reload();
           } catch (error) {
             toast.error(error.response.data.message);
           }
@@ -75,9 +77,11 @@ function MyProfile() {
               <Link className="edit" to="/editprofile">
                 Edit profile
               </Link>
-              <button className="delete" onClick={handleDelete}>
-                Delete profile
-              </button>
+              {user.profile && (
+                <button className="delete" onClick={handleDelete}>
+                  Delete profile
+                </button>
+              )}
             </div>
           )}
         </div>
